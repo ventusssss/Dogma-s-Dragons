@@ -11,6 +11,7 @@ using namespace std;
 using namespace ddgm;
 
 int main() {
+  // test commit
   Player player("Guts", 200, 500, 0, 500, 25, Vocations::Fighter,
                 Player::Colors::red, 1390);
   player.updateStats();
