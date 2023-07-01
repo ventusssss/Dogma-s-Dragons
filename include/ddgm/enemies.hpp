@@ -72,29 +72,42 @@ public:
 
 // BOSSES
 
+// lvl >= 5
 class Cyclope : public Entity {
 public:
   Cyclope() : Entity("Cyclope", 12000, 400, 0, 80, 60, Colors::red, 4000) {}
 };
 
+// lvl >= 10
 class Chimera : public Entity {
 public:
   Chimera() : Entity("Chimera", 15000, 900, 150, 250, 150, Colors::red, 7700) {}
 };
 
+// lvl >= 15
 class Ogre : public Entity {
 public:
   Ogre() : Entity("Ogre", 15000, 775, 0, 210, 15, Colors::red, 500) {}
 };
 
+// lvl >= 15
 class Golem : public Magic {
 public:
   Golem() : Magic("Golem", 20000, 735, 473, 0, 0, Colors::blue, 8600) {}
 };
 
+// lvl >= 25
 class Hydra : public Entity {
+public:
   Hydra()
       : Entity("Hydra", 75000, 1230, 675, 145, 145, Colors::yellow, 16000) {}
+};
+
+// 卍卍卍 --- FINAL BOSS --- 卍卍卍
+class Grigori : public Entity {
+public:
+  Grigori()
+      : Entity("Grigori", 100000, 1250, 600, 260, 280, Colors::red, 80000) {}
 };
 
 } // namespace ddgm

@@ -1,29 +1,34 @@
 #include "ddgm/player.hpp"
+#include "ddgm/enemies.hpp"
 #include "ddgm/items.hpp"
 #include "ddgm/utilities.hpp"
+#include <chrono>
 #include <cmath>
 #include <iostream>
 #include <math.h>
+#include <random>
 #include <string>
 #include <sys/types.h>
 
 namespace ddgm {
 // chiamiamo il constructor di player,
-// inizializzando la SUA entità
+// inizializzando la SUA entita'
 Player::Player(std::string name, uint hp, uint atk, uint matk, uint def,
                uint mdef, Vocations vocation, Colors color, uint xp)
-    : Entity(name, hp, atk, matk, def, mdef, color, xp), vocation(vocation) {}
+    : Entity(name, hp, atk, matk, def, mdef, color, xp), vocation(vocation) {
+  this->updateStats();
+}
 void Player::addXp(const uint xp) { this->xp += xp; }
 void Player::updateStats() {
   this->hp = max_hp;
   uint tmp_lvl = this->lvl;
-  this->lvl = 0.06 * std::pow(this->xp, 1 / 1.85);
-  this->lvl = ((0.06 * std::pow(this->xp, 1 / 1.85)) -
-                           (uint)((0.06 * std::pow(this->xp, 1 / 1.85))) >
-                       .999
-                   ? this->lvl + 1
-                   : this->lvl);
+  // xp = 123 * lvl^2 - 123 * lvl
+  // lvl = (123 + sqrt(123^2-4(123)(-xp))) / 123 * 2;
+
+  uint delta = std::pow(123, 2) - (4 * 123 * (-this->xp));
+  this->lvl = (123 + (std::sqrt(delta))) / 246;
   this->lvl = (!this->lvl ? 1 : this->lvl);
+
   uint diff = this->lvl - tmp_lvl;
   for (uint i = 0; i < diff; i++) {
     switch (this->vocation) {
@@ -100,7 +105,9 @@ std::ostream &operator<<(std::ostream &os, const Player player) {
   os << "Vocation: " << player.returnVocation() << "\n";
   os << "Level: " << player.getLvl() << "\n";
   os << "XP required for next level: "
-     << (uint)std::pow(((player.getLvl() + 1) / 0.06), 1.85) - (player.getXp())
+     << (123 * std::pow((player.getLvl() + 1), 2) -
+         123 * (player.getLvl() + 1)) -
+            player.getXp()
      << "\n";
   os << "Total XP: " << player.getXp() << "\n";
   return os;
@@ -168,5 +175,17 @@ void Player::useItem(uint pos, Entity *obj) {
   }
 
   this->inventory.erase(this->inventory.begin() + pos);
+}
+
+void Player::attackDragon(Entity *obj) {
+  if (dynamic_cast<Grigori *>(obj)) {
+    std::random_device rd;
+    std::mt19937 rng(rd());
+    std::uniform_int_distribution<uint> uni(this->atk - percu(this->atk, 10),
+                                            this->atk + percu(this->atk, 10));
+    uint dmg = uni(rng), dmg_eff = (dmg > obj->getDef() ? dmg - obj->getDef()
+                                                        : obj->getDef() - dmg);
+    obj->getHit(dmg);
+  }
 }
 } // namespace ddgm

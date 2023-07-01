@@ -37,6 +37,7 @@ public:
   void changeVocation(Vocations vocation);
   void addItem(Item *item);
   void useItem(uint pos, Entity *obj = nullptr);
+  void attackDragon(Entity *obj = nullptr);
 };
 
 std::ostream &operator<<(std::ostream &os, const Player player);

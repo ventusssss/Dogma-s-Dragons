@@ -16,6 +16,7 @@ protected:
   uint hp, atk, matk, def, mdef;
   uint xp;
   Colors color;
+  virtual void magicFunc() {}
 
 public:
   Entity(std::string name, uint hp, uint atk, uint matk, uint def, uint mdef,

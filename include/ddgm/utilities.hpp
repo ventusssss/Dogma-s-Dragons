@@ -7,6 +7,10 @@ namespace ddgm {
 // funzione per calcolare la percentuale
 uint percu(uint n, uint perc);
 void casuality(uint perc);
+int start_menu();
+int game_menu();
+void game_credits();
+void game_introduction();
 } // namespace ddgm
 
 #endif
