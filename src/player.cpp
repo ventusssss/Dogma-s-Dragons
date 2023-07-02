@@ -14,8 +14,8 @@ namespace ddgm {
 // chiamiamo il constructor di player,
 // inizializzando la SUA entita'
 Player::Player(std::string name, uint hp, uint atk, uint matk, uint def,
-               uint mdef, Vocations vocation, Colors color, uint xp)
-    : Entity(name, hp, atk, matk, def, mdef, color, xp), vocation(vocation) {
+               uint mdef, Vocations vocation, uint xp)
+    : Entity(name, hp, atk, matk, def, mdef, xp), vocation(vocation) {
   this->updateStats();
 }
 void Player::addXp(const uint xp) { this->xp += xp; }

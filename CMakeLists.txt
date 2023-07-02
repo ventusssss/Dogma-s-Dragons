@@ -16,6 +16,7 @@ set(
   src/utilities.cpp
   src/items.cpp
   src/pawn.cpp
+  src/skills.cpp
   )
 
 # crea l'eseguibile con nome (p1) e risorsa (p2)

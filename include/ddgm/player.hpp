@@ -29,7 +29,7 @@ private:
 
 public:
   Player(std::string name, uint hp, uint atk, uint matk, uint def, uint mdef,
-         Vocations vocation, Colors color, uint xp = 0);
+         Vocations vocation, uint xp = 0);
   void addXp(const uint xp);
   void updateStats();
   uint getLvl() const;

@@ -2,112 +2,207 @@
 #define DDGM_ENEMIES_HPP
 
 #include "ddgm/entity.hpp"
+#include "ddgm/skills.hpp"
+#include <vector>
 
 namespace ddgm {
+
+class Enemy : public Entity {
+public:
+  Enemy(std::string name, uint hp, uint atk, uint matk, uint def, uint mdef,
+        uint xp, std::vector<Skill::SkillType> vulnerabilities,
+        std::vector<Skill::SkillType> resistances, uint vulperc, uint resperc);
+};
 
 // SMALL ENEMIES
 // Red ones
 
-class Golbin : public Entity {
+class Golbin : public Enemy {
 public:
-  Golbin() : Entity("Golbin", 300, 125, 0, 47, 37, Colors::red, 65) {}
+  Golbin()
+      : Enemy("Golbin", 300, 125, 0, 47, 37, 65,
+              {Skill::SkillType::fire, Skill::SkillType::ice},
+              {Skill::SkillType::dark}, 50, 40) {}
 };
 
-class Wolf : public Entity {
+class Wolf : public Enemy {
 public:
-  Wolf() : Entity("Wolf", 100, 23, 0, 55, 0, Colors::red, 25) {}
+  Wolf()
+      : Enemy("Wolf", 100, 23, 0, 55, 0, 25, {Skill::SkillType::fire},
+              {Skill::SkillType::dash, Skill::SkillType::ice,
+               Skill::SkillType::thunder},
+              10, 10) {}
 };
 
-class Undead : public Entity {
+class Undead : public Enemy {
 public:
-  Undead() : Entity("Undead", 1000, 55, 0, 300, 0, Colors::red, 185) {}
+  Undead()
+      : Enemy("Undead", 1000, 55, 0, 300, 0, 185,
+              {Skill::SkillType::fire, Skill::SkillType::holy},
+              {Skill::SkillType::ice, Skill::SkillType::thunder,
+               Skill::SkillType::dark},
+              350, 50) {}
 };
 
 // Yellow ones
 
-class Bandit : public Entity {
+class Bandit : public Enemy {
 public:
-  Bandit() : Entity("Bandit", 500, 150, 0, 63, 13, Colors::yellow, 65) {}
+  Bandit()
+      : Enemy("Bandit", 500, 150, 0, 63, 13, 65,
+              {Skill::SkillType::fire, Skill::SkillType::ice,
+               Skill::SkillType::thunder, Skill::SkillType::dark},
+              {Skill::SkillType::none}, 40, 0) {}
 };
 
-class Saurian : public Entity {
+class Saurian : public Enemy {
 public:
-  Saurian() : Entity("Saurian", 1000, 220, 50, 76, 20, Colors::yellow, 400) {}
+  Saurian()
+      : Enemy("Saurian", 1000, 220, 50, 76, 20, 400, {Skill::SkillType::ice},
+              {Skill::SkillType::fire, Skill::SkillType::dash}, 150, 40) {}
 };
 
-class Gargoyle : public Entity {
+class Gargoyle : public Enemy {
 public:
   Gargoyle()
-      : Entity("Gargoyle", 5000, 710, 372, 280, 123, Colors::yellow, 1350) {}
+      : Enemy("Gargoyle", 5000, 710, 372, 280, 123, 1350,
+              {Skill::SkillType::dash, Skill::SkillType::thunder},
+              {Skill::SkillType::slash, Skill::SkillType::fire,
+               Skill::SkillType::ice, Skill::SkillType::dark},
+              50, 75) {}
 };
 
-class Harpy : public Entity {
+class Harpy : public Enemy {
 public:
-  Harpy() : Entity("Harpy", 700, 210, 0, 43, 63, Colors::yellow, 140) {}
+  Harpy()
+      : Enemy("Harpy", 700, 210, 0, 43, 63, 140, {Skill::SkillType::fire},
+              {Skill::SkillType::dark}, 20, 20) {}
 };
 
-class Skeleton : public Entity {
+class Skeleton : public Enemy {
 public:
-  Skeleton() : Entity("Skeleton", 650, 140, 55, 30, 30, Colors::yellow, 240) {}
+  Skeleton()
+      : Enemy("Skeleton", 650, 140, 55, 30, 30, 240,
+              {Skill::SkillType::dash, Skill::SkillType::holy},
+              {Skill::SkillType::slash, Skill::SkillType::fire,
+               Skill::SkillType::ice, Skill::SkillType::thunder,
+               Skill::SkillType::dark},
+              50, 40) {}
 };
 
-class Succubus : public Entity {
+class Succubus : public Enemy {
 public:
   Succubus()
-      : Entity("Succubus", 3200, 520, 430, 160, 120, Colors::yellow, 660) {}
+      : Enemy("Succubus", 3200, 520, 430, 160, 120, 660,
+              {Skill::SkillType::slash, Skill::SkillType::holy},
+              {Skill::SkillType::fire, Skill::SkillType::ice,
+               Skill::SkillType::thunder, Skill::SkillType::dark},
+              35, 95) {}
 };
 
 // Blue ones
 
-class Ghost : public Magic {
+class Ghost : public Enemy {
 public:
-  Ghost() : Magic("Ghost", 1000, 1, 200, 100, 125, Colors::blue, 900) {}
+  Ghost()
+      : Enemy("Ghost", 1000, 1, 200, 100, 125, 900, {Skill::SkillType::holy},
+              {Skill::SkillType::slash, Skill::SkillType::dash,
+               Skill::SkillType::dark},
+              250, 83) {}
 };
 
-class Vile_Eye : public Magic {
+class Vile_Eye : public Enemy {
 public:
   Vile_Eye()
-      : Magic("Vile Eye", 1500, 525, 600, 130, 515, Colors::blue, 5000) {}
+      : Enemy("Vile Eye", 1500, 525, 600, 130, 515, 5000,
+              {Skill::SkillType::none},
+              {Skill::SkillType::dash, Skill::SkillType::fire,
+               Skill::SkillType::ice, Skill::SkillType::thunder,
+               Skill::SkillType::dark},
+              0, 57) {}
 };
 
 // BOSSES
 
 // lvl >= 5
-class Cyclope : public Entity {
+class Cyclope : public Enemy {
 public:
-  Cyclope() : Entity("Cyclope", 12000, 400, 0, 80, 60, Colors::red, 4000) {}
+  Cyclope()
+      : Enemy("Cyclope", 12000, 400, 0, 80, 60, 4000,
+              {Skill::SkillType::thunder},
+              {Skill::SkillType::fire, Skill::SkillType::ice}, 80, 40) {}
 };
 
 // lvl >= 10
-class Chimera : public Entity {
+class Chimera : public Enemy {
 public:
-  Chimera() : Entity("Chimera", 15000, 900, 150, 250, 150, Colors::red, 7700) {}
+  Chimera()
+      : Enemy("Chimera", 15000, 900, 150, 250, 150, 7700,
+              {Skill::SkillType::none},
+              {Skill::SkillType::fire, Skill::SkillType::ice,
+               Skill::SkillType::thunder, Skill::SkillType::holy,
+               Skill::SkillType::dark},
+              0, 15) {}
 };
 
 // lvl >= 15
-class Ogre : public Entity {
+class Ogre : public Enemy {
 public:
-  Ogre() : Entity("Ogre", 15000, 775, 0, 210, 15, Colors::red, 500) {}
+  Ogre()
+      : Enemy("Ogre", 15000, 775, 0, 210, 15, 500, {Skill::SkillType::none},
+              {Skill::SkillType::dark}, 0, 60) {}
 };
 
 // lvl >= 15
-class Golem : public Magic {
+class Golem : public Enemy {
 public:
-  Golem() : Magic("Golem", 20000, 735, 473, 0, 0, Colors::blue, 8600) {}
+  Golem()
+      : Enemy("Golem", 20000, 735, 473, 0, 0, 8600, {Skill::SkillType::none},
+              {Skill::SkillType::none}, 0, 0) {}
 };
 
 // lvl >= 25
-class Hydra : public Entity {
+class Hydra : public Enemy {
 public:
   Hydra()
-      : Entity("Hydra", 75000, 1230, 675, 145, 145, Colors::yellow, 16000) {}
+      : Enemy("Hydra", 75000, 1230, 675, 145, 145, 16000,
+              {Skill::SkillType::slash},
+              {Skill::SkillType::dash, Skill::SkillType::fire,
+               Skill::SkillType::ice, Skill::SkillType::thunder,
+               Skill::SkillType::holy, Skill::SkillType::dark},
+              10, 58) {}
+};
+
+class Wyrm : public Enemy {
+public:
+  Wyrm()
+      : Enemy("Wyrm", 60000, 800, 1300, 270, 800, 24000,
+              {Skill::SkillType::fire}, {Skill::SkillType::ice}, 50, 75) {}
+};
+
+class FrostWyrm : public Enemy {
+public:
+  FrostWyrm()
+      : Enemy("Frost Wyrm", 90000, 1000, 400, 320, 524, 64000,
+              {Skill::SkillType::fire},
+              {Skill::SkillType::ice, Skill::SkillType::thunder,
+               Skill::SkillType::holy, Skill::SkillType::dark},
+              20, 70) {}
+};
+
+class Drake : public Enemy {
+public:
+  Drake()
+      : Enemy("Drake", 80000, 450, 275, 300, 100, 25000,
+              {Skill::SkillType::ice}, {Skill::SkillType::fire}, 50, 80) {}
 };
 
 // 卍卍卍 --- FINAL BOSS --- 卍卍卍
-class Grigori : public Entity {
+class Grigori : public Enemy {
 public:
   Grigori()
-      : Entity("Grigori", 100000, 1250, 600, 260, 280, Colors::red, 80000) {}
+      : Enemy("Grigori", 100000, 1250, 600, 260, 280, 80000,
+              {Skill::SkillType::dark}, {Skill::SkillType::fire}, 30, 80) {}
 };
 
 } // namespace ddgm

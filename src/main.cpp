@@ -3,6 +3,7 @@
 #include "ddgm/items.hpp"
 #include "ddgm/pawn.hpp"
 #include "ddgm/player.hpp"
+#include "ddgm/skills.hpp"
 #include "ddgm/utilities.hpp"
 #include <cstdlib>
 #include <iostream>

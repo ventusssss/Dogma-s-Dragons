@@ -1,4 +1,5 @@
 #include "ddgm/utilities.hpp"
+#include "ddgm/skills.hpp"
 #include <chrono>
 #include <iostream>
 #include <random>
@@ -49,4 +50,77 @@ void game_introduction() {
                "years now, and peace seems to reign sovereign in people's "
                "hearts once more.\n";
 }
+
+void fighter_skills() {
+  for (int i = 0; i < 6; i++) {
+    std::cout << "\nName: " << skills[i].getName() << "\n";
+    std::cout << "Damage Type: " << skills[i].getSkillType() << "\n";
+    std::cout << "Cooldown: " << skills[i].getCooldown() << "\n";
+  }
+}
+
+void warrior_skills() {
+  for (int i = 6; i < 12; i++) {
+    std::cout << "\nName: " << skills[i].getName() << "\n";
+    std::cout << "Damage Type: " << skills[i].getSkillType() << "\n";
+    std::cout << "Cooldown: " << skills[i].getCooldown() << "\n";
+  }
+}
+
+void magicknight_skills() {
+  for (int i = 12; i < 18; i++) {
+    std::cout << "\nName: " << skills[i].getName() << "\n";
+    std::cout << "Damage Type: " << skills[i].getSkillType() << "\n";
+    std::cout << "Cooldown: " << skills[i].getCooldown() << "\n";
+  }
+}
+
+void strider_skills() {
+  for (int i = 18; i < 24; i++) {
+    std::cout << "\nName: " << skills[i].getName() << "\n";
+    std::cout << "Damage Type: " << skills[i].getSkillType() << "\n";
+    std::cout << "Cooldown: " << skills[i].getCooldown() << "\n";
+  }
+}
+
+void ranger_skills() {
+  for (int i = 24; i < 30; i++) {
+    std::cout << "\nName: " << skills[i].getName() << "\n";
+    std::cout << "Damage Type: " << skills[i].getSkillType() << "\n";
+    std::cout << "Cooldown: " << skills[i].getCooldown() << "\n";
+  }
+}
+
+void assassin_skills() {
+  for (int i = 30; i < 36; i++) {
+    std::cout << "\nName: " << skills[i].getName() << "\n";
+    std::cout << "Damage Type: " << skills[i].getSkillType() << "\n";
+    std::cout << "Cooldown: " << skills[i].getCooldown() << "\n";
+  }
+}
+
+void mage_skills() {
+  for (int i = 36; i < 45; i++) {
+    std::cout << "\nName: " << skills[i].getName() << "\n";
+    std::cout << "Damage Type: " << skills[i].getSkillType() << "\n";
+    std::cout << "Cooldown: " << skills[i].getCooldown() << "\n";
+  }
+}
+
+void sorcerer_skills() {
+  for (int i = 45; i < 55; i++) {
+    std::cout << "\nName: " << skills[i].getName() << "\n";
+    std::cout << "Damage Type: " << skills[i].getSkillType() << "\n";
+    std::cout << "Cooldown: " << skills[i].getCooldown() << "\n";
+  }
+}
+
+void magickarcher_skills() {
+  for (int i = 55; i < 61; i++) {
+    std::cout << "\nName: " << skills[i].getName() << "\n";
+    std::cout << "Damage Type: " << skills[i].getSkillType() << "\n";
+    std::cout << "Cooldown: " << skills[i].getCooldown() << "\n";
+  }
+}
+
 } // namespace ddgm

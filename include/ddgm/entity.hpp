@@ -7,20 +7,16 @@
 namespace ddgm {
 
 class Entity {
-public:
-  enum class Colors { red, yellow, blue };
-
 protected:
   std::string name;
   const uint max_hp;
   uint hp, atk, matk, def, mdef;
   uint xp;
-  Colors color;
   virtual void magicFunc() {}
 
 public:
   Entity(std::string name, uint hp, uint atk, uint matk, uint def, uint mdef,
-         Colors color, uint xp);
+         uint xp);
   void attack(Entity &obj);
 
   std::string getName() const;
@@ -30,17 +26,9 @@ public:
   uint getMatk() const;
   uint getDef() const;
   uint getMdef() const;
-  Colors getColor() const;
   uint getXp() const;
-
   void getHit(uint dmg);
   void getMagicHit(uint mdmg);
-};
-
-class Magic : public Entity {
-public:
-  using Entity::Entity;
-  void attack(Entity &obj);
 };
 } // namespace ddgm
 
