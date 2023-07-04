@@ -2,6 +2,7 @@
 #define DDGM_ABILITIES_HPP
 
 #include "ddgm/entity.hpp"
+#include <ostream>
 #include <string>
 #include <vector>
 

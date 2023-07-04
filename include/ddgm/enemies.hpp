@@ -8,10 +8,22 @@
 namespace ddgm {
 
 class Enemy : public Entity {
+protected:
+  std::vector<Skill::SkillType> vulnerabilities, resistances;
+
 public:
   Enemy(std::string name, uint hp, uint atk, uint matk, uint def, uint mdef,
         uint xp, std::vector<Skill::SkillType> vulnerabilities,
         std::vector<Skill::SkillType> resistances, uint vulperc, uint resperc);
+  std::vector<Skill::SkillType> gV() const;
+  std::vector<Skill::SkillType> gR() const;
+  void isEffective(Skill::SkillType skill);
+};
+
+class Magic : public Enemy {
+public:
+  void magicAttack(Entity &obj);
+  using Enemy::Enemy;
 };
 
 // SMALL ENEMIES
@@ -102,19 +114,19 @@ public:
 
 // Blue ones
 
-class Ghost : public Enemy {
+class Ghost : public Magic {
 public:
   Ghost()
-      : Enemy("Ghost", 1000, 1, 200, 100, 125, 900, {Skill::SkillType::holy},
+      : Magic("Ghost", 1000, 1, 200, 100, 125, 900, {Skill::SkillType::holy},
               {Skill::SkillType::slash, Skill::SkillType::dash,
                Skill::SkillType::dark},
               250, 83) {}
 };
 
-class Vile_Eye : public Enemy {
+class Vile_Eye : public Magic {
 public:
   Vile_Eye()
-      : Enemy("Vile Eye", 1500, 525, 600, 130, 515, 5000,
+      : Magic("Vile Eye", 1500, 525, 600, 130, 515, 5000,
               {Skill::SkillType::none},
               {Skill::SkillType::dash, Skill::SkillType::fire,
                Skill::SkillType::ice, Skill::SkillType::thunder,
@@ -154,10 +166,10 @@ public:
 };
 
 // lvl >= 15
-class Golem : public Enemy {
+class Golem : public Magic {
 public:
   Golem()
-      : Enemy("Golem", 20000, 735, 473, 0, 0, 8600, {Skill::SkillType::none},
+      : Magic("Golem", 20000, 735, 473, 0, 0, 8600, {Skill::SkillType::none},
               {Skill::SkillType::none}, 0, 0) {}
 };
 
@@ -180,10 +192,10 @@ public:
               {Skill::SkillType::fire}, {Skill::SkillType::ice}, 50, 75) {}
 };
 
-class FrostWyrm : public Enemy {
+class FrostWyrm : public Magic {
 public:
   FrostWyrm()
-      : Enemy("Frost Wyrm", 90000, 1000, 400, 320, 524, 64000,
+      : Magic("Frost Wyrm", 90000, 1000, 400, 320, 524, 64000,
               {Skill::SkillType::fire},
               {Skill::SkillType::ice, Skill::SkillType::thunder,
                Skill::SkillType::holy, Skill::SkillType::dark},
