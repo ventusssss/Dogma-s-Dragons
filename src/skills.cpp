@@ -2,6 +2,8 @@
 #include <string>
 
 namespace ddgm {
+// Defining the function to return the type of the skill
+// as a string so it's readable by the player
 std::string Skill::getSkillType() const {
   switch (this->type) {
   case SkillType::slash:
@@ -22,6 +24,7 @@ std::string Skill::getSkillType() const {
     return "Nigga what";
   }
 }
+// Defining the getters to get the member attributes of the Skill
 std::string Skill::getName() const { return this->name; }
 uint Skill::getCooldown() const { return this->cooldown; }
 } // namespace ddgm

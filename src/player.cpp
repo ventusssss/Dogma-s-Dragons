@@ -11,24 +11,35 @@
 #include <sys/types.h>
 
 namespace ddgm {
-// chiamiamo il constructor di player,
-// inizializzando la SUA entita'
+/*
+  Calling and initializing Player's constructor
+*/
 Player::Player(std::string name, uint hp, uint atk, uint matk, uint def,
                uint mdef, Vocations vocation, uint xp)
     : Entity(name, hp, atk, matk, def, mdef, xp), vocation(vocation) {
+  // Updating the stats everytime the constructor is called
   this->updateStats();
 }
+
+// Defining the method to add xp to the Player
 void Player::addXp(const uint xp) { this->xp += xp; }
+
+// Defining the method to update the stats at the end of a fight
 void Player::updateStats() {
   this->hp = max_hp;
   uint tmp_lvl = this->lvl;
   // xp = 123 * lvl^2 - 123 * lvl
   // lvl = (123 + sqrt(123^2-4(123)(-xp))) / 123 * 2;
 
+  // Creating an xp curve and a levelling system
   uint delta = std::pow(123, 2) - (4 * 123 * (-this->xp));
   this->lvl = (123 + (std::sqrt(delta))) / 246;
   this->lvl = (!this->lvl ? 1 : this->lvl);
 
+  /*
+    Checking how many levels the player gained after acquiring xp
+    And boosting specific stats for whatever vocation the player is.
+  */
   uint diff = this->lvl - tmp_lvl;
   for (uint i = 0; i < diff; i++) {
     switch (this->vocation) {
@@ -68,33 +79,38 @@ void Player::updateStats() {
   }
 }
 
+// Defining the getter method for the level
 uint Player::getLvl() const { return this->lvl; }
 
+// Defining the getter method for the vocation and returning a string
+// (it's simpler in the code)
 std::string Player::returnVocation() const {
   switch (this->vocation) {
   case Vocations::Fighter:
-    return "Fighter (Red)";
+    return "Fighter";
   case Vocations::Strider:
-    return "Strider (Yellow)";
+    return "Strider";
   case Vocations::Mage:
-    return "Mage (Blue)";
+    return "Mage";
   case Vocations::Warrior:
-    return "Warrior (Red)";
+    return "Warrior";
   case Vocations::Ranger:
-    return "Ranger (Yellow)";
+    return "Ranger";
   case Vocations::Sorcerer:
-    return "Sorcerer (Blue)";
+    return "Sorcerer";
   case Vocations::Assassin:
-    return "Assassin (Red/Yellow)";
+    return "Assassin";
   case Vocations::MagickArcher:
-    return "Magick-Archer (Yellow/Blue)";
+    return "Magick-Archer";
   case Vocations::Paladin:
-    return "Paladin (Red/Blue)";
+    return "Paladin";
   default:
     return "Unknown (unexpected behavior nigga)";
   }
 }
 
+// Operator overloading for the << operator
+// for being able to output the player stats
 std::ostream &operator<<(std::ostream &os, const Player player) {
   os << "Name: " << player.getName() << "\n";
   os << "HP: " << player.getHp() << "\n";
@@ -104,6 +120,11 @@ std::ostream &operator<<(std::ostream &os, const Player player) {
   os << "MDEF: " << player.getMdef() << "\n";
   os << "Vocation: " << player.returnVocation() << "\n";
   os << "Level: " << player.getLvl() << "\n";
+  /*
+  here we make a subtraction between player's xp required
+  for next level (that's why player.getLvl() +1 ) and player's
+  current xp
+  */
   os << "XP required for next level: "
      << (123 * std::pow((player.getLvl() + 1), 2) -
          123 * (player.getLvl() + 1)) -
@@ -113,6 +134,8 @@ std::ostream &operator<<(std::ostream &os, const Player player) {
   return os;
 }
 
+// Defining the method to change vocations to the player
+// based on some criterias
 void Player::changeVocation(Vocations vocation) {
   if (this->lvl < 5) {
     switch (vocation) {
@@ -153,8 +176,13 @@ void Player::changeVocation(Vocations vocation) {
   }
 }
 
+// Defining the method for adding an item to the inventory
+// passin the item object as a pointer and adding the item to
+// the end of the inventory
 void Player::addItem(Item *item) { this->inventory.push_back(item); }
 
+// Defining the method for using the items, that will affect
+// the player, or the object which the item is directed to
 void Player::useItem(uint pos, Entity *obj) {
   if (dynamic_cast<HealingItem *>(this->inventory[pos])) {
     this->hp += this->inventory[pos]->getValue();
@@ -177,6 +205,8 @@ void Player::useItem(uint pos, Entity *obj) {
   this->inventory.erase(this->inventory.begin() + pos);
 }
 
+// Special function defined just for the dragon because
+// he's the final boss and he's unique
 void Player::attackDragon(Entity *obj) {
   if (dynamic_cast<Grigori *>(obj)) {
     std::random_device rd;

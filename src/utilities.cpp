@@ -6,7 +6,11 @@
 #include <unistd.h>
 
 namespace ddgm {
+// Defining the function to calculate the percentage of a number
 uint percu(uint n, uint perc) { return n * perc / 100; }
+
+// defining a function to calculate (randomically) the chance
+// of an event to verify
 void casuality(uint perc) {
   // generates the seed for the randomization, taking the current time in
   // seconds
@@ -19,6 +23,7 @@ void casuality(uint perc) {
   range(gnr) > perc ? std::cout << "Missed\n" : std::cout << "Hit!\n";
 }
 
+// Basic start menu of the game
 int start_menu() {
   uint r;
   std::cout << "-------------------\n";
@@ -32,6 +37,7 @@ int start_menu() {
   return r;
 }
 
+// Credits of the game
 void game_credits() {
   std::cout << "- DOGMA'S DRAGONS -\n";
   std::cout << "Game made by Kenkai and Ventus\n";
@@ -51,6 +57,7 @@ void game_introduction() {
                "hearts once more.\n";
 }
 
+// Those functions show the entirety of the vocations' skills
 void fighter_skills() {
   for (int i = 0; i < 6; i++) {
     std::cout << "\nName: " << skills[i].getName() << "\n";
