@@ -17,7 +17,6 @@ protected:
 public:
   Entity(std::string name, uint hp, uint atk, uint matk, uint def, uint mdef,
          uint xp);
-  void attack(Entity &obj);
 
   std::string getName() const;
   uint getHp() const;
@@ -28,7 +27,6 @@ public:
   uint getMdef() const;
   uint getXp() const;
   void getHit(uint dmg);
-  void getMagicHit(uint mdmg);
 };
 } // namespace ddgm
 

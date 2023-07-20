@@ -9,14 +9,14 @@ set(
   # variabile che racchiude la lista delle risorse
   SRC 
   # path relativi al CMakeLists.txt
-  src/main.cpp 
-  src/entity.cpp
-  src/player.cpp
   src/enemies.cpp
-  src/utilities.cpp
+  src/entity.cpp
   src/items.cpp
+  src/main.cpp 
   src/pawn.cpp
+  src/player.cpp
   src/skills.cpp
+  src/utilities.cpp
   )
 
 # crea l'eseguibile con nome (p1) e risorsa (p2)

@@ -10,24 +10,34 @@ namespace ddgm {
 class Enemy : public Entity {
 protected:
   std::vector<Skill::SkillType> vulnerabilities, resistances;
+  uint vulperc, resperc;
 
 public:
   Enemy(std::string name, uint hp, uint atk, uint matk, uint def, uint mdef,
         uint xp, std::vector<Skill::SkillType> vulnerabilities,
         std::vector<Skill::SkillType> resistances, uint vulperc, uint resperc);
-  std::vector<Skill::SkillType> gV() const;
-  std::vector<Skill::SkillType> gR() const;
-  void isEffective(Skill::SkillType skill);
+
+  void attack(Entity &obj);
+  void magicAttack(Entity &obj);
+  void printVulnerabilities() const;
+  void printResistances() const;
+
+  std::vector<Skill::SkillType> getVulnerabilities() const;
+  std::vector<Skill::SkillType> getResistances() const;
+
+  uint getVulperc() const;
+  uint getResperc() const;
+
+  bool isEffective(Skill::SkillType skill);
+  bool isResistant(Skill::SkillType skill);
 };
 
 class Magic : public Enemy {
 public:
-  void magicAttack(Entity &obj);
   using Enemy::Enemy;
 };
 
 // SMALL ENEMIES
-// Red ones
 
 class Golbin : public Enemy {
 public:
@@ -55,8 +65,6 @@ public:
                Skill::SkillType::dark},
               350, 50) {}
 };
-
-// Yellow ones
 
 class Bandit : public Enemy {
 public:
@@ -111,8 +119,6 @@ public:
                Skill::SkillType::thunder, Skill::SkillType::dark},
               35, 95) {}
 };
-
-// Blue ones
 
 class Ghost : public Magic {
 public:

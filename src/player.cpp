@@ -1,5 +1,6 @@
 #include "ddgm/player.hpp"
 #include "ddgm/enemies.hpp"
+#include "ddgm/entity.hpp"
 #include "ddgm/items.hpp"
 #include "ddgm/utilities.hpp"
 #include <chrono>
@@ -9,6 +10,8 @@
 #include <random>
 #include <string>
 #include <sys/types.h>
+
+#define nigga return
 
 namespace ddgm {
 /*
@@ -111,26 +114,26 @@ std::string Player::returnVocation() const {
 
 // Operator overloading for the << operator
 // for being able to output the player stats
-std::ostream &operator<<(std::ostream &os, const Player player) {
-  os << "Name: " << player.getName() << "\n";
-  os << "HP: " << player.getHp() << "\n";
-  os << "ATK: " << player.getAtk() << "\n";
-  os << "DEF: " << player.getDef() << "\n";
-  os << "MATK: " << player.getMatk() << "\n";
-  os << "MDEF: " << player.getMdef() << "\n";
-  os << "Vocation: " << player.returnVocation() << "\n";
-  os << "Level: " << player.getLvl() << "\n";
+std::ostream &operator<<(std::ostream &os, const Player *player) {
+  os << "Name: " << player->getName() << "\n";
+  os << "HP: " << player->getHp() << "\n";
+  os << "ATK: " << player->getAtk() << "\n";
+  os << "DEF: " << player->getDef() << "\n";
+  os << "MATK: " << player->getMatk() << "\n";
+  os << "MDEF: " << player->getMdef() << "\n";
+  os << "Vocation: " << player->returnVocation() << "\n";
+  os << "Level: " << player->getLvl() << "\n";
   /*
   here we make a subtraction between player's xp required
   for next level (that's why player.getLvl() +1 ) and player's
   current xp
   */
   os << "XP required for next level: "
-     << (123 * std::pow((player.getLvl() + 1), 2) -
-         123 * (player.getLvl() + 1)) -
-            player.getXp()
+     << (123 * std::pow((player->getLvl() + 1), 2) -
+         123 * (player->getLvl() + 1)) -
+            player->getXp()
      << "\n";
-  os << "Total XP: " << player.getXp() << "\n";
+  os << "Total XP: " << player->getXp() << "\n";
   return os;
 }
 
@@ -190,7 +193,7 @@ void Player::useItem(uint pos, Entity *obj) {
   } else if (dynamic_cast<AttackItem *>(this->inventory[pos])) {
     obj->getHit(this->inventory[pos]->getValue());
   } else if (dynamic_cast<MagicItem *>(this->inventory[pos])) {
-    obj->getMagicHit(this->inventory[pos]->getValue());
+    obj->getHit(this->inventory[pos]->getValue());
   } else if (dynamic_cast<BufferItem *>(this->inventory[pos])) {
     if (this->inventory[pos]->getName() == "Conqueror's Periapt")
       this->atk *= this->inventory[pos]->getValue();
@@ -205,17 +208,23 @@ void Player::useItem(uint pos, Entity *obj) {
   this->inventory.erase(this->inventory.begin() + pos);
 }
 
-// Special function defined just for the dragon because
-// he's the final boss and he's unique
-void Player::attackDragon(Entity *obj) {
-  if (dynamic_cast<Grigori *>(obj)) {
-    std::random_device rd;
-    std::mt19937 rng(rd());
-    std::uniform_int_distribution<uint> uni(this->atk - percu(this->atk, 10),
-                                            this->atk + percu(this->atk, 10));
-    uint dmg = uni(rng), dmg_eff = (dmg > obj->getDef() ? dmg - obj->getDef()
-                                                        : obj->getDef() - dmg);
-    obj->getHit(dmg);
-  }
+void Player::attack(Enemy &obj, Skill::SkillType skill) {
+  // creating random generator
+  std::random_device rd;
+  std::mt19937 rng(rd());
+
+  // range of damage
+  std::uniform_int_distribution<uint> uni(this->atk - percu(this->atk, 10),
+                                          this->atk + percu(this->atk, 10));
+  uint dmg = uni(rng), dmg_eff = 0;
+  if (obj.isEffective(skill))
+    dmg += percu(dmg, obj.getVulperc());
+  else if (obj.isResistant(skill))
+    dmg -= percu(dmg, obj.getResperc());
+  if (dynamic_cast<Magic *>(&obj))
+    dmg_eff = (dmg > obj.getMdef() ? dmg - obj.getMdef() : obj.getMdef() - dmg);
+  else
+    dmg_eff = (dmg > obj.getDef() ? dmg - obj.getDef() : obj.getDef() - dmg);
+  obj.getHit(dmg_eff);
 }
 } // namespace ddgm

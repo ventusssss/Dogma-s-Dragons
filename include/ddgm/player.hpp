@@ -1,8 +1,10 @@
 #ifndef DDGM_PLAYER_HPP
 #define DDGM_PLAYER_HPP
 
+#include "ddgm/enemies.hpp"
 #include "ddgm/entity.hpp"
 #include "ddgm/items.hpp"
+#include "ddgm/skills.hpp"
 #include <ostream>
 #include <vector>
 
@@ -37,10 +39,13 @@ public:
   void changeVocation(Vocations vocation);
   void addItem(Item *item);
   void useItem(uint pos, Entity *obj = nullptr);
-  void attackDragon(Entity *obj = nullptr);
+
+  // do not remove this unless you want the code to stop working
+  // void attack(Entity &obj);
+  void attack(Enemy &obj, Skill::SkillType skill);
 };
 
-std::ostream &operator<<(std::ostream &os, const Player player);
+std::ostream &operator<<(std::ostream &os, const Player *player);
 
 } // namespace ddgm
 

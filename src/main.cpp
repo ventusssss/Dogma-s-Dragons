@@ -13,4 +13,11 @@
 using namespace std;
 using namespace ddgm;
 
-int main() { return int(bool(nullptr)); }
+int main() {
+  Enemy *g = new Golbin();
+  Player *p = new Player("Guts", 2000, 15, 10, 500, 25, Vocations::Warrior, 0);
+  std::cout << g->getHp() << "\n";
+  p->attack(*g, Skill::SkillType::fire);
+  std::cout << g->getHp() << "\n";
+  return int(bool(nullptr)) ? 1 : 0;
+}

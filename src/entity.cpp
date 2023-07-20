@@ -14,28 +14,9 @@ Entity::Entity(std::string name, uint hp, uint atk, uint matk, uint def,
     : name(name), hp(hp), atk(atk), matk(matk), def(def), mdef(mdef),
       max_hp(hp), xp(xp) {}
 
-// Defining the attack methods
-void Entity::attack(Entity &obj) {
-
-  // Calculating the random damage
-  std::random_device rd;
-  std::mt19937 rng(rd());
-
-  // range of damage
-  std::uniform_int_distribution<uint> uni(this->atk - percu(this->atk, 10),
-                                          this->atk + percu(this->atk, 10));
-  uint dmg = uni(rng),
-       dmg_eff = (dmg > obj.def ? dmg - obj.def : obj.def - dmg);
-  obj.hp = (obj.hp > dmg_eff ? obj.hp - dmg_eff : 0);
-}
-
 // Defining the functions to allow the object to TAKE damage
 void Entity::getHit(uint dmg) {
-  this->hp = (this->hp > dmg ? this->getHp() - dmg : 0);
-}
-
-void Entity::getMagicHit(uint mdmg) {
-  this->hp = (this->hp > mdmg ? this->getHp() - mdmg : 0);
+  this->hp = (this->hp >= dmg ? this->getHp() - dmg : 0);
 }
 
 // Getters to get the private member attributes
