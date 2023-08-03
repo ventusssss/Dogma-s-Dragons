@@ -9,18 +9,22 @@ namespace ddgm {
 // Defining the function to calculate the percentage of a number
 uint percu(uint n, uint perc) { return n * perc / 100; }
 
+// Defining a function to create a random number between a given range
+uint generateRandom(uint start, uint end) {
+  uint seed = std::chrono::system_clock::now().time_since_epoch().count();
+  std::mt19937 gnr(seed);
+  std::uniform_int_distribution<int> range(start, end);
+  return range(gnr);
+}
+
 // defining a function to calculate (randomically) the chance
 // of an event to verify
-void casuality(uint perc) {
-  // generates the seed for the randomization, taking the current time in
-  // seconds
-  uint seed = std::chrono::system_clock::now().time_since_epoch().count();
-  // initializes the generator (gnr)
-  std::mt19937 gnr(seed);
-  std::uniform_int_distribution<int> range(1, 100);
-
+bool casuality(uint perc) {
   // creating the actual casual number
-  range(gnr) > perc ? std::cout << "Missed\n" : std::cout << "Hit!\n";
+  if (generateRandom(0, 100) > perc)
+    return true;
+  else
+    return false;
 }
 
 // Basic start menu of the game

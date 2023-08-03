@@ -210,13 +210,26 @@ void Player::useItem(uint pos, Entity *obj) {
 
 void Player::attack(Enemy &obj, Skill::SkillType skill) {
   // creating random generator
-  std::random_device rd;
-  std::mt19937 rng(rd());
+  // std::random_device rd;
+  // std::mt19937 rng(rd());
 
   // range of damage
-  std::uniform_int_distribution<uint> uni(this->atk - percu(this->atk, 10),
-                                          this->atk + percu(this->atk, 10));
-  uint dmg = uni(rng), dmg_eff = 0;
+  /*std::uniform_int_distribution<uint> uni(this->atk - percu(this->atk, 10),
+                                          this->atk + percu(this->atk, 10));*/
+
+  // std::uniform_int_distribution<uint> uni;
+  uint dmg = 0;
+  if (dynamic_cast<Magic *>(&obj))
+    dmg = generateRandom(this->matk - percu(this->matk, 10),
+                         this->matk + percu(this->matk, 10));
+  // uni = std::uniform_int_distribution<uint>(
+  // this->matk - percu(this->matk, 10), this->matk + percu(this->matk, 10));
+  else
+    dmg = generateRandom(this->atk - percu(this->atk, 10),
+                         this->atk + percu(this->atk, 10));
+  // uni = std::uniform_int_distribution<uint>(this->atk - percu(this->atk,
+  // 10), this->atk + percu(this->atk, 10));
+  uint dmg_eff = 0;
   if (obj.isEffective(skill))
     dmg += percu(dmg, obj.getVulperc());
   else if (obj.isResistant(skill))

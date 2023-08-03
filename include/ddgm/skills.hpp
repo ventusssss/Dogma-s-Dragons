@@ -22,6 +22,8 @@ public:
   std::string getSkillType() const;
   std::string getName() const;
   uint getCooldown() const;
+  friend std::ostream &operator<<(std::ostream &os,
+                                  const Skill::SkillType skilltype);
 };
 
 const std::vector<Skill> skills = {
