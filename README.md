@@ -1,4 +1,5 @@
 Terminal game developed in C++
+
 Update 1:
 - Added type of attacks of the player (Slash, Bash, Fire, Ice, Thunder, Holy, Dark, Healing);
 - Added enemy vulnerabilities and resistances;
