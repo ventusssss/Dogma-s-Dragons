@@ -25,7 +25,6 @@ std::string Skill::getSkillType() const {
   }
 }
 
-// Defining the getters to get the member attributes of the Skill
 std::string Skill::getName() const { return this->name; }
 uint Skill::getCooldown() const { return this->cooldown; }
 } // namespace ddgm

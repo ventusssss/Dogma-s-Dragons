@@ -6,20 +6,21 @@
 // #include <random>
 #include <sys/types.h>
 
+// ALL THE MEANINGS OF THE FUNCTIONS
+// ARE EXPLAINED IN THE HPP FILE
+
 namespace ddgm {
 
-// initializing entity's member attributes
+// Initializing entity's member attributes
 Entity::Entity(std::string name, uint hp, uint atk, uint matk, uint def,
                uint mdef, uint xp)
     : name(name), hp(hp), atk(atk), matk(matk), def(def), mdef(mdef),
       max_hp(hp), xp(xp) {}
 
-// Defining the functions to allow the object to TAKE damage
 void Entity::getHit(uint dmg) {
   this->hp = (this->hp >= dmg ? this->getHp() - dmg : 0);
 }
 
-// Getters to get the private member attributes
 std::string Entity::getName() const { return this->name; }
 
 uint Entity::getHp() const { return this->hp; }

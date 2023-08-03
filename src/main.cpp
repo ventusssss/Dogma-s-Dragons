@@ -23,12 +23,16 @@ int main() {
   std::cout << g->getHp() << "\n";
   Enemy *b = new Bandit();
   pawn->tellVulnerabilities(true, *b);
-  Enemy *s = new Skeleton();
   pawn->tellResistances(true, *s);
   */
-  std::cout << casuality(50) << "\n";
+  Enemy *s = new Skeleton();
+  // std::cout << casuality(50) << "\n";
   Pawn *pawn = new Pawn("Brok", 100, 3, 4, 5, 6, Vocations::Warrior, 0);
-  pawn->travelTalk();
+  // pawn->tellResistances(true, *s);
+  // pawn->travelTalk(casuality(30));
+  // pawn->itemfindTalk(casuality(10));
+  // pawn->battleTalk(casuality(99), *s);
+  // pawn->pawndeathTalk();
 
   return int(bool(nullptr)) ? 1 : 0;
 }

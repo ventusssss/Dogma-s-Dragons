@@ -31,6 +31,7 @@ void Player::addXp(const uint xp) { this->xp += xp; }
 void Player::updateStats() {
   this->hp = max_hp;
   uint tmp_lvl = this->lvl;
+
   // xp = 123 * lvl^2 - 123 * lvl
   // lvl = (123 + sqrt(123^2-4(123)(-xp))) / 123 * 2;
 
@@ -39,10 +40,8 @@ void Player::updateStats() {
   this->lvl = (123 + (std::sqrt(delta))) / 246;
   this->lvl = (!this->lvl ? 1 : this->lvl);
 
-  /*
-    Checking how many levels the player gained after acquiring xp
-    And boosting specific stats for whatever vocation the player is.
-  */
+  // Checking how many levels the player gained after acquiring xp
+  // And boosting specific stats for whatever vocation the player is.
   uint diff = this->lvl - tmp_lvl;
   for (uint i = 0; i < diff; i++) {
     switch (this->vocation) {
@@ -82,7 +81,6 @@ void Player::updateStats() {
   }
 }
 
-// Defining the getter method for the level
 uint Player::getLvl() const { return this->lvl; }
 
 // Defining the getter method for the vocation and returning a string
@@ -112,8 +110,6 @@ std::string Player::returnVocation() const {
   }
 }
 
-// Operator overloading for the << operator
-// for being able to output the player stats
 std::ostream &operator<<(std::ostream &os, const Player *player) {
   os << "Name: " << player->getName() << "\n";
   os << "HP: " << player->getHp() << "\n";
@@ -137,8 +133,6 @@ std::ostream &operator<<(std::ostream &os, const Player *player) {
   return os;
 }
 
-// Defining the method to change vocations to the player
-// based on some criterias
 void Player::changeVocation(Vocations vocation) {
   if (this->lvl < 5) {
     switch (vocation) {
@@ -179,9 +173,6 @@ void Player::changeVocation(Vocations vocation) {
   }
 }
 
-// Defining the method for adding an item to the inventory
-// passin the item object as a pointer and adding the item to
-// the end of the inventory
 void Player::addItem(Item *item) { this->inventory.push_back(item); }
 
 // Defining the method for using the items, that will affect

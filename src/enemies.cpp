@@ -7,8 +7,12 @@
 #include <random>
 #include <vector>
 
+// ALL THE MEANINGS OF THE FUNCTIONS
+// ARE EXPLAINED IN THE HPP FILE
+
 namespace ddgm {
 
+// Initializing Enemy's constructor
 Enemy::Enemy(std::string name, uint hp, uint atk, uint matk, uint def,
              uint mdef, uint xp, std::vector<Skill::SkillType> vulnerabilities,
              std::vector<Skill::SkillType> resistances, uint vulperc,
@@ -17,8 +21,6 @@ Enemy::Enemy(std::string name, uint hp, uint atk, uint matk, uint def,
       vulnerabilities(vulnerabilities), resistances(resistances),
       vulperc(vulperc), resperc(resperc) {}
 
-// Defining the function to return the vector of
-// vulnerabilities of the enemy
 std::vector<Skill::SkillType> Enemy::getVulnerabilities() const {
   return this->vulnerabilities;
 }
@@ -29,6 +31,8 @@ std::vector<Skill::SkillType> Enemy::getResistances() const {
 
 void Enemy::printVulnerabilities() const {
   std::cout << "Vulnerabilities:\n";
+  // Iterating through all the vulnerablities vector
+  // and with a switch case, printing the name of the SKillType
   for (int i = 0; i < this->vulnerabilities.size(); i++) {
     std::cout << "  - ";
     switch (vulnerabilities[i]) {
@@ -60,6 +64,7 @@ void Enemy::printVulnerabilities() const {
   }
 }
 
+// Same thing here for the resistances
 void Enemy::printResistances() const {
   std::cout << "Resistances:\n";
   for (int i = 0; i < this->resistances.size(); i++) {
@@ -99,34 +104,20 @@ uint Enemy::getResperc() const { return this->resperc; }
 // attack methods
 void Enemy::attack(Entity &obj) {
 
-  // random generator
-  std::random_device rd;
-  std::mt19937 rng(rd());
-
-  // range of damage
-  std::uniform_int_distribution<uint> uni(this->atk - percu(this->atk, 10),
-                                          this->atk + percu(this->atk, 10));
-  uint dmg = uni(rng),
+  uint dmg = generateRandom(this->atk - percu(this->atk, 10),
+                            this->atk + percu(this->atk, 10)),
        dmg_eff = (dmg > obj.getDef() ? dmg - obj.getDef() : obj.getDef() - dmg);
   obj.getHit(dmg_eff);
 }
 
 void Enemy::magicAttack(Entity &obj) {
-
-  // creating random generator
-  std::random_device rd;
-  std::mt19937 rng(rd());
-
-  // range of damage
-  std::uniform_int_distribution<uint> uni(this->matk - percu(this->matk, 10),
-                                          this->matk + percu(this->matk, 10));
-  uint dmg = uni(rng), dmg_eff = (dmg > obj.getMdef() ? dmg - obj.getMdef()
-                                                      : obj.getMdef() - dmg);
+  uint dmg = generateRandom(this->matk - percu(this->matk, 10),
+                            this->matk + percu(this->matk, 10)),
+       dmg_eff =
+           (dmg > obj.getMdef() ? dmg - obj.getMdef() : obj.getMdef() - dmg);
   obj.getHit(dmg_eff);
 }
 
-// check skill type is effective
-// against the enemy (needs to be corrected)
 bool Enemy::isEffective(Skill::SkillType skill) {
   for (uint i = 0; i < this->vulnerabilities.size();) {
     if (skill == vulnerabilities[i++])
@@ -137,7 +128,7 @@ bool Enemy::isEffective(Skill::SkillType skill) {
 
 bool Enemy::isResistant(Skill::SkillType skill) {
   for (uint i = 0; i < this->resistances.size();)
-    if (skill == vulnerabilities[i++])
+    if (skill == resistances[i++])
       return true;
   return 0;
 }

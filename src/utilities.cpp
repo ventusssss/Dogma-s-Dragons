@@ -21,7 +21,7 @@ uint generateRandom(uint start, uint end) {
 // of an event to verify
 bool casuality(uint perc) {
   // creating the actual casual number
-  if (generateRandom(0, 100) > perc)
+  if (generateRandom(0, 100) < perc)
     return true;
   else
     return false;

@@ -9,22 +9,31 @@
 namespace ddgm {
 class Skill {
 public:
+  // Declaring an enumeration of all the possible types
+  // of skill in-game
   enum class SkillType { slash, dash, fire, ice, thunder, holy, dark, none };
 
 private:
+  // Declaring the type, name and cooldown of each skill
   SkillType type;
   std::string name;
   uint cooldown;
 
 public:
+  // Declaring and initializing the constructor for
+  // the skill class
   Skill(std::string name, uint cooldown, SkillType type)
       : name(name), cooldown(cooldown), type(type) {}
+
+  // Getter functions that return the private
+  // values of the class
   std::string getSkillType() const;
   std::string getName() const;
   uint getCooldown() const;
-  friend std::ostream &operator<<(std::ostream &os,
-                                  const Skill::SkillType skilltype);
 };
+
+// Declaring and initializing a vector of type Skill
+// that contains all the skills in game
 
 const std::vector<Skill> skills = {
     // Fighter

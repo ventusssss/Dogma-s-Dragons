@@ -10,33 +10,59 @@
 
 namespace ddgm {
 
-// crea un tipo che rappresenta le vocations
+// Enumeration of all the in-game existing
+// vocations selectable by the player
 enum class Vocations {
-  Fighter,      // def (mid-high 10%)
-  Strider,      // def (non troppo 2%) e atk (non troppo)
-  Mage,         // mdef (massive)
-  Warrior,      // hp (massive)
-  Ranger,       // mid (5%) def, mid atk
-  Sorcerer,     // matk (massive 15%)
-  Assassin,     // atk (massive) def (mid)
-  MagickArcher, // def (mid) mdef (massive)
-  Paladin       // hp (mid-high) matk (mid-high)
+  Fighter,
+  Strider,
+  Mage,
+  Warrior,
+  Ranger,
+  Sorcerer,
+  Assassin,
+  MagickArcher,
+  Paladin
 };
 
 class Player : public Entity {
 private:
+  // Declaring a vocation variable of type Vocations
+  // that will store the player's vocation
   Vocations vocation;
+
+  // Declaring and initializing the player's level
   uint lvl = 1;
+
+  // Declaring a vector of type Item
+  // to represent the player's inventory
   std::vector<Item *> inventory;
 
 public:
+  // Declaring player's constructor
   Player(std::string name, uint hp, uint atk, uint matk, uint def, uint mdef,
          Vocations vocation, uint xp = 0);
+
+  // Defining a function to add xp to the player
+  // after a battle
   void addXp(const uint xp);
+
+  // Defining a function to update all stats of the player
+  // after a battle, or at the start of the game
   void updateStats();
+
+  // Getter function for the level
   uint getLvl() const;
+
+  // Getter function for the vocation
   std::string returnVocation() const;
+
+  // Function to change vocations
+  // under specific criteria
   void changeVocation(Vocations vocation);
+
+  // Declaring function that respectively allow
+  // the player to add an item to his inventory
+  // or to use one
   void addItem(Item *item);
   void useItem(uint pos, Entity *obj = nullptr);
 
@@ -45,6 +71,8 @@ public:
   void attack(Enemy &obj, Skill::SkillType skill);
 };
 
+// Operator overloading that allows to print
+// the player's stats
 std::ostream &operator<<(std::ostream &os, const Player *player);
 
 } // namespace ddgm

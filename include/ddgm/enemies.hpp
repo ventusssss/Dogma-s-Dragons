@@ -9,25 +9,48 @@ namespace ddgm {
 
 class Enemy : public Entity {
 protected:
+  // Declaring two vectors of type Skill::SkillType
+  // to store all the vulnerabilities and resistences of an enemy
   std::vector<Skill::SkillType> vulnerabilities, resistances;
+
+  // Declaring two variables that indicate the percentage
+  // value of how much the player attack has to be increased
+  // or decreased
   uint vulperc, resperc;
 
 public:
+  // Declaring the base constructor for each enemy object
   Enemy(std::string name, uint hp, uint atk, uint matk, uint def, uint mdef,
         uint xp, std::vector<Skill::SkillType> vulnerabilities,
         std::vector<Skill::SkillType> resistances, uint vulperc, uint resperc);
 
+  // Defining the attack function for
+  // physical class enemies
   void attack(Entity &obj);
+
+  // Declaring the attack function for
+  // magic class enemies
   void magicAttack(Entity &obj);
+
+  // Declaring two functions that are related to the battle
+  // (that's why we haven't used them in the definition files)
+  // that allow the player to see an enemy's vulnerabilities/resistances
   void printVulnerabilities() const;
   void printResistances() const;
 
+  // Declaring getter functions that return a vector of type
+  // Skill::SkillType
   std::vector<Skill::SkillType> getVulnerabilities() const;
   std::vector<Skill::SkillType> getResistances() const;
 
+  // Declaring getter functions for vulperc
+  // and resperc values
   uint getVulperc() const;
   uint getResperc() const;
 
+  // Defining two functions to check if a type
+  // of skill used by the player is effective or
+  // not against an enemy
   bool isEffective(Skill::SkillType skill);
   bool isResistant(Skill::SkillType skill);
 };
@@ -36,6 +59,9 @@ class Magic : public Enemy {
 public:
   using Enemy::Enemy;
 };
+
+// Starting to declare each enemy, initializing
+// its constructor
 
 // SMALL ENEMIES
 
@@ -215,7 +241,7 @@ public:
               {Skill::SkillType::ice}, {Skill::SkillType::fire}, 50, 80) {}
 };
 
-// 卍卍卍 --- FINAL BOSS --- 卍卍卍
+// FINAL BOSS
 class Grigori : public Enemy {
 public:
   Grigori()
