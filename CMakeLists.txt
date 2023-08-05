@@ -11,6 +11,7 @@ set(
   # path relativi al CMakeLists.txt
   src/enemies.cpp
   src/entity.cpp
+  src/game.cpp
   src/items.cpp
   src/main.cpp 
   src/pawn.cpp

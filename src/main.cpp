@@ -1,10 +1,12 @@
 #include "ddgm/enemies.hpp"
 #include "ddgm/entity.hpp"
+#include "ddgm/game.hpp"
 #include "ddgm/items.hpp"
 #include "ddgm/pawn.hpp"
 #include "ddgm/player.hpp"
 #include "ddgm/skills.hpp"
 #include "ddgm/utilities.hpp"
+#include <algorithm>
 #include <cstdlib>
 #include <iostream>
 #include <ostream>
@@ -33,6 +35,8 @@ int main() {
   // pawn->itemfindTalk(casuality(10));
   // pawn->battleTalk(casuality(99), *s);
   // pawn->pawndeathTalk();
+
+  // itemFind();
 
   return int(bool(nullptr)) ? 1 : 0;
 }

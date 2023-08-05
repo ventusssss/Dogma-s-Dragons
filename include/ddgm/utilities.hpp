@@ -14,6 +14,10 @@ uint percu(uint n, uint perc);
 //  among that range
 uint generateRandom(uint start, uint end);
 
+// Declaring a function to check IF a number
+// is contained in a range
+bool isInRange(uint n, uint start, uint end);
+
 // Declaring the function that calculates
 // the probability of an event to happen
 bool casuality(uint perc);

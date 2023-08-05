@@ -17,6 +17,13 @@ uint generateRandom(uint start, uint end) {
   return range(gnr);
 }
 
+// Defining a function to check IF a number is contained in a range
+bool isInRange(uint n, uint start, uint end) {
+  if (n >= start && n <= end)
+    return true;
+  return false;
+}
+
 // defining a function to calculate (randomically) the chance
 // of an event to verify
 bool casuality(uint perc) {
