@@ -19,7 +19,6 @@ using namespace ddgm;
 int main() {
   /*
   Enemy *g = new Golbin();
-  Player *p = new Player("Guts", 2000, 15, 10, 500, 25, Vocations::Warrior, 0);
   std::cout << g->getHp() << "\n";
   p->attack(*g, Skill::SkillType::fire);
   std::cout << g->getHp() << "\n";
@@ -29,14 +28,17 @@ int main() {
   */
   Enemy *s = new Skeleton();
   // std::cout << casuality(50) << "\n";
+  Player *p = new Player("Guts", 2000, 15, 10, 500, 25, Vocations::Warrior, 0);
   Pawn *pawn = new Pawn("Brok", 100, 3, 4, 5, 6, Vocations::Warrior, 0);
-  // pawn->tellResistances(true, *s);
-  // pawn->travelTalk(casuality(30));
-  // pawn->itemfindTalk(casuality(10));
-  // pawn->battleTalk(casuality(99), *s);
-  // pawn->pawndeathTalk();
+  // pawn->tellResistances(*s);
+  //  pawn->travelTalk(casuality(30));
+  //  pawn->itemfindTalk(casuality(10));
+  //  pawn->battleTalk(casuality(99), *s);
+  //  pawn->pawndeathTalk();
 
   // itemFind();
+
+  // std::cout << totalDmg(30, skills[0].getMultiplier()) << "\n";
 
   return int(bool(nullptr)) ? 1 : 0;
 }

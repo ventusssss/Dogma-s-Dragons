@@ -37,6 +37,11 @@ private:
   // to represent the player's inventory
   std::vector<Item *> inventory;
 
+  // Declaring a vector of type Skill
+  // that contains all the usable skill
+  // by the player/pawn
+  std::vector<Skill> player_skills[6];
+
 public:
   // Declaring player's constructor
   Player(std::string name, uint hp, uint atk, uint matk, uint def, uint mdef,

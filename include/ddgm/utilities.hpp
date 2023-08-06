@@ -22,29 +22,8 @@ bool isInRange(uint n, uint start, uint end);
 // the probability of an event to happen
 bool casuality(uint perc);
 
-// Declaring a function for the main menu of the game;
-int start_menu();
+uint totalDmg(uint dmg, float multiplier);
 
-// Declaring a function for the menu in-game
-int game_menu();
-
-// Declaring a function for the final credits of the game
-void game_credits();
-
-// Declaring a function for the game introduction
-void game_introduction();
-
-// Defining the function to print all
-// the vocations' skills
-void fighter_skills();
-void warrior_skills();
-void magicknight_skills();
-void strider_skills();
-void ranger_skills();
-void assassin_skills();
-void mage_skills();
-void sorcerer_skills();
-void magickarcher_skills();
 } // namespace ddgm
 
 #endif

@@ -27,4 +27,5 @@ std::string Skill::getSkillType() const {
 
 std::string Skill::getName() const { return this->name; }
 uint Skill::getCooldown() const { return this->cooldown; }
+float Skill::getMultiplier() const { return this->multiplier; }
 } // namespace ddgm
