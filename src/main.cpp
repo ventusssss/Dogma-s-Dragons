@@ -6,10 +6,8 @@
 #include "ddgm/player.hpp"
 #include "ddgm/skills.hpp"
 #include "ddgm/utilities.hpp"
-#include <algorithm>
 #include <cstdlib>
 #include <iostream>
-#include <ostream>
 #include <random>
 #include <unistd.h>
 
@@ -26,19 +24,20 @@ int main() {
   pawn->tellVulnerabilities(true, *b);
   pawn->tellResistances(true, *s);
   */
-  Enemy *s = new Skeleton();
-  // std::cout << casuality(50) << "\n";
+  // Enemy *s = new Skeleton();
+  //  std::cout << casuality(50) << "\n";
   Player *p = new Player("Guts", 2000, 15, 10, 500, 25, Vocations::Warrior, 0);
-  Pawn *pawn = new Pawn("Brok", 100, 3, 4, 5, 6, Vocations::Warrior, 0);
-  // pawn->tellResistances(*s);
-  //  pawn->travelTalk(casuality(30));
-  //  pawn->itemfindTalk(casuality(10));
-  //  pawn->battleTalk(casuality(99), *s);
-  //  pawn->pawndeathTalk();
+  // p->addXp(1000);
+  //    p->updateStats();
+  //  Pawn *pawn = new Pawn("Brok", 100, 3,
+  //   4, 5, 6, Vocations::Warrior, 0);
+  //     pawn->tellResistances(*s);
+  //     pawn->travelTalk(casuality(30));
+  //     pawn->itemfindTalk(casuality(10));
+  //     pawn->battleTalk(casuality(99), *s);
+  //     pawn->pawndeathTalk();
 
-  // itemFind();
-
-  // std::cout << totalDmg(30, skills[0].getMultiplier()) << "\n";
+  skill_choosing(p);
 
   return int(bool(nullptr)) ? 1 : 0;
 }

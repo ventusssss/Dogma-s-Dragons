@@ -40,7 +40,13 @@ private:
   // Declaring a vector of type Skill
   // that contains all the usable skill
   // by the player/pawn
-  std::vector<Skill> player_skills[6];
+  std::vector<Skill> player_skills;
+
+  // Creating variables to count how many levels
+  // the player has done for each vocation
+  uint fighter_levels = 0, warrior_levels = 0, paladin_levels = 0,
+       strider_levels = 0, ranger_levels = 0, assassin_levels = 0,
+       mage_levels = 0, sorcerer_levels = 0, magickarcher_levels = 0;
 
 public:
   // Declaring player's constructor
@@ -58,6 +64,9 @@ public:
   // Getter function for the level
   uint getLvl() const;
 
+  // Getter function to return the vocation as an enum
+  Vocations getVocation() const;
+
   // Getter function for the vocation
   std::string returnVocation() const;
 
@@ -74,6 +83,18 @@ public:
   // do not remove this unless you want the code to stop working
   // void attack(Entity &obj);
   void attack(Enemy &obj, Skill::SkillType skill);
+
+  // Getter functions for the level counters
+  uint getFighterLvls() const, getStriderLvls() const, getMageLvls() const,
+      getWarriorLvls() const, getRangerLvls() const, getSorcererLvls() const,
+      getPaladinLvls() const, getAssassinLvls() const,
+      getMagickArcherLvls() const;
+
+  // Getter function that returns the
+  // player_skills vector
+  std::vector<Skill> getPlayerSkills();
+
+  void setSkills(std::vector<Skill> player_abilities);
 };
 
 // Operator overloading that allows to print

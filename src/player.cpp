@@ -2,6 +2,7 @@
 #include "ddgm/enemies.hpp"
 #include "ddgm/entity.hpp"
 #include "ddgm/items.hpp"
+#include "ddgm/skills.hpp"
 #include "ddgm/utilities.hpp"
 #include <chrono>
 #include <cmath>
@@ -47,41 +48,54 @@ void Player::updateStats() {
     switch (this->vocation) {
     case Vocations::Fighter:
       this->def += percu(this->def, 10);
+      this->fighter_levels++;
       break;
     case Vocations::Strider:
       this->def += percu(this->def, 2);
       this->atk += percu(this->atk, 2);
+      this->strider_levels++;
       break;
     case Vocations::Mage:
       this->mdef += percu(this->mdef, 15);
+      this->mage_levels++;
       break;
     case Vocations::Warrior:
       this->hp += percu(this->hp, 15);
+      this->warrior_levels++;
       break;
     case Vocations::Ranger:
       this->def += percu(this->def, 5);
       this->atk += percu(this->atk, 5);
+      this->ranger_levels++;
       break;
     case Vocations::Sorcerer:
       this->matk += percu(this->matk, 15);
+      this->sorcerer_levels++;
       break;
     case Vocations::Assassin:
       this->atk += percu(this->atk, 15);
       this->def += percu(this->def, 5);
+      this->assassin_levels++;
       break;
     case Vocations::MagickArcher:
       this->def += percu(this->def, 5);
       this->mdef += percu(this->mdef, 15);
+      this->magickarcher_levels++;
       break;
     case Vocations::Paladin:
       this->hp += percu(this->hp, 10);
       this->matk += percu(this->matk, 10);
+      this->paladin_levels++;
       break;
     }
   }
 }
 
 uint Player::getLvl() const { return this->lvl; }
+
+// Defining the getter method to return the vocation as it is
+// declared (enum)
+Vocations Player::getVocation() const { return this->vocation; }
 
 // Defining the getter method for the vocation and returning a string
 // (it's simpler in the code)
@@ -231,4 +245,21 @@ void Player::attack(Enemy &obj, Skill::SkillType skill) {
     dmg_eff = (dmg > obj.getDef() ? dmg - obj.getDef() : obj.getDef() - dmg);
   obj.getHit(dmg_eff);
 }
+
+uint Player::getFighterLvls() const { return this->fighter_levels; }
+uint Player::getStriderLvls() const { return this->strider_levels; }
+uint Player::getMageLvls() const { return this->mage_levels; }
+uint Player::getWarriorLvls() const { return this->warrior_levels; }
+uint Player::getRangerLvls() const { return this->ranger_levels; }
+uint Player::getSorcererLvls() const { return this->sorcerer_levels; }
+uint Player::getPaladinLvls() const { return this->paladin_levels; }
+uint Player::getAssassinLvls() const { return this->assassin_levels; }
+uint Player::getMagickArcherLvls() const { return this->magickarcher_levels; }
+
+std::vector<Skill> Player::getPlayerSkills() { return this->player_skills; }
+
+void Player::setSkills(std::vector<Skill> player_abilities) {
+  this->player_skills = player_abilities;
+}
+
 } // namespace ddgm

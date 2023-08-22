@@ -24,6 +24,8 @@ bool casuality(uint perc);
 
 uint totalDmg(uint dmg, float multiplier);
 
+uint check_skill(uint start, uint end);
+
 } // namespace ddgm
 
 #endif

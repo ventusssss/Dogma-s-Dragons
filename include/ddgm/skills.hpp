@@ -21,6 +21,7 @@ private:
   float multiplier;
 
 public:
+  Skill() : name("") {}
   // Declaring and initializing the constructor for
   // the skill class
   Skill(std::string name, uint cooldown, SkillType type, float multiplier)
