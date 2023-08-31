@@ -25,7 +25,39 @@ std::string Skill::getSkillType() const {
   }
 }
 
+Skill::SkillType Skill::returnSkillType() const {
+  switch (this->type) {
+  case SkillType::slash:
+    return SkillType::slash;
+    break;
+  case SkillType::dash:
+    return SkillType::dash;
+    break;
+  case SkillType::fire:
+    return SkillType::fire;
+    break;
+  case SkillType::ice:
+    return SkillType::ice;
+    break;
+  case SkillType::thunder:
+    return SkillType::thunder;
+    break;
+  case SkillType::holy:
+    return SkillType::holy;
+    break;
+  case SkillType::dark:
+    return SkillType::dark;
+    break;
+  case SkillType::none:
+    return SkillType::none;
+    break;
+  default:
+    return SkillType::none;
+  }
+}
+
 std::string Skill::getName() const { return this->name; }
-uint Skill::getCooldown() const { return this->cooldown; }
+uint Skill::getCd() const { return this->cd; }
+uint Skill::getActualCd() const { return this->actual_cd; }
 float Skill::getMultiplier() const { return this->multiplier; }
 } // namespace ddgm

@@ -12,10 +12,7 @@ uint percu(uint n, uint perc) { return n * perc / 100; }
 
 // Defining a function to create a random number between a given range
 uint generateRandom(uint start, uint end) {
-  uint seed = std::chrono::system_clock::now().time_since_epoch().count();
-  std::mt19937 gnr(seed);
-  std::uniform_int_distribution<int> range(start, end);
-  return range(gnr);
+  return rand() % (end - start + 1) + start;
 }
 
 // Defining a function to check IF a number is contained in a range

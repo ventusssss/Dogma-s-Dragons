@@ -17,21 +17,34 @@ private:
   // Declaring the type, name and cooldown of each skill
   SkillType type;
   std::string name;
-  uint cooldown;
+  // 5/0
+  uint cd, actual_cd;
   float multiplier;
 
 public:
   Skill() : name("") {}
   // Declaring and initializing the constructor for
   // the skill class
-  Skill(std::string name, uint cooldown, SkillType type, float multiplier)
-      : name(name), cooldown(cooldown), type(type), multiplier(multiplier) {}
+  Skill(std::string name, uint cd, SkillType type, float multiplier)
+      : name(name), cd(cd), actual_cd(cd), type(type), multiplier(multiplier) {}
+
+  inline void use() {
+    if (!actual_cd)
+      this->actual_cd = this->cd;
+  }
+  inline Skill operator--() {
+    if (this->actual_cd)
+      this->actual_cd--;
+    return *this;
+  }
 
   // Getter functions that return the private
   // values of the class
   std::string getSkillType() const;
+  Skill::SkillType returnSkillType() const;
   std::string getName() const;
-  uint getCooldown() const;
+  uint getCd() const;
+  uint getActualCd() const;
   float getMultiplier() const;
 };
 

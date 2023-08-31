@@ -94,7 +94,7 @@ void fighter_skills() {
   for (int i = 0; i < 6; i++) {
     std::cout << "\n" << i + 1 << ") Name: " << skills[i].getName() << "\n";
     std::cout << "   Damage Type: " << skills[i].getSkillType() << "\n";
-    std::cout << "   Cooldown: " << skills[i].getCooldown() << "\n";
+    std::cout << "   Cooldown: " << skills[i].getCd() << "\n";
   }
 }
 
@@ -102,7 +102,7 @@ void warrior_skills() {
   for (int i = 6; i < 12; i++) {
     std::cout << "\n" << i + 1 << ") Name: " << skills[i].getName() << "\n";
     std::cout << "   Damage Type: " << skills[i].getSkillType() << "\n";
-    std::cout << "   Cooldown: " << skills[i].getCooldown() << "\n";
+    std::cout << "   Cooldown: " << skills[i].getCd() << "\n";
   }
 }
 
@@ -110,7 +110,7 @@ void paladin_skills() {
   for (int i = 12; i < 18; i++) {
     std::cout << "\n" << i + 1 << ") Name: " << skills[i].getName() << "\n";
     std::cout << "   Damage Type: " << skills[i].getSkillType() << "\n";
-    std::cout << "   Cooldown: " << skills[i].getCooldown() << "\n";
+    std::cout << "   Cooldown: " << skills[i].getCd() << "\n";
   }
 }
 
@@ -118,7 +118,7 @@ void strider_skills() {
   for (int i = 18; i < 24; i++) {
     std::cout << "\n" << i + 1 << ") Name: " << skills[i].getName() << "\n";
     std::cout << "   Damage Type: " << skills[i].getSkillType() << "\n";
-    std::cout << "   Cooldown: " << skills[i].getCooldown() << "\n";
+    std::cout << "   Cooldown: " << skills[i].getCd() << "\n";
   }
 }
 
@@ -126,7 +126,7 @@ void ranger_skills() {
   for (int i = 24; i < 30; i++) {
     std::cout << "\n" << i + 1 << ") Name: " << skills[i].getName() << "\n";
     std::cout << "   Damage Type: " << skills[i].getSkillType() << "\n";
-    std::cout << "   Cooldown: " << skills[i].getCooldown() << "\n";
+    std::cout << "   Cooldown: " << skills[i].getCd() << "\n";
   }
 }
 
@@ -134,7 +134,7 @@ void assassin_skills() {
   for (int i = 30; i < 36; i++) {
     std::cout << "\n" << i + 1 << ") Name: " << skills[i].getName() << "\n";
     std::cout << "   Damage Type: " << skills[i].getSkillType() << "\n";
-    std::cout << "   Cooldown: " << skills[i].getCooldown() << "\n";
+    std::cout << "   Cooldown: " << skills[i].getCd() << "\n";
   }
 }
 
@@ -142,7 +142,7 @@ void mage_skills() {
   for (int i = 36; i < 45; i++) {
     std::cout << "\n" << i + 1 << ") Name: " << skills[i].getName() << "\n";
     std::cout << "   Damage Type: " << skills[i].getSkillType() << "\n";
-    std::cout << "   Cooldown: " << skills[i].getCooldown() << "\n";
+    std::cout << "   Cooldown: " << skills[i].getCd() << "\n";
   }
 }
 
@@ -150,7 +150,7 @@ void sorcerer_skills() {
   for (int i = 45; i < 55; i++) {
     std::cout << "\n" << i + 1 << ") Name: " << skills[i].getName() << "\n";
     std::cout << "   Damage Type: " << skills[i].getSkillType() << "\n";
-    std::cout << "   Cooldown: " << skills[i].getCooldown() << "\n";
+    std::cout << "   Cooldown: " << skills[i].getCd() << "\n";
   }
 }
 
@@ -158,7 +158,7 @@ void magickarcher_skills() {
   for (int i = 55; i < 61; i++) {
     std::cout << "\n" << i + 1 << ") Name: " << skills[i].getName() << "\n";
     std::cout << "   Damage Type: " << skills[i].getSkillType() << "\n";
-    std::cout << "   Cooldown: " << skills[i].getCooldown() << "\n";
+    std::cout << "   Cooldown: " << skills[i].getCd() << "\n";
   }
 }
 
@@ -481,5 +481,6 @@ void skill_choosing(Player *player) {
       std::cout << player_abilities[i].getName();
   }
   std::cout << " ]\n";
+  player->setSkills(player_abilities);
 }
 } // namespace ddgm

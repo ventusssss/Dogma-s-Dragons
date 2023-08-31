@@ -82,7 +82,7 @@ public:
 
   // do not remove this unless you want the code to stop working
   // void attack(Entity &obj);
-  void attack(Enemy &obj, Skill::SkillType skill);
+  void attack(Enemy &obj, Skill skill);
 
   // Getter functions for the level counters
   uint getFighterLvls() const, getStriderLvls() const, getMageLvls() const,

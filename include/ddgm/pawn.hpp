@@ -21,6 +21,11 @@ public:
   void itemfindTalk(bool cas);
   void battleTalk(bool cas, Enemy &obj);
   void pawndeathTalk();
+
+  // Declaring a function that allows the pawn to attack
+  // managing the attack choice based on the enemy vulnerabilities
+  // and resistances
+  void pawn_attack(Enemy &obj);
 };
 } // namespace ddgm
 

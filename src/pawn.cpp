@@ -2,9 +2,11 @@
 #include "ddgm/enemies.hpp"
 #include "ddgm/skills.hpp"
 #include "ddgm/utilities.hpp"
+#include <algorithm>
 #include <chrono>
 #include <iostream>
 #include <random>
+#include <system_error>
 
 // ALL THE MEANINGS OF THE FUNCTIONS
 // ARE EXPLAINED IN THE HPP FILE
@@ -271,4 +273,63 @@ void Pawn::pawndeathTalk() {
   }
 }
 
+void Pawn::pawn_attack(Enemy &obj) {
+  std::vector<Skill *> usable_skills, eff_skills, res_skills;
+  uint skill = 0, dmg = 0, dmg_eff = 0,
+       skill_number = this->getPlayerSkills().size();
+
+  if (dynamic_cast<Magic *>(&obj))
+    dmg = generateRandom(this->matk - percu(this->matk, 10),
+                         this->matk + percu(this->matk, 10));
+  else
+    dmg = generateRandom(this->atk - percu(this->atk, 10),
+                         this->atk + percu(this->atk, 10));
+
+  /*
+    obj (enemy)
+      vuln [ dash, slash, fire ]
+
+    pawn
+      skills [ ice, slash, fire ]
+  */
+
+  for (const Skill::SkillType &obj_sktype : obj.getResistances()) {
+    for (Skill &skill : this->getPlayerSkills()) {
+      if (skill.returnSkillType() != obj_sktype) {
+        // std::cout << "Usable Welf!\n";
+        usable_skills.push_back(&skill);
+      }
+    }
+  }
+
+  if (usable_skills.size()) {
+    for (const Skill::SkillType &obj_vuln : obj.getVulnerabilities()) {
+      for (uint i = 0; i < usable_skills.size(); i++) {
+        if (usable_skills[i]->returnSkillType() == obj_vuln) {
+          // std::cout << "Welf found a Vulnerability!\n",
+          eff_skills.push_back(usable_skills[i]);
+        }
+      }
+    }
+  } else {
+    // std::cout << "Welf normal attack\n";
+    dmg_eff = dmg;
+  }
+  uint used_skill = 0;
+  if (eff_skills.size()) {
+    used_skill = generateRandom(0, eff_skills.size() - 1);
+    // std::cout << "Welf used Vulnerability!\n";
+    std::cout << eff_skills[used_skill]->getName() << "\n";
+    dmg_eff = dmg * eff_skills[used_skill]->getMultiplier();
+    eff_skills[used_skill]->use();
+  } else {
+    used_skill = generateRandom(0, usable_skills.size() - 1);
+    // std::cout << "Welf used one of the random skills!\n";
+    std::cout << usable_skills[used_skill]->getName() << "\n";
+    dmg_eff = dmg * usable_skills[used_skill]->getMultiplier();
+    usable_skills[used_skill]->use();
+  }
+
+  obj.getHit(dmg_eff);
+}
 } // namespace ddgm

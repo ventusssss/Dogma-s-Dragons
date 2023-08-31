@@ -213,7 +213,7 @@ void Player::useItem(uint pos, Entity *obj) {
   this->inventory.erase(this->inventory.begin() + pos);
 }
 
-void Player::attack(Enemy &obj, Skill::SkillType skill) {
+void Player::attack(Enemy &obj, Skill skill) {
   // creating random generator
   // std::random_device rd;
   // std::mt19937 rng(rd());
@@ -235,9 +235,10 @@ void Player::attack(Enemy &obj, Skill::SkillType skill) {
   // uni = std::uniform_int_distribution<uint>(this->atk - percu(this->atk,
   // 10), this->atk + percu(this->atk, 10));
   uint dmg_eff = 0;
-  if (obj.isEffective(skill))
+  dmg *= skill.getMultiplier();
+  if (obj.isEffective(skill.returnSkillType()))
     dmg += percu(dmg, obj.getVulperc());
-  else if (obj.isResistant(skill))
+  else if (obj.isResistant(skill.returnSkillType()))
     dmg -= percu(dmg, obj.getResperc());
   if (dynamic_cast<Magic *>(&obj))
     dmg_eff = (dmg > obj.getMdef() ? dmg - obj.getMdef() : obj.getMdef() - dmg);
