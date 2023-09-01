@@ -26,12 +26,12 @@ pawn->tellVulnerabilities(true, *b);
 pawn->tellResistances(true, *s);
 */
 http: //
-  Enemy *s = new Skeleton();
+  Enemy *sk = new Skeleton();
   Enemy *g = new Golbin();
+  Enemy *s = new Saurian();
   //  std::cout << casuality(50) << "\n";
-  // Player *p = new Player("Guts", 2000, 15, 10, 500, 25, Vocations::Warrior,
-  // 0);
-  // p->addXp(1000);
+  // Player *p = new Player("Guts", 2000, 15, 10, 500, 25,
+  // Vocations::Warrior, 0); p->addXp(1000);
   //    p->updateStats();
   Pawn *pawn = new Pawn("Brok", 110, 3, 4, 5, 6, Vocations::Warrior, 3690);
   pawn->updateStats();
@@ -48,10 +48,13 @@ http: //
   }*/
 
   skill_choosing(pawn);
+
   /*std::cout << g->getHp() << "\n";
-  pawn->pawn_attack(*g);
-  // nulla
-  std::cout << g->getHp() << "\n";
-  */
+  std::cout << g->getHp() << "\n";*/
+
+  std::cout << s->getHp() << "\n";
+  pawn->pawn_attack(*s);
+  std::cout << s->getHp() << "\n";
+
   return int(bool(nullptr)) ? 1 : 0;
 }
