@@ -5,6 +5,7 @@
 #include <iostream>
 #include <random>
 #include <unistd.h>
+#include <vector>
 
 namespace ddgm {
 // Defining the function to calculate the percentage of a number
@@ -47,6 +48,16 @@ uint check_skill(uint start, uint end) {
     std::cin >> k;
   }
   return k;
+}
+
+bool search_skill(std::vector<Skill::SkillType> vector,
+                  Skill::SkillType skill) {
+  for (uint i = 0; i < vector.size(); i++) {
+    if (skill == vector[i]) {
+      return true;
+    }
+  }
+  return false;
 }
 
 } // namespace ddgm

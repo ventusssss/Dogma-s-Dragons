@@ -6,6 +6,7 @@
 #include <chrono>
 #include <iostream>
 #include <random>
+#include <sys/types.h>
 #include <system_error>
 
 // ALL THE MEANINGS OF THE FUNCTIONS
@@ -274,9 +275,9 @@ void Pawn::pawndeathTalk() {
 }
 
 void Pawn::pawn_attack(Enemy &obj) {
-  std::vector<Skill *> usable_skills, eff_skills, res_skills;
-  uint skill = 0, dmg = 0, dmg_eff = 0,
-       skill_number = this->getPlayerSkills().size();
+  std::vector<Skill *> usable_skills, eff_skills;
+  std::vector<std::string> usable_skillsNames, eff_skillsNames;
+  uint dmg = 0, dmg_eff = 0, used_skill = 0;
   if (dynamic_cast<Magic *>(&obj))
     dmg = generateRandom(this->matk - percu(this->matk, 10),
                          this->matk + percu(this->matk, 10));
@@ -284,43 +285,39 @@ void Pawn::pawn_attack(Enemy &obj) {
     dmg = generateRandom(this->atk - percu(this->atk, 10),
                          this->atk + percu(this->atk, 10));
 
-  if (skill_number) {
-    for (const Skill::SkillType &obj_sktype : obj.getResistances()) {
-      for (Skill &skill : this->getPlayerSkills()) {
-        if (skill.returnSkillType() != obj_sktype) {
-          usable_skills.push_back(&skill);
-        }
+  if (this->getPlayerSkills().size()) {
+    for (uint i = 0; i < this->getPlayerSkills().size(); i++) {
+      if (!search_skill(obj.getResistances(),
+                        this->getPlayerSkills()[i].returnSkillType())) {
+        usable_skills.push_back(&this->getPlayerSkills()[i]);
+        usable_skillsNames.push_back(this->getPlayerSkills()[i].getName());
       }
     }
-  }
-  std::cout << usable_skills.size() << ": Size after loop\n";
-  if (usable_skills.size()) {
-    for (const Skill::SkillType &obj_vuln : obj.getVulnerabilities()) {
+    if (usable_skills.size()) {
       for (uint i = 0; i < usable_skills.size(); i++) {
-        if (usable_skills[i]->returnSkillType() == obj_vuln) {
-          // std::cout << "Welf found a Vulnerability!\n",
+        if (search_skill(obj.getVulnerabilities(),
+                         this->getPlayerSkills()[i].returnSkillType())) {
           eff_skills.push_back(usable_skills[i]);
+          eff_skillsNames.push_back(this->getPlayerSkills()[i].getName());
         }
       }
+      if (eff_skills.size()) {
+        used_skill = generateRandom(0, eff_skills.size() - 1);
+        dmg_eff = dmg * eff_skills[used_skill]->getMultiplier();
+        std::cout << eff_skillsNames[used_skill] << "\n";
+        eff_skills[used_skill]->use();
+      } else {
+        used_skill = generateRandom(0, usable_skills.size() - 1);
+        dmg_eff = dmg * usable_skills[used_skill]->getMultiplier();
+        std::cout << usable_skillsNames[used_skill] << "\n";
+        usable_skills[used_skill]->use();
+      }
+    } else {
+      dmg_eff = dmg;
     }
   } else {
-    std::cout << "Normal attack\n";
     dmg_eff = dmg;
-    std::cout << dmg_eff << "\n";
   }
-  uint used_skill = 0;
-  if (eff_skills.size()) {
-    used_skill = generateRandom(0, eff_skills.size() - 1);
-    std::cout << eff_skills[used_skill]->getName() << "\n";
-    dmg_eff = dmg * eff_skills[used_skill]->getMultiplier();
-    eff_skills[used_skill]->use();
-  } else {
-    used_skill = generateRandom(0, usable_skills.size() - 1);
-    std::cout << usable_skills[used_skill]->getName() << "\n";
-    dmg_eff = dmg * usable_skills[used_skill]->getMultiplier();
-    usable_skills[used_skill]->use();
-  }
-  std::cout << dmg_eff << "\n";
   obj.getHit(dmg_eff);
 }
 } // namespace ddgm

@@ -1,6 +1,7 @@
 #ifndef DDGM_UTILITIES_HPP
 #define DDGM_UTILITIES_HPP
 
+#include "ddgm/skills.hpp"
 #include <random>
 #include <sys/types.h>
 
@@ -25,6 +26,8 @@ bool casuality(uint perc);
 uint totalDmg(uint dmg, float multiplier);
 
 uint check_skill(uint start, uint end);
+
+bool search_skill(std::vector<Skill::SkillType> vector, Skill::SkillType skill);
 
 } // namespace ddgm
 

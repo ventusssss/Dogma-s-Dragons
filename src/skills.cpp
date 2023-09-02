@@ -21,7 +21,7 @@ std::string Skill::getSkillType() const {
   case SkillType::dark:
     return "Dark";
   default:
-    return "Nigga what";
+    return "None";
   }
 }
 
