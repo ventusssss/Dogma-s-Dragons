@@ -5,7 +5,7 @@ namespace ddgm {
 // Defining the function to return the type of the skill
 // as a string so it's readable by the player
 std::string Skill::getSkillType() const {
-  switch (this->type) {
+  switch (this->actualType) {
   case SkillType::slash:
     return "Slash";
   case SkillType::dash:
@@ -25,36 +25,8 @@ std::string Skill::getSkillType() const {
   }
 }
 
-Skill::SkillType Skill::returnSkillType() const {
-  switch (this->type) {
-  case SkillType::slash:
-    return SkillType::slash;
-    break;
-  case SkillType::dash:
-    return SkillType::dash;
-    break;
-  case SkillType::fire:
-    return SkillType::fire;
-    break;
-  case SkillType::ice:
-    return SkillType::ice;
-    break;
-  case SkillType::thunder:
-    return SkillType::thunder;
-    break;
-  case SkillType::holy:
-    return SkillType::holy;
-    break;
-  case SkillType::dark:
-    return SkillType::dark;
-    break;
-  case SkillType::none:
-    return SkillType::none;
-    break;
-  default:
-    return SkillType::none;
-  }
-}
+Skill::SkillType Skill::returnSkillType() const { return this->type; }
+Skill::SkillType Skill::returnActualType() const { return this->actualType; }
 
 std::string Skill::getName() const { return this->name; }
 uint Skill::getCd() const { return this->cd; }

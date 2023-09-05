@@ -1,13 +1,34 @@
 #include "ddgm/utilities.hpp"
+#include "ddgm/enemies.hpp"
+#include "ddgm/pawn.hpp"
+#include "ddgm/player.hpp"
 #include "ddgm/skills.hpp"
 #include <chrono>
 #include <cmath>
+#include <fstream>
 #include <iostream>
 #include <random>
 #include <unistd.h>
 #include <vector>
 
 namespace ddgm {
+
+nlohmann::json load() {
+  std::ifstream stream("save.json");
+  nlohmann::json data;
+  data = nlohmann::json::parse(stream);
+  stream.close();
+  return data;
+}
+
+void save(Player player, Pawn pawn) {
+  std::ofstream stream("save.json");
+  nlohmann::json data = {{"player", player.getJson()},
+                         {"pawn", pawn.getJson()}};
+  stream << std::setw(4) << data;
+  stream.close();
+}
+
 // Defining the function to calculate the percentage of a number
 uint percu(uint n, uint perc) { return n * perc / 100; }
 
@@ -56,6 +77,14 @@ bool search_skill(std::vector<Skill::SkillType> vector,
     if (skill == vector[i]) {
       return true;
     }
+  }
+  return false;
+}
+
+bool search_enemy(std::vector<Enemy> enemies, Enemy enemy) {
+  for (uint i = 0; i < enemies.size(); i++) {
+    if (enemy.getName() == enemies[i].getName())
+      return true;
   }
   return false;
 }

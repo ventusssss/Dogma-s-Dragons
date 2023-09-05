@@ -28,4 +28,11 @@ std::string Item::getName() const { return this->name; }
 uint Item::getValue() const { return this->value; }
 std::string Item::Item::getDescription() const { return this->description; }
 
+nlohmann::json Item::getJson() const {
+  nlohmann::json data = {{"name", this->name},
+                         {"value", this->value},
+                         {"description", this->description}};
+  return data;
+}
+
 } // namespace ddgm

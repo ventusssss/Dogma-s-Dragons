@@ -4,6 +4,7 @@
 #include "ddgm/enemies.hpp"
 #include "ddgm/entity.hpp"
 #include "ddgm/items.hpp"
+#include "ddgm/json.hpp"
 #include "ddgm/skills.hpp"
 #include <ostream>
 #include <vector>
@@ -25,7 +26,7 @@ enum class Vocations {
 };
 
 class Player : public Entity {
-private:
+protected:
   // Declaring a vocation variable of type Vocations
   // that will store the player's vocation
   Vocations vocation;
@@ -95,6 +96,12 @@ public:
   std::vector<Skill> getPlayerSkills();
 
   void setSkills(std::vector<Skill> player_abilities);
+
+  std::vector<Skill> *getSkillsAddr();
+
+  nlohmann::json getJson() const;
+
+  inline std::vector<Item *> getInventory() const { return this->inventory; }
 };
 
 // Operator overloading that allows to print

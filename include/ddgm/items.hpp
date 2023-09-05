@@ -2,6 +2,7 @@
 #define DDGM_ITEMS_HPP
 
 #include "ddgm/entity.hpp"
+#include "ddgm/json.hpp"
 #include <ostream>
 #include <vector>
 
@@ -25,6 +26,8 @@ public:
   std::string getName() const;
   uint getValue() const;
   std::string getDescription() const;
+
+  nlohmann::json getJson() const;
 };
 
 // Creating class HealingItem that contains all

@@ -353,6 +353,7 @@ void skill_choosing(Player *player) {
           std::cout << player_abilities[i].getName();
       }
       std::cout << " ]\n";
+
       std::cout << "\nChoose which skill you want to add to your roaster\n>> ";
       skill = check_skill(46, 55);
       std::cin.ignore();
@@ -368,8 +369,10 @@ void skill_choosing(Player *player) {
         std::cin.get();
       } else {
         player_abilities.push_back(skills[skill - 1]);
+        std::cout << player_abilities.size() << "L\n";
+        std::cin.get();
       }
-    } while (skill != 0);
+    } while (skill != 0 && player_abilities.size() < 6);
     break;
   case Vocations::Assassin:
     do {
@@ -404,7 +407,7 @@ void skill_choosing(Player *player) {
       } else {
         player_abilities.push_back(skills[skill - 1]);
       }
-    } while (skill != 0);
+    } while (skill != 0 && player_abilities.size() < 6);
     break;
   case Vocations::MagickArcher:
     do {

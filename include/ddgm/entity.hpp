@@ -36,6 +36,8 @@ public:
   uint getMdef() const;
   uint getXp() const;
 
+  void healEntity(uint hp);
+
   // Declaring the function to allow an entity to take damage
   void getHit(uint dmg);
 };

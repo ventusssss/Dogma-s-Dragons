@@ -37,4 +37,8 @@ uint Entity::getMdef() const { return this->mdef; }
 
 uint Entity::getXp() const { return this->xp; }
 
+void Entity::healEntity(uint heal) {
+  this->hp = (this->hp + heal > this->max_hp ? this->max_hp : this->hp + heal);
+}
+
 } // namespace ddgm

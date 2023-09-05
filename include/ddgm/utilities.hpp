@@ -1,11 +1,22 @@
 #ifndef DDGM_UTILITIES_HPP
 #define DDGM_UTILITIES_HPP
 
+#include "ddgm/enemies.hpp"
+#include "ddgm/json.hpp"
 #include "ddgm/skills.hpp"
 #include <random>
 #include <sys/types.h>
+#include <vector>
 
 namespace ddgm {
+
+struct Player;
+struct Pawn;
+
+// Declaring the functions to load and save the datas
+nlohmann::json load();
+void save(Player player, Pawn pawn);
+
 // Declaring a function that returns the
 // percentage of a given number
 uint percu(uint n, uint perc);
@@ -29,6 +40,9 @@ uint check_skill(uint start, uint end);
 
 bool search_skill(std::vector<Skill::SkillType> vector, Skill::SkillType skill);
 
+class Enemy;
+
+bool search_enemy(std::vector<Enemy> enemies, Enemy enemy);
 } // namespace ddgm
 
 #endif

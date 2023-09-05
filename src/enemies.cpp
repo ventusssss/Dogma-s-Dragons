@@ -57,6 +57,9 @@ void Enemy::printVulnerabilities() const {
     case Skill::SkillType::dark:
       std::cout << "Dark";
       break;
+    case Skill::SkillType::cure:
+      std::cout << "Cure";
+      break;
     case Skill::SkillType::none:
       break;
     }
@@ -90,6 +93,9 @@ void Enemy::printResistances() const {
       break;
     case Skill::SkillType::dark:
       std::cout << "Dark";
+      break;
+    case Skill::SkillType::cure:
+      std::cout << "Cure";
       break;
     case Skill::SkillType::none:
       break;

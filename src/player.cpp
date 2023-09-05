@@ -12,8 +12,6 @@
 #include <string>
 #include <sys/types.h>
 
-#define nigga return
-
 namespace ddgm {
 /*
   Calling and initializing Player's constructor
@@ -89,6 +87,89 @@ void Player::updateStats() {
       break;
     }
   }
+  if (this->lvl >= 5 && this->lvl < 10) {
+    if (!search_enemy(selectable_enemies,
+                      Enemy("Cyclope", 12000, 400, 0, 80, 60, 4000,
+                            {Skill::SkillType::thunder},
+                            {Skill::SkillType::fire, Skill::SkillType::ice}, 80,
+                            40))) {
+      selectable_enemies.push_back(Enemy(
+          "Cyclope", 12000, 400, 0, 80, 60, 4000, {Skill::SkillType::thunder},
+          {Skill::SkillType::fire, Skill::SkillType::ice}, 80, 40));
+    }
+  } else if (this->lvl >= 10 && this->lvl < 15) {
+    if (!search_enemy(selectable_enemies,
+                      Enemy("Chimera", 15000, 900, 150, 250, 150, 7700,
+                            {Skill::SkillType::none},
+                            {Skill::SkillType::fire, Skill::SkillType::ice,
+                             Skill::SkillType::thunder, Skill::SkillType::holy,
+                             Skill::SkillType::dark},
+                            0, 15)))
+      selectable_enemies.push_back(Enemy(
+          "Chimera", 15000, 900, 150, 250, 150, 7700, {Skill::SkillType::none},
+          {Skill::SkillType::fire, Skill::SkillType::ice,
+           Skill::SkillType::thunder, Skill::SkillType::holy,
+           Skill::SkillType::dark},
+          0, 15));
+  } else if (this->lvl >= 15 && this->lvl < 40) {
+    if (!search_enemy(selectable_enemies,
+                      Enemy("Ogre", 15000, 775, 0, 210, 15, 500,
+                            {Skill::SkillType::none}, {Skill::SkillType::dark},
+                            0, 60)) &&
+        (!search_enemy(selectable_enemies,
+                       Magic("Golem", 20000, 735, 473, 0, 0, 8600,
+                             {Skill::SkillType::none}, {Skill::SkillType::none},
+                             0, 0)))) {
+      selectable_enemies.push_back(Enemy("Ogre", 15000, 775, 0, 210, 15, 500,
+                                         {Skill::SkillType::none},
+                                         {Skill::SkillType::dark}, 0, 60));
+      selectable_enemies.push_back(Magic("Golem", 20000, 735, 473, 0, 0, 8600,
+                                         {Skill::SkillType::none},
+                                         {Skill::SkillType::none}, 0, 0));
+    }
+  } else if (this->lvl >= 40 && this->lvl < 50) {
+    if (!search_enemy(selectable_enemies,
+                      Enemy("Hydra", 75000, 1230, 675, 145, 145, 16000,
+                            {Skill::SkillType::slash},
+                            {Skill::SkillType::dash, Skill::SkillType::fire,
+                             Skill::SkillType::ice, Skill::SkillType::thunder,
+                             Skill::SkillType::holy, Skill::SkillType::dark},
+                            10, 58)) &&
+        !search_enemy(selectable_enemies,
+                      Enemy("Wyrm", 60000, 800, 1300, 270, 800, 24000,
+                            {Skill::SkillType::fire}, {Skill::SkillType::ice},
+                            50, 75)) &&
+        !search_enemy(selectable_enemies,
+                      Magic("Frost Wyrm", 90000, 1000, 400, 320, 524, 64000,
+                            {Skill::SkillType::fire},
+                            {Skill::SkillType::ice, Skill::SkillType::thunder,
+                             Skill::SkillType::holy, Skill::SkillType::dark},
+                            20, 70)) &&
+        !search_enemy(selectable_enemies,
+                      Enemy("Drake", 80000, 450, 275, 300, 100, 25000,
+                            {Skill::SkillType::ice}, {Skill::SkillType::fire},
+                            50, 80))) {
+      selectable_enemies.push_back(Enemy(
+          "Hydra", 75000, 1230, 675, 145, 145, 16000, {Skill::SkillType::slash},
+          {Skill::SkillType::dash, Skill::SkillType::fire,
+           Skill::SkillType::ice, Skill::SkillType::thunder,
+           Skill::SkillType::holy, Skill::SkillType::dark},
+          10, 58));
+      selectable_enemies.push_back(Enemy("Wyrm", 60000, 800, 1300, 270, 800,
+                                         24000, {Skill::SkillType::fire},
+                                         {Skill::SkillType::ice}, 50, 75));
+
+      selectable_enemies.push_back(
+          Magic("Frost Wyrm", 90000, 1000, 400, 320, 524, 64000,
+                {Skill::SkillType::fire},
+                {Skill::SkillType::ice, Skill::SkillType::thunder,
+                 Skill::SkillType::holy, Skill::SkillType::dark},
+                20, 70));
+      selectable_enemies.push_back(Enemy("Drake", 80000, 450, 275, 300, 100,
+                                         25000, {Skill::SkillType::ice},
+                                         {Skill::SkillType::fire}, 50, 80));
+    }
+  }
 }
 
 uint Player::getLvl() const { return this->lvl; }
@@ -158,12 +239,14 @@ void Player::changeVocation(Vocations vocation) {
     case Vocations::Warrior:
     case Vocations::Ranger:
     case Vocations::Sorcerer:
-      std::cout << "You cannote change vocation\nMinimum level required: 5\n";
+      std::cout << "You cannote change vocation\nMinimum "
+                   "level required: 5\n";
       break;
     case Vocations::Assassin:
     case Vocations::MagickArcher:
     case Vocations::Paladin:
-      std::cout << "You cannote change vocation\nMinimum level required: 10\n";
+      std::cout << "You cannote change vocation\nMinimum "
+                   "level required: 10\n";
       break;
     }
   } else if (this->lvl < 10) {
@@ -179,7 +262,8 @@ void Player::changeVocation(Vocations vocation) {
     case Vocations::Assassin:
     case Vocations::MagickArcher:
     case Vocations::Paladin:
-      std::cout << "You cannote change vocation\nMinimum level required: 10\n";
+      std::cout << "You cannote change vocation\nMinimum "
+                   "level required: 10\n";
       break;
     }
   } else {
@@ -258,9 +342,47 @@ uint Player::getAssassinLvls() const { return this->assassin_levels; }
 uint Player::getMagickArcherLvls() const { return this->magickarcher_levels; }
 
 std::vector<Skill> Player::getPlayerSkills() { return this->player_skills; }
+std::vector<Skill> *Player::getSkillsAddr() { return &this->player_skills; }
 
 void Player::setSkills(std::vector<Skill> player_abilities) {
   this->player_skills = player_abilities;
+}
+
+nlohmann::json Player::getJson() const {
+  nlohmann::json items;
+  for (Item *item : this->getInventory()) {
+    items.push_back(item->getJson());
+  }
+
+  nlohmann::json data = {{"name", this->name},
+                         {"hp", this->hp},
+                         {"atk", this->atk},
+                         {"matk", this->matk},
+                         {"def", this->def},
+                         {"mdef", this->mdef},
+                         {"xp", this->xp},
+                         {"lvl", this->lvl},
+                         {"vocation", this->returnVocation()},
+                         {"fighter_lvls", this->fighter_levels},
+                         {"warrior_levels", this->warrior_levels},
+                         {"paladin_levels", this->paladin_levels},
+                         {"strider_levels", this->strider_levels},
+                         {"ranger_levels", this->ranger_levels},
+                         {"assassin_levels", this->assassin_levels},
+                         {"mage_levels", this->mage_levels},
+                         {"sorcerer_levels", this->sorcerer_levels},
+                         {"magickarcher_levels", this->magickarcher_levels},
+                         {"inventory", items}};
+
+  /*
+  "player" : {
+    "inventory": [
+      {}
+    ]
+  }
+  */
+
+  return data;
 }
 
 } // namespace ddgm

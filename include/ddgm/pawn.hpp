@@ -21,11 +21,14 @@ public:
   void itemfindTalk(bool cas);
   void battleTalk(bool cas, Enemy &obj);
   void pawndeathTalk();
+  inline void setSkills(std::vector<Skill> skills) {
+    this->player_skills = skills;
+  }
 
   // Declaring a function that allows the pawn to attack
   // managing the attack choice based on the enemy vulnerabilities
   // and resistances
-  void pawn_attack(Enemy &obj);
+  void pawn_attack(Enemy &obj, Player &p);
 };
 } // namespace ddgm
 

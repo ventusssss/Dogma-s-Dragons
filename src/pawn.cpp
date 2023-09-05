@@ -1,5 +1,6 @@
 #include "ddgm/pawn.hpp"
 #include "ddgm/enemies.hpp"
+#include "ddgm/player.hpp"
 #include "ddgm/skills.hpp"
 #include "ddgm/utilities.hpp"
 #include <algorithm>
@@ -92,6 +93,8 @@ void Pawn::tellVulnerabilities(Enemy &obj) {
         std::cout << "Dark, ";
       }
       break;
+    case Skill::SkillType::cure:
+      break;
     case Skill::SkillType::none:
       std::cout << "Nothing!";
       break;
@@ -174,6 +177,8 @@ void Pawn::tellResistances(Enemy &obj) {
       } else if (i < obj.getResistances().size() - 1) {
         std::cout << "Dark, ";
       }
+      break;
+    case Skill::SkillType::cure:
       break;
     case Skill::SkillType::none:
       std::cout << "Nothing!";
@@ -274,50 +279,58 @@ void Pawn::pawndeathTalk() {
   }
 }
 
-void Pawn::pawn_attack(Enemy &obj) {
-  std::vector<Skill *> usable_skills, eff_skills;
-  std::vector<std::string> usable_skillsNames, eff_skillsNames;
-  uint dmg = 0, dmg_eff = 0, used_skill = 0;
-  if (dynamic_cast<Magic *>(&obj))
-    dmg = generateRandom(this->matk - percu(this->matk, 10),
-                         this->matk + percu(this->matk, 10));
-  else
-    dmg = generateRandom(this->atk - percu(this->atk, 10),
-                         this->atk + percu(this->atk, 10));
+void Pawn::pawn_attack(Enemy &obj, Player &p) {
+  std::vector<Skill *> usable_skills;
+  uint dmg = dynamic_cast<Magic *>(&obj)
+                 ? generateRandom(this->matk - percu(this->matk, 10),
+                                  this->matk + percu(this->matk, 10))
+                 : generateRandom(this->atk - percu(this->atk, 10),
+                                  this->atk + percu(this->atk, 10));
+  Skill *skill = nullptr;
 
-  if (this->getPlayerSkills().size()) {
-    for (uint i = 0; i < this->getPlayerSkills().size(); i++) {
-      if (!search_skill(obj.getResistances(),
-                        this->getPlayerSkills()[i].returnSkillType())) {
-        usable_skills.push_back(&this->getPlayerSkills()[i]);
-        usable_skillsNames.push_back(this->getPlayerSkills()[i].getName());
+  // looks for usable skills
+  for (uint i = 0; i < this->player_skills.size(); i++) {
+    if (!search_skill(obj.getResistances(),
+                      this->player_skills[i].returnSkillType()) &&
+        !this->player_skills[i].getActualCd()) {
+      usable_skills.push_back(&this->player_skills[i]);
+    }
+  }
+
+  // looks for effective skills
+  if (usable_skills.size()) {
+    std::vector<Skill *> eff_skills;
+    for (uint i = 0; i < usable_skills.size(); i++) {
+      if (search_skill(obj.getVulnerabilities(),
+                       usable_skills[i]->returnSkillType())) {
+        eff_skills.push_back(usable_skills[i]);
       }
     }
-    if (usable_skills.size()) {
-      for (uint i = 0; i < usable_skills.size(); i++) {
-        if (search_skill(obj.getVulnerabilities(),
-                         this->getPlayerSkills()[i].returnSkillType())) {
-          eff_skills.push_back(usable_skills[i]);
-          eff_skillsNames.push_back(this->getPlayerSkills()[i].getName());
-        }
-      }
-      if (eff_skills.size()) {
-        used_skill = generateRandom(0, eff_skills.size() - 1);
-        dmg_eff = dmg * eff_skills[used_skill]->getMultiplier();
-        std::cout << eff_skillsNames[used_skill] << "\n";
-        eff_skills[used_skill]->use();
-      } else {
-        used_skill = generateRandom(0, usable_skills.size() - 1);
-        dmg_eff = dmg * usable_skills[used_skill]->getMultiplier();
-        std::cout << usable_skillsNames[used_skill] << "\n";
-        usable_skills[used_skill]->use();
+    if (eff_skills.size())
+      usable_skills = eff_skills;
+  }
+
+  // if it found an effective skill, it'll use one
+  // else, it'll use a normal skill
+  if (usable_skills.size()) {
+    skill = usable_skills[generateRandom(0, usable_skills.size() - 1)];
+    if ((skill->getName() == "Fire Pact" || skill->getName() == "Ice Pact" ||
+         skill->getName() == "Thunder Pact" ||
+         skill->getName() == "Holy Pact" || skill->getName() == "Dark Pact") &&
+        (!skill->getActualCd())) {
+      std::vector<Skill> *p_skills = p.getSkillsAddr();
+      for (Skill &x : *p_skills) {
+        x.setSkillType(skill->returnSkillType());
       }
     } else {
-      dmg_eff = dmg;
+      dmg *= skill->getMultiplier();
+      if (search_skill(obj.getVulnerabilities(), skill->returnSkillType())) {
+        dmg *= 1.2;
+      }
     }
-  } else {
-    dmg_eff = dmg;
+    skill->use();
   }
-  obj.getHit(dmg_eff);
+
+  obj.getHit(dmg);
 }
 } // namespace ddgm
