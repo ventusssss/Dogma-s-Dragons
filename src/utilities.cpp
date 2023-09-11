@@ -54,17 +54,17 @@ bool casuality(uint perc) {
     return false;
 }
 
-uint totalDmg(uint dmg, float multiplier) {
+/*uint totalDmg(uint dmg, float multiplier) {
   dmg *= multiplier;
   return std::ceil(dmg);
-}
+}*/
 
 uint check_skill(uint start, uint end) {
   uint k = 0;
   std::cin >> k;
-  if (k == 0)
-    return k;
-  while (k < start || k > end) {
+  while (std::cin.fail() || (k < start || k > end)) {
+    std::cin.clear();
+    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
     std::cout << "Choose a skill between the ones listed.\n>> ";
     std::cin >> k;
   }

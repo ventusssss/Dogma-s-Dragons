@@ -102,6 +102,10 @@ public:
   nlohmann::json getJson() const;
 
   inline std::vector<Item *> getInventory() const { return this->inventory; }
+
+  // setter functions for the name and the starting vocation
+  void setName(std::string name);
+  void setStartingVocation(uint vocation);
 };
 
 // Operator overloading that allows to print

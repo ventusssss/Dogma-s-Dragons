@@ -24,6 +24,16 @@ void game_credits();
 // Declaring a function for the game introduction
 void game_introduction();
 
+// functions that take the user input to give
+// a name to their characters
+std::string playerChooseName();
+std::string pawnChooseName();
+
+// function to choose the player's starting vocation
+uint chooseStartingVocation();
+
+void characterCreation(Player *player);
+
 // Declaring the function for the battles
 void battle();
 

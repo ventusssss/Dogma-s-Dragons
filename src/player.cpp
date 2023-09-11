@@ -46,43 +46,59 @@ void Player::updateStats() {
     switch (this->vocation) {
     case Vocations::Fighter:
       this->def += percu(this->def, 10);
+      this->hp += percu(this->hp, 3);
+      this->atk += percu(this->atk, 3);
       this->fighter_levels++;
       break;
     case Vocations::Strider:
-      this->def += percu(this->def, 2);
-      this->atk += percu(this->atk, 2);
+      this->def += percu(this->def, 4);
+      this->atk += percu(this->atk, 4);
+      this->hp += percu(this->hp, 2);
       this->strider_levels++;
       break;
     case Vocations::Mage:
       this->mdef += percu(this->mdef, 15);
+      this->hp += percu(this->hp, 2);
+      this->matk += percu(this->matk, 4);
       this->mage_levels++;
       break;
     case Vocations::Warrior:
       this->hp += percu(this->hp, 15);
+      this->atk += percu(this->atk, 5);
+      this->def += percu(this->def, 3);
       this->warrior_levels++;
       break;
     case Vocations::Ranger:
-      this->def += percu(this->def, 5);
-      this->atk += percu(this->atk, 5);
+      this->def += percu(this->def, 7);
+      this->atk += percu(this->atk, 7);
+      this->hp += percu(this->hp, 3);
       this->ranger_levels++;
       break;
     case Vocations::Sorcerer:
       this->matk += percu(this->matk, 15);
+      this->mdef += percu(this->mdef, 4);
+      this->hp += percu(this->hp, 3);
       this->sorcerer_levels++;
       break;
     case Vocations::Assassin:
       this->atk += percu(this->atk, 15);
-      this->def += percu(this->def, 5);
+      this->def += percu(this->def, 7);
+      this->hp += percu(this->hp, 5);
       this->assassin_levels++;
       break;
     case Vocations::MagickArcher:
       this->def += percu(this->def, 5);
       this->mdef += percu(this->mdef, 15);
+      this->matk += percu(this->matk, 10);
+      this->hp += percu(this->hp, 5);
       this->magickarcher_levels++;
       break;
     case Vocations::Paladin:
       this->hp += percu(this->hp, 10);
       this->matk += percu(this->matk, 10);
+      this->def += percu(this->def, 7);
+      this->mdef += percu(this->mdef, 5);
+      this->atk += percu(this->atk, 3);
       this->paladin_levels++;
       break;
     }
@@ -374,15 +390,38 @@ nlohmann::json Player::getJson() const {
                          {"magickarcher_levels", this->magickarcher_levels},
                          {"inventory", items}};
 
-  /*
-  "player" : {
-    "inventory": [
-      {}
-    ]
-  }
-  */
-
   return data;
+}
+
+void Player::setName(std::string name) { this->name = name; }
+
+void Player::setStartingVocation(uint vocation) {
+  switch (vocation) {
+  case 1:
+    this->vocation = Vocations::Fighter;
+    this->hp = 430;
+    this->atk = 80;
+    this->def = 80;
+    this->matk = 60;
+    this->mdef = 60;
+    break;
+  case 2:
+    this->vocation = Vocations::Strider;
+    this->hp = 430;
+    this->atk = 70;
+    this->def = 70;
+    this->matk = 70;
+    this->mdef = 70;
+    break;
+  case 3:
+    this->vocation = Vocations::Mage;
+    this->hp = 410;
+    this->atk = 60;
+    this->def = 60;
+    this->matk = 80;
+    this->mdef = 80;
+    break;
+  }
 }
 
 } // namespace ddgm

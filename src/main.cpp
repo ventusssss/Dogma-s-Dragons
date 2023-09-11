@@ -18,20 +18,10 @@ using nlohmann::json;
 
 int main() {
   srand(time(0));
-  Player player = Player("Guts", 500, 250, 25, 250, 150, Vocations::Warrior, 0);
-  Pawn pawn = Pawn("Brok", 110, 3, 4, 5, 6, Vocations::Sorcerer, 0);
-
-  player.addItem(new Item(availableHealingItems[0]));
-  player.addItem(new Item(availableAttackItems[0]));
-  player.addItem(new Item(availableMagicItems[0]));
-  player.addItem(new Item(availableBufferItems[0]));
-
-  save(player, pawn);
-  json data = load();
-
-  for (uint i = 0; i < 20; i++) {
-    std::cout << data["player"]["inventory"][0]["name"] << "\n";
-  }
-
-  return int(bool(nullptr)) ? 1 : 0;
+  Player player("", 0, 0, 0, 0, 0, Vocations::Fighter, 0);
+  Pawn pawn("", 0, 0, 0, 0, 0, Vocations::Fighter, 0);
+  game_introduction();
+  std::cin.get();
+  characterCreation(&player);
+  return int(bool(nullptr)) ? !(bool(nullptr)) : bool(nullptr);
 }

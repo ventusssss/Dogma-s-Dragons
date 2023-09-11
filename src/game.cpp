@@ -2,6 +2,7 @@
 #include "ddgm/player.hpp"
 #include "ddgm/utilities.hpp"
 #include <array>
+#include <cctype>
 #include <iostream>
 #include <unistd.h>
 #include <vector>
@@ -63,7 +64,7 @@ void game_credits() {
 
 // Basic start menu of the game
 int start_menu() {
-  uint r;
+  uint c;
   std::cout << "-------------------\n";
   std::cout << "1. New Game\n";
   std::cout << "2. Continue\n";
@@ -71,20 +72,151 @@ int start_menu() {
   std::cout << "0. Exit\n";
   std::cout << "-------------------\n";
   std::cout << ">> ";
-  std::cin >> r;
-  return r;
+  std::cin >> c;
+  return c;
+}
+
+int game_menu() {
+  uint c;
+  std::cout << "1. Travel\n";
+  std::cout << "2. Change Abilities/Vocation\n";
+  std::cout << "3. Check Stats\n";
+  std::cout << "0. Main Menu\n";
+  std::cout << ">> ";
+  std::cin >> c;
+  return c;
 }
 
 // to continue
 void game_introduction() {
+  system("clear");
   std::cout << "Legends tell that a Dragon has populated these lands since "
-               "time immemorial. Whether it was the same creature over the "
-               "centuries, no one can tell, for no one has ever lived "
+               "time immemorial.\nWhether it was the same creature over the "
+               "centuries, no one can tell,\nfor no one has ever lived "
                "enough to witness...or did someone?\n";
-  sleep(1);
-  std::cout << "The people hasn't seen the Dragon's shadow for over fifty "
+  // std::cout << ">> Press any KEY to continue.";
+  std::cin.get();
+  std::cout << "The people haven't seen the Dragon for over fifty "
                "years now, and peace seems to reign sovereign in people's "
                "hearts once more.\n";
+  // std::cout << "Press any KEY to continue.";
+  std::cin.get();
+  std::cout
+      << "But one day is enough to turn the people's hope into pure fear.\n";
+  // std::cout << "Press any KEY to continue.";
+  std::cin.get();
+  std::cout << "That day, the Dragon landed on the sea village of "
+               "Cassardis.\nThe Royal Guards were in a mix of disbelief and "
+               "terror at its appearance.\nEveryone tried to flee, but many "
+               "were struck by The Dragon's infernal flames.\nAmongst all "
+               "those terrified people, one person stepped forward, determined "
+               "to fight The Dragon.\n";
+  // std::cout << "Press any KEY to continue.";
+  std::cin.get();
+  std::cout
+      << "The brave one was just a fisherman, but he wielded a rusted "
+         "sword and challenged the Dragon.\nHe stood no choice. The "
+         "Dragon struck him with his paw,\nbut in that moment, the "
+         "fisherman also managed to thrust the sword into the Dragon's hand.\n";
+  // std::cout << "Press any KEY to continue.";
+  std::cin.get();
+  std::cout << "Something awakened in the Dragon. Its eyes turned red as fire, "
+               "and it seemed to realize what was happening.\nThe Beast then "
+               "raised his paw, and with a single touch, he ripped the heart "
+               "of the fisherman.\n";
+  // std::cout << "Press any KEY to continue.";
+  std::cin.get();
+  std::cout
+      << "It then flee away, speaking in an ancient language only the "
+         "fisherman could apparently understand.\nIt said \"Come and get me, "
+         "slay me. You'll find me on the tallest peak of the kingdom\".\n";
+  // std::cout << "Press any KEY to continue.";
+  std::cin.get();
+  std::cout << "The fisherman woke up in a house, with a scar on his chest, "
+               "in disbelief that he survived.\nSuddently, the scar "
+               "enlightened,\nand the man heard the phrase that the Dragon "
+               "told him before.\n";
+  // std::cout << "Press any KEY to continue.";
+  std::cin.get();
+  std::cout << "Then, his beloved entered the room. To check if he was well, "
+               "she asked a few questions,\nbeginning with simply asking him "
+               "his name.\n";
+}
+
+std::string playerChooseName() {
+  std::string name;
+  char ans = ' ';
+  do {
+    name = "";
+    std::cout << "What is your name?\n>> ";
+    std::getline(std::cin, name);
+    std::cout << "Is this really your name? Y/N\n>> ";
+    std::cin >> ans;
+    while (tolower(ans) != 'y' && tolower(ans) != 'n') {
+      std::cout << "Select Y or N: ";
+      std::cin >> ans;
+    }
+    std::cin.ignore();
+  } while (ans != 'y');
+  return name;
+}
+
+std::string pawnChooseName() {
+  std::string name;
+  char ans = ' ';
+  do {
+    name = "";
+    std::cout << "Choose a name for your Pawn: ";
+    std::getline(std::cin, name);
+    std::cout << "Is this the name for your partner? Y/N\n>> ";
+    std::cin >> ans;
+    while (tolower(ans) != 'y' && tolower(ans) != 'n') {
+      std::cout << "Select Y or N: ";
+      std::cin >> ans;
+    }
+    std::cin.ignore();
+  } while (ans != 'y');
+  return name;
+}
+
+uint chooseStartingVocation() {
+  system("clear");
+  uint vocation = 0;
+  std::cout << "Choose the starting vocation: \n";
+  std::cout << "1. Fighter, grants a high bonus to DEF when levelling up. "
+               "\n   Small increase of life too.\n";
+  std::cout << "2. Strider, grants a small increase to ATK and DEF when "
+               "levelling up.\n";
+  std::cout << "3. Mage, grants a huge boost to MDEF when levelling up.\n";
+  std::cout
+      << "(Other stats will also increase, but in a less significant way)\n";
+  std::cout << ">> ";
+  std::cin >> vocation;
+  while (std::cin.fail() || (vocation < 1 || vocation > 3)) {
+    std::cin.clear();
+    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+    std::cout << "Choose a valid vocation: ";
+    std::cin >> vocation;
+  }
+  std::cin.ignore();
+  return vocation;
+}
+
+void characterCreation(Player *player) {
+  std::string name = "";
+  uint vocation = 0;
+  system("clear");
+  if (dynamic_cast<Pawn *>(player)) {
+    name = pawnChooseName();
+    vocation = chooseStartingVocation();
+    player->setName(name);
+    player->setStartingVocation(vocation);
+  } else {
+    name = playerChooseName();
+    vocation = chooseStartingVocation();
+    player->setName(name);
+    player->setStartingVocation(vocation);
+  }
 }
 
 void battle() {}
