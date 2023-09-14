@@ -15,6 +15,9 @@ void itemFind();
 // Declaring a function for the main menu of the game;
 int start_menu();
 
+// declaring a function for the new game start
+void new_game(Player *player, Pawn *pawn);
+
 // Declaring a function for the menu in-game
 int game_menu();
 
@@ -23,6 +26,10 @@ void game_credits();
 
 // Declaring a function for the game introduction
 void game_introduction();
+
+// declaring a function for narrating what
+// happens after the introduction
+void game_progression(Pawn *pawn);
 
 // functions that take the user input to give
 // a name to their characters
