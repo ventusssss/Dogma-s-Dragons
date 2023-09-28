@@ -86,6 +86,7 @@ void new_game(Player *player, Pawn *pawn) {
   game_introduction();
   characterCreation(player);
   game_progression(pawn);
+  save(*player, *pawn);
 }
 
 int game_menu() {
@@ -148,7 +149,7 @@ void game_introduction() {
   std::cout
       << "It then flee away, speaking in an ancient language\nonly the "
          "fisherman could apparently understand.\nIt said \"Come and get me, "
-         "slay me. You'll find me on the tallest peak of the kingdom\".\n";
+         "slay me. You'll find me on the tallest peak of the kingdom\"\n";
 
   std::cin.get();
   std::cout << "The fisherman woke up in a house, with a scar on his chest,"
@@ -183,7 +184,7 @@ void game_progression(Pawn *pawn) {
          "You'll connect with another dimension, the Pawn Dimension.\nThe "
          "Pawns "
          "are meant to serve the Arisen only.\nThen come, and let your heart "
-         "choose the best companion for your journey.\"\n";
+         "choose the best companion for your journey\"\n";
   std::cin.get();
   system("clear");
   characterCreation(pawn);

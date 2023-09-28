@@ -378,7 +378,7 @@ nlohmann::json Player::getJson() const {
                          {"mdef", this->mdef},
                          {"xp", this->xp},
                          {"lvl", this->lvl},
-                         {"vocation", this->returnVocation()},
+                         {"vocation", this->getVocation()},
                          {"fighter_lvls", this->fighter_levels},
                          {"warrior_levels", this->warrior_levels},
                          {"paladin_levels", this->paladin_levels},
@@ -424,4 +424,11 @@ void Player::setStartingVocation(uint vocation) {
   }
 }
 
+void Player::setHp(uint hp) { this->hp = hp; }
+void Player::setAtk(uint atk) { this->atk = atk; }
+void Player::setMatk(uint matk) { this->matk = matk; }
+void Player::setDef(uint def) { this->def = def; }
+void Player::setMdef(uint mdef) { this->mdef = mdef; }
+void Player::setVocation(Vocations vocation) { this->vocation = vocation; }
+void Player::setXp(uint xp) { this->xp = xp; }
 } // namespace ddgm

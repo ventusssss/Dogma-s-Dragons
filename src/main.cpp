@@ -20,20 +20,46 @@ using nlohmann::json;
 int main() {
   system("clear");
   srand(time(0));
-  Player player("", 0, 0, 0, 0, 0, Vocations::Fighter, 0);
-  Pawn pawn("", 0, 0, 0, 0, 0, Vocations::Fighter, 0);
 
+  Player player("provaplayer", 0, 0, 0, 0, 0, Vocations::Strider, 0);
+  Pawn pawn("provapawn", 0, 0, 0, 0, 0, Vocations::Mage, 0);
+
+  json data = load();
+  if (data != json::parse("{}")) {
+    std::cout << "enter\n";
+    player.setName(data["player"]["name"]);
+    player.setHp(data["player"]["hp"]);
+    player.setAtk(data["player"]["atk"]);
+    player.setMatk(data["player"]["matk"]);
+    player.setDef(data["player"]["def"]);
+    player.setMdef(data["player"]["mdef"]);
+    player.setVocation((Vocations)data["player"]["vocation"]);
+    player.setXp(data["player"]["xp"]);
+
+    pawn.setName(data["pawn"]["name"]);
+    pawn.setHp(data["pawn"]["hp"]);
+    pawn.setAtk(data["pawn"]["atk"]);
+    pawn.setMatk(data["pawn"]["matk"]);
+    pawn.setDef(data["pawn"]["def"]);
+    pawn.setMdef(data["pawn"]["mdef"]);
+    pawn.setVocation((Vocations)data["pawn"]["vocation"]);
+    pawn.setXp(data["pawn"]["xp"]);
+  }
+
+  std::cout << player.getName() << " " << player.returnVocation()
+            << " player\n";
+  std::cout << pawn.getName() << " " << pawn.returnVocation() << " pawn\n";
+
+  /*
   uint choice = 0;
-  // std::cout << "Welcome to Dogma's Dragons!\nThanks for playing our game,\nwe
-  // "
-  //             "really appreciate it!\n";
-
+  std::cout << "Welcome to Dogma's Dragons!\nThanks for playing our game,\nwe "
+               "really appreciate it!\n";
   ifstream save_file("save.json");
   std::string tmp = "", tmp1 = "";
   while (save_file >> tmp1)
     tmp += tmp1;
 
-  /*do {
+  do {
     std::cin.get();
     system("clear");
     choice = start_menu();
@@ -46,26 +72,24 @@ int main() {
         std::cout << "You have no existing datas.\n";
       } else {
         std::cout << "You have existing datas!\n";
+        load();
+        std::cout << &player << "\n" << &pawn;
       }
       break;
     case 3:
       game_credits();
-      std::cin.get();
       break;
     case 0:
       std::cout
-          << "Goodbye, and thanks for playing!\nYour datas will be saved.\n";
-      std::cin.get();
+          << "\nGoodbye, and thanks for playing!\nYour datas, if existing\n"
+             "(meaning you will have to complete the tutorial)\nwill be "
+             "saved.\n";
       break;
     }
+    std::cin.ignore();
   } while (choice != 0);
-  // save(player, pawn);
-  std::cout << &player;
-  save_file.close();*/
-  new_game(&player, &pawn);
-
-  std::cout << &player << "\n";
-  std::cout << &pawn;
-
+  save(player, pawn);
+  save_file.close();
+  */
   return int(bool(nullptr)) ? !(bool(nullptr)) : bool(nullptr);
 }

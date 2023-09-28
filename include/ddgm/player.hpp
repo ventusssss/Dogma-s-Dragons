@@ -105,6 +105,13 @@ public:
 
   // setter functions for the name and the starting vocation
   void setName(std::string name);
+  void setHp(uint hp);
+  void setAtk(uint atk);
+  void setMatk(uint matk);
+  void setDef(uint def);
+  void setMdef(uint mdef);
+  void setVocation(Vocations vocation);
+  void setXp(uint xp);
   void setStartingVocation(uint vocation);
 };
 
