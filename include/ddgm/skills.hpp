@@ -2,6 +2,7 @@
 #define DDGM_ABILITIES_HPP
 
 #include "ddgm/entity.hpp"
+#include "ddgm/json.hpp"
 #include <ostream>
 #include <string>
 #include <vector>
@@ -60,6 +61,13 @@ public:
 
   inline void setSkillType(SkillType type) { this->actualType = type; }
   inline void resetSkillType() { this->actualType = this->type; }
+
+  void setName(std::string name);
+  void setMultiplier(float multiplier);
+  void setType(uint type);
+  void setCooldown(uint cooldown);
+
+  nlohmann::json getJson() const;
 };
 
 // Declaring and initializing a vector of type Skill

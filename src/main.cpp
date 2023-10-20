@@ -17,48 +17,41 @@ using namespace std;
 using namespace ddgm;
 using nlohmann::json;
 
+/* vec.erase(vec.begin() + index); || vec.erase(std::next(vec.begin(), index1),
+   std::next(vec.begin(), index2));
+  [ciao, reie, ded, firdk]
+*/
 int main() {
   system("clear");
   srand(time(0));
 
-  Player player("provaplayer", 0, 0, 0, 0, 0, Vocations::Strider, 0);
-  Pawn pawn("provapawn", 0, 0, 0, 0, 0, Vocations::Mage, 0);
+  Player player("noName", 0, 0, 0, 0, 0, Vocations::Assassin, 5000);
+  Pawn pawn("noName", 0, 0, 0, 0, 0, Vocations::MagickArcher, 0);
 
+  // player.updateStats();
+  // player.addItem((Item *)&availableHealingItems[1]);
   json data = load();
-  if (data != json::parse("{}")) {
-    std::cout << "enter\n";
-    player.setName(data["player"]["name"]);
-    player.setHp(data["player"]["hp"]);
-    player.setAtk(data["player"]["atk"]);
-    player.setMatk(data["player"]["matk"]);
-    player.setDef(data["player"]["def"]);
-    player.setMdef(data["player"]["mdef"]);
-    player.setVocation((Vocations)data["player"]["vocation"]);
-    player.setXp(data["player"]["xp"]);
+  load_characterData(&player, &pawn, data);
 
-    pawn.setName(data["pawn"]["name"]);
-    pawn.setHp(data["pawn"]["hp"]);
-    pawn.setAtk(data["pawn"]["atk"]);
-    pawn.setMatk(data["pawn"]["matk"]);
-    pawn.setDef(data["pawn"]["def"]);
-    pawn.setMdef(data["pawn"]["mdef"]);
-    pawn.setVocation((Vocations)data["pawn"]["vocation"]);
-    pawn.setXp(data["pawn"]["xp"]);
+  for (int i = 0; i < player.getInventory().size(); i++) {
+    std::cout << player.getInventory()[i]->getName() << "\n";
   }
 
-  std::cout << player.getName() << " " << player.returnVocation()
-            << " player\n";
-  std::cout << pawn.getName() << " " << pawn.returnVocation() << " pawn\n";
+  for (int i = 0; i < player.getPlayerSkills().size(); i++) {
+    std::cout << player.getPlayerSkills()[i].getName() << "\n";
+  }
 
-  /*
   uint choice = 0;
   std::cout << "Welcome to Dogma's Dragons!\nThanks for playing our game,\nwe "
                "really appreciate it!\n";
+
+  /*
   ifstream save_file("save.json");
   std::string tmp = "", tmp1 = "";
   while (save_file >> tmp1)
     tmp += tmp1;
-
+  */
+  /*
   do {
     std::cin.get();
     system("clear");
@@ -68,11 +61,11 @@ int main() {
       new_game(&player, &pawn);
       break;
     case 2:
-      if (!save_file && tmp == "{}") {
+      if (data == json::parse("{}")) {
         std::cout << "You have no existing datas.\n";
       } else {
         std::cout << "You have existing datas!\n";
-        load();
+        load_characterData(player, pawn, data);
         std::cout << &player << "\n" << &pawn;
       }
       break;
@@ -80,16 +73,26 @@ int main() {
       game_credits();
       break;
     case 0:
-      std::cout
-          << "\nGoodbye, and thanks for playing!\nYour datas, if existing\n"
-             "(meaning you will have to complete the tutorial)\nwill be "
-             "saved.\n";
+      if (data == json::parse("{}")) {
+        std::cout << "\nYour data has not been saved\nbecause you have not "
+                     "completed character customizations.\n";
+      } else {
+        std::cout << "\nYour data has been successfully saved!\n";
+      }
+      std::cout << "Goodbye, and thanks for playing!\n";
       break;
     }
     std::cin.ignore();
   } while (choice != 0);
-  save(player, pawn);
-  save_file.close();
+  // save(player, pawn);
   */
+  // skill_choosing(&player);
+  //     skill_removing(&player);
+  //     std::cout << "\n";
+  //     skill_choosing(&pawn);
+  //     skill_removing(&pawn);
+
+  // save(player, pawn);
+
   return int(bool(nullptr)) ? !(bool(nullptr)) : bool(nullptr);
 }

@@ -27,6 +27,10 @@ public:
   uint getValue() const;
   std::string getDescription() const;
 
+  void setName(std::string name);
+  void setValue(uint value);
+  void setDescription(std::string description);
+
   nlohmann::json getJson() const;
 };
 

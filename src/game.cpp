@@ -1,5 +1,7 @@
 #include "ddgm/game.hpp"
+#include "ddgm/items.hpp"
 #include "ddgm/player.hpp"
+#include "ddgm/skills.hpp"
 #include "ddgm/utilities.hpp"
 #include <array>
 #include <cctype>
@@ -87,6 +89,54 @@ void new_game(Player *player, Pawn *pawn) {
   characterCreation(player);
   game_progression(pawn);
   save(*player, *pawn);
+}
+
+void load_characterData(Player *player, Pawn *pawn, nlohmann::json data) {
+  if (data != nlohmann::json::parse("{}")) {
+
+    player->setName(data["player"]["name"]);
+    player->setHp(data["player"]["hp"]);
+    player->setAtk(data["player"]["atk"]);
+    player->setMatk(data["player"]["matk"]);
+    player->setDef(data["player"]["def"]);
+    player->setMdef(data["player"]["mdef"]);
+    player->setVocation((Vocations)data["player"]["vocation"]);
+    player->setXp(data["player"]["xp"]);
+
+    std::vector<Skill> tmpSkills;
+
+    for (const auto &skill : data["player"]["skills"]) {
+      if (skill.is_object() && skill.contains("name") &&
+          skill.contains("type") && skill.contains("multiplier") &&
+          skill.contains("cooldown")) {
+        uint tmpCd = skill["cooldown"];
+        float tmpMul = skill["multiplier"];
+        std::string tmpName = skill["name"];
+        uint tmpType = skill["type"];
+        Skill tmpSkill(tmpName, tmpCd, (Skill::SkillType)tmpType, tmpMul);
+        tmpSkills.push_back(tmpSkill);
+      }
+    }
+    player->setSkills(tmpSkills);
+    tmpSkills.clear();
+    tmpSkills.shrink_to_fit();
+
+    std::vector<Item *> tmpItems;
+
+    for (const auto &item : data["player"]["inventory"]) {
+      if (item.is_object() && item.contains("name") && item.contains("value") &&
+          item.contains("description")) {
+        std::string tmpDescription = item["description"];
+        std::string tmpName = item["name"];
+        uint tmpValue = item["value"];
+        Item tmpItem(tmpName, tmpValue, tmpDescription);
+        tmpItems.push_back(&tmpItem);
+      }
+    }
+    player->setInventory(tmpItems);
+    tmpItems.clear();
+    tmpItems.shrink_to_fit();
+  }
 }
 
 int game_menu() {
@@ -192,10 +242,12 @@ void game_progression(Pawn *pawn) {
   std::cin.ignore();
   std::cout
       << "You enter the so called \"Rift\", and you see coming towards you a "
-         "person\nthat looks a lot like your best friend, but it's clearly not "
+         "person\nthat looks a lot like your best friend, but it's clearly "
+         "not "
          "him.\nIt must be that \"Pawn\" the Rift Voice was talking "
          "about.\nYou "
-         "aproach the Pawn and, as soon as you do to greet him,\nhe shows his "
+         "aproach the Pawn and, as soon as you do to greet him,\nhe shows "
+         "his "
          "hand, and you notice a strage bright scar on the palm.\n";
   std::cin.get();
   std::cout << "You immediately go back to the normal world,\nand even if it "
@@ -240,7 +292,8 @@ void game_progression(Pawn *pawn) {
                "time,\nset off for your adventure.\n";
   std::cin.get();
   std::cout
-      << "This, is where your journey begins.\nNow it's your time to make your "
+      << "This, is where your journey begins.\nNow it's your time to make "
+         "your "
          "way to The Dragon.\nYou do not know what risks you're facing.\nYou "
          "only know what your goal is, and that you'll do anything to "
          "acomplish it.\n";
@@ -294,8 +347,8 @@ uint chooseStartingVocation() {
     std::cout << "2. Strider, grants a small increase to ATK and DEF when "
                  "levelling up.\n";
     std::cout << "3. Mage, grants a huge boost to MDEF when levelling up.\n";
-    std::cout
-        << "(Other stats will also increase, but in a less significant way)\n";
+    std::cout << "(Other stats will also increase, but in a less significant "
+                 "way)\n";
     std::cout << ">> ";
     std::cin >> vocation;
     while (std::cin.fail() || (vocation < 1 || vocation > 3)) {
@@ -336,79 +389,76 @@ void battle() {}
 
 // Those functions show the entirety of the vocations' skills
 void fighter_skills() {
-  for (int i = 0; i < 6; i++) {
-    std::cout << "\n" << i + 1 << ") Name: " << skills[i].getName() << "\n";
+  for (uint i = 0, j = 0; i < 6; i++, j++) {
+    std::cout << "\n" << j + 1 << ") Name: " << skills[i].getName() << "\n";
     std::cout << "   Damage Type: " << skills[i].getSkillType() << "\n";
     std::cout << "   Cooldown: " << skills[i].getCd() << "\n";
   }
 }
 
 void warrior_skills() {
-  for (int i = 6; i < 12; i++) {
-    std::cout << "\n" << i + 1 << ") Name: " << skills[i].getName() << "\n";
+  for (uint i = 6, j = 0; i < 12; i++, j++) {
+    std::cout << "\n" << j + 1 << ") Name: " << skills[i].getName() << "\n";
     std::cout << "   Damage Type: " << skills[i].getSkillType() << "\n";
     std::cout << "   Cooldown: " << skills[i].getCd() << "\n";
   }
 }
 
 void paladin_skills() {
-  for (int i = 12; i < 18; i++) {
-    std::cout << "\n" << i + 1 << ") Name: " << skills[i].getName() << "\n";
+  for (uint i = 12, j = 0; i < 18; i++, j++) {
+    std::cout << "\n" << j + 1 << ") Name: " << skills[i].getName() << "\n";
     std::cout << "   Damage Type: " << skills[i].getSkillType() << "\n";
     std::cout << "   Cooldown: " << skills[i].getCd() << "\n";
   }
 }
 
 void strider_skills() {
-  for (int i = 18; i < 24; i++) {
-    std::cout << "\n" << i + 1 << ") Name: " << skills[i].getName() << "\n";
+  for (uint i = 18, j = 0; i < 24; i++, j++) {
+    std::cout << "\n" << j + 1 << ") Name: " << skills[i].getName() << "\n";
     std::cout << "   Damage Type: " << skills[i].getSkillType() << "\n";
     std::cout << "   Cooldown: " << skills[i].getCd() << "\n";
   }
 }
 
 void ranger_skills() {
-  for (int i = 24; i < 30; i++) {
-    std::cout << "\n" << i + 1 << ") Name: " << skills[i].getName() << "\n";
+  for (uint i = 24, j = 0; i < 30; i++, j++) {
+    std::cout << "\n" << j + 1 << ") Name: " << skills[i].getName() << "\n";
     std::cout << "   Damage Type: " << skills[i].getSkillType() << "\n";
     std::cout << "   Cooldown: " << skills[i].getCd() << "\n";
   }
 }
 
 void assassin_skills() {
-  for (int i = 30; i < 36; i++) {
-    std::cout << "\n" << i + 1 << ") Name: " << skills[i].getName() << "\n";
+  for (uint i = 30, j = 0; i < 36; i++, j++) {
+    std::cout << "\n" << j + 1 << ") Name: " << skills[i].getName() << "\n";
     std::cout << "   Damage Type: " << skills[i].getSkillType() << "\n";
     std::cout << "   Cooldown: " << skills[i].getCd() << "\n";
   }
 }
 
 void mage_skills() {
-  for (int i = 36; i < 45; i++) {
-    std::cout << "\n" << i + 1 << ") Name: " << skills[i].getName() << "\n";
+  for (uint i = 36, j = 0; i < 45; i++, j++) {
+    std::cout << "\n" << j + 1 << ") Name: " << skills[i].getName() << "\n";
     std::cout << "   Damage Type: " << skills[i].getSkillType() << "\n";
     std::cout << "   Cooldown: " << skills[i].getCd() << "\n";
   }
 }
 
 void sorcerer_skills() {
-  for (int i = 45; i < 55; i++) {
-    std::cout << "\n" << i + 1 << ") Name: " << skills[i].getName() << "\n";
+  for (uint i = 45, j = 0; i < 55; i++, j++) {
+    std::cout << "\n" << j + 1 << ") Name: " << skills[i].getName() << "\n";
     std::cout << "   Damage Type: " << skills[i].getSkillType() << "\n";
     std::cout << "   Cooldown: " << skills[i].getCd() << "\n";
   }
 }
 
 void magickarcher_skills() {
-  for (int i = 55; i < 61; i++) {
-    std::cout << "\n" << i + 1 << ") Name: " << skills[i].getName() << "\n";
+  for (uint i = 55, j = 0; i < 62; i++, j++) {
+    std::cout << "\n" << j + 1 << ") Name: " << skills[i].getName() << "\n";
     std::cout << "   Damage Type: " << skills[i].getSkillType() << "\n";
     std::cout << "   Cooldown: " << skills[i].getCd() << "\n";
   }
 }
-
-// NEED TO ADD LIMITATIONS TO THE CHOOSING SKILLS
-// BY CHECKING THE CURRENT VOCATION LEVELS
 
 void skill_choosing(Player *player) {
   uint skill = 0;
@@ -428,29 +478,38 @@ void skill_choosing(Player *player) {
       }
       std::cout << " ]\n";
       std::cout << "\nChoose which skill you want to add to your roaster\n>> ";
-      skill = check_skill(0, 6);
+      skill = check_skill(6);
       std::cin.ignore();
       if (!skill)
         break;
-      if (skill - 1 == 4 && player->getFighterLvls() < 2) {
-        std::cout
-            << "\nYou cannot set this skill yet.\nYou have to do at least 2 "
-               "levels as a Fighter.\nNow you currently have "
-            << player->getFighterLvls() << " levels as a Fighter.\n";
+      if (find_skill(player_abilities, skills[skill - 1])) {
+        std::cout << "You already have this skill set.\n";
         std::cin.get();
-      } else if (skill - 1 == 5 && player->getFighterLvls() < 3) {
-        std::cout
-            << "\nYou cannot set this skill yet.\nYou have to do at least 3 "
-               "levels as a Fighter.\nNow you currently have "
-            << player->getFighterLvls() << " levels as a Fighter.\n";
-        std::cin.get();
+        continue;
       } else {
-        player_abilities.push_back(skills[skill - 1]);
+        if ((skill == 5) && (player->getFighterLvls() < 2)) {
+          std::cout << "\nYou cannot set this skill yet.\nYou have to do at "
+                       "least 2 "
+                       "levels as a Fighter.\nNow you currently have "
+                    << player->getFighterLvls() << " levels as a Fighter.\n";
+
+          std::cin.get();
+          continue;
+        } else if ((skill == 6) && (player->getFighterLvls() < 3)) {
+          std::cout << "\nYou cannot set this skill yet.\nYou have to do at "
+                       "least 3 "
+                       "levels as a Fighter.\nNow you currently have "
+                    << player->getFighterLvls() << " levels as a Fighter.\n";
+          std::cin.get();
+          continue;
+        }
       }
+      player_abilities.push_back(skills[skill - 1]);
     } while (skill != 0 && player_abilities.size() < 6);
     break;
   case Vocations::Strider:
     do {
+      system("clear");
       strider_skills();
       std::cout << "0) None\n\n";
       std::cout << "[ ";
@@ -462,38 +521,46 @@ void skill_choosing(Player *player) {
       }
       std::cout << " ]\n";
       std::cout << "\nChoose which skill you want to add to your roaster\n>> ";
-      skill = check_skill(19, 24);
+      skill = check_skill(6);
       std::cin.ignore();
       if (!skill)
         break;
-      if (skill - 1 == 20 && player->getStriderLvls() < 2) {
-        std::cout
-            << "\nYou cannot set this skill yet.\nYou have to do at least 2 "
-               "levels as a Strider.\nNow you currently have "
-            << player->getStriderLvls() << " levels as a Strider.\n";
+      if (find_skill(player_abilities, skills[skill + 17])) {
+        std::cout << "You already havr this skill set.\n";
         std::cin.get();
-      } else if (skill - 1 == 22 && player->getStriderLvls() < 2) {
-        std::cout
-            << "\nYou cannot set this skill yet.\nYou have to do at least 2 "
-               "levels as a Strider.\nNow you currently have "
-            << player->getStriderLvls() << " levels as a Strider.\n";
-        std::cin.get();
-      } else if (skill - 1 == 21 && player->getStriderLvls() < 3) {
-        std::cout
-            << "\nYou cannot set this skill yet.\nYou have to do at least 3 "
-               "levels as a Strider.\nNow you currently have "
-            << player->getStriderLvls() << " levels as a Strider.\n";
-        std::cin.get();
+        continue;
       } else {
-        player_abilities.push_back(skills[skill - 1]);
+        if (((skill == 3) || (skill == 5)) && (player->getStriderLvls() < 2)) {
+          std::cout << "\nYou cannot set this skill yet.\nYou have to do at "
+                       "least 2 "
+                       "levels as a Strider.\nNow you currently have "
+                    << player->getStriderLvls() << " levels as a Strider.\n";
+          std::cin.get();
+          continue;
+        } else if ((skill == 4) && (player->getStriderLvls() < 3)) {
+          std::cout << "\nYou cannot set this skill yet.\nYou have to do at "
+                       "least 3 "
+                       "levels as a Strider.\nNow you currently have "
+                    << player->getStriderLvls() << " levels as a Strider.\n";
+          std::cin.get();
+          continue;
+        }
       }
+      skill += 17;
+      player_abilities.push_back(skills[skill]);
     } while (skill != 0 && player_abilities.size() < 6);
     break;
   case Vocations::Mage:
     do {
+      system("clear");
       mage_skills();
       std::cout << "0) None\n\n";
-      std::cout << "[ ";
+      std::cout << "Skills that end with the word \"Pact\"\nare a special kind "
+                   "of skills\nthat do not damage the enemy, but instead\nthey "
+                   "buff the Arisen's weapon\nwith that specific element.\n";
+      std::cout << "\nHigh Spellscrean is a skill that allows the healing of "
+                   "an Arisen or a Pawn.\n";
+      std::cout << "\n[ ";
       for (uint i = 0; i < player_abilities.size(); i++) {
         if (i != player_abilities.size() - 1)
           std::cout << player_abilities[i].getName() << ", ";
@@ -502,19 +569,26 @@ void skill_choosing(Player *player) {
       }
       std::cout << " ]\n";
       std::cout << "\nChoose which skill you want to add to your roaster\n>> ";
-      skill = check_skill(37, 45);
+      skill = check_skill(9);
       std::cin.ignore();
       if (!skill)
         break;
-      if (skill - 1 == 44 && player->getMageLvls() < 3) {
-        std::cout
-            << "\nYou cannot set this skill yet.\nYou have to do at least 3 "
-               "levels as a Mage.\nNow you currently have "
-            << player->getMageLvls() << " levels as a Mage.\n";
+      if (find_skill(player_abilities, skills[skill + 35])) {
+        std::cout << "You already have this skills set.\n";
         std::cin.get();
+        continue;
       } else {
-        player_abilities.push_back(skills[skill - 1]);
+        if ((skill == 9) && (player->getMageLvls() < 3)) {
+          std::cout << "\nYou cannot set this skill yet.\nYou have to do at "
+                       "least 3 "
+                       "levels as a Mage.\nNow you currently have "
+                    << player->getMageLvls() << " levels as a Mage.\n";
+          std::cin.get();
+          continue;
+        }
       }
+      skill += 35;
+      player_abilities.push_back(skills[skill]);
     } while (skill != 0 && player_abilities.size() < 6);
     break;
   case Vocations::Warrior:
@@ -531,29 +605,38 @@ void skill_choosing(Player *player) {
       }
       std::cout << " ]\n";
       std::cout << "\nChoose which skill you want to add to your roaster\n>> ";
-      skill = check_skill(7, 12);
+      skill = check_skill(6);
       std::cin.ignore();
       if (!skill)
         break;
-      if (skill - 1 == 10 && player->getWarriorLvls() < 2) {
-        std::cout
-            << "\nYou cannot set this skill yet.\nYou have to do at least 2 "
-               "levels as a Warrior.\nNow you currently have "
-            << player->getWarriorLvls() << " levels as a Warrior.\n";
+      if (find_skill(player_abilities, skills[skill + 5])) {
+        std::cout << "You already have this skill set.\n";
         std::cin.get();
-      } else if (skill - 1 == 11 && player->getWarriorLvls() < 5) {
-        std::cout
-            << "\nYou cannot set this skill yet.\nYou have to do at least 5 "
-               "levels as a Warrior.\nNow you currently have "
-            << player->getWarriorLvls() << " levels as a Warrior.\n";
-        std::cin.get();
+        continue;
       } else {
-        player_abilities.push_back(skills[skill - 1]);
+        if ((skill == 5) && (player->getWarriorLvls() < 2)) {
+          std::cout << "\nYou cannot set this skill yet.\nYou have to do at "
+                       "least 2 "
+                       "levels as a Warrior.\nNow you currently have "
+                    << player->getWarriorLvls() << " levels as a Warrior.\n";
+          std::cin.get();
+          continue;
+        } else if ((skill == 6) && (player->getWarriorLvls() < 5)) {
+          std::cout << "\nYou cannot set this skill yet.\nYou have to do at "
+                       "least 5 "
+                       "levels as a Warrior.\nNow you currently have "
+                    << player->getWarriorLvls() << " levels as a Warrior.\n";
+          std::cin.get();
+          continue;
+        }
       }
+      skill += 5;
+      player_abilities.push_back(skills[skill]);
     } while (skill != 0 && player_abilities.size() < 6);
     break;
   case Vocations::Ranger:
     do {
+      system("clear");
       ranger_skills();
       std::cout << "0) None\n\n";
       std::cout << "[ ";
@@ -565,32 +648,44 @@ void skill_choosing(Player *player) {
       }
       std::cout << " ]\n";
       std::cout << "\nChoose which skill you want to add to your roaster\n>> ";
-      skill = check_skill(25, 30);
+      skill = check_skill(6);
       std::cin.ignore();
       if (!skill)
         break;
-      if (skill - 1 == 27 && player->getRangerLvls() < 3) {
-        std::cout
-            << "\nYou cannot set this skill yet.\nYou have to do at least 3 "
-               "levels as a Ranger.\nNow you currently have "
-            << player->getRangerLvls() << " levels as a Ranger.\n";
+      if (find_skill(player_abilities, skills[skill + 23])) {
+        std::cout << "You already have this skill set.\n";
         std::cin.get();
-      } else if (skill - 1 == 29 && player->getRangerLvls() < 4) {
-        std::cout
-            << "\nYou cannot set this skill yet.\nYou have to do at least 4 "
-               "levels as a Ranger.\nNow you currently have "
-            << player->getRangerLvls() << " levels as a Ranger.\n";
-        std::cin.get();
+        continue;
       } else {
-        player_abilities.push_back(skills[skill - 1]);
+        if ((skill == 4) && (player->getRangerLvls() < 3)) {
+          std::cout << "\nYou cannot set this skill yet.\nYou have to do at "
+                       "least 3 "
+                       "levels as a Ranger.\nNow you currently have "
+                    << player->getRangerLvls() << " levels as a Ranger.\n";
+          std::cin.get();
+          continue;
+        } else if ((skill == 6) && (player->getRangerLvls() < 4)) {
+          std::cout << "\nYou cannot set this skill yet.\nYou have to do at "
+                       "least 4 "
+                       "levels as a Ranger.\nNow you currently have "
+                    << player->getRangerLvls() << " levels as a Ranger.\n";
+          std::cin.get();
+          continue;
+        }
       }
+      skill += 23;
+      player_abilities.push_back(skills[skill]);
     } while (skill != 0 && player_abilities.size() < 6);
     break;
   case Vocations::Sorcerer:
     do {
+      system("clear");
       sorcerer_skills();
       std::cout << "0) None\n\n";
-      std::cout << "[ ";
+      std::cout << "Skills that end with the word \"Pact\"\nare a special kind "
+                   "of skills\nthat do not damage the enemy, but instead\nthey "
+                   "buff the Arisen's weapon\nwith that specific element.\n";
+      std::cout << "\n[ ";
       for (uint i = 0; i < player_abilities.size(); i++) {
         if (i != player_abilities.size() - 1)
           std::cout << player_abilities[i].getName() << ", ";
@@ -598,29 +693,32 @@ void skill_choosing(Player *player) {
           std::cout << player_abilities[i].getName();
       }
       std::cout << " ]\n";
-
       std::cout << "\nChoose which skill you want to add to your roaster\n>> ";
-      skill = check_skill(46, 55);
+      skill = check_skill(10);
       std::cin.ignore();
       if (!skill)
         break;
-      if (((skill - 1 == 45) || (skill - 1 == 46) || (skill - 1 == 47) ||
-           (skill - 1 == 48)) &&
-          player->getSorcererLvls() < 5) {
-        std::cout
-            << "\nYou cannot set this skill yet.\nYou have to do at least 5 "
-               "levels as a Sorcerer.\nNow you currently have "
-            << player->getSorcererLvls() << " levels as a Sorcerer.\n";
+      if (find_skill(player_abilities, skills[skill + 44])) {
+        std::cout << "You already have this skill set.\n";
         std::cin.get();
+        continue;
       } else {
-        player_abilities.push_back(skills[skill - 1]);
-        std::cout << player_abilities.size() << "L\n";
-        std::cin.get();
+        if ((isInRange(skill, 1, 4)) && (player->getSorcererLvls() < 5)) {
+          std::cout << "\nYou cannot set this skill yet.\nYou have to do at "
+                       "least 5 "
+                       "levels as a Sorcerer.\nNow you currently have "
+                    << player->getSorcererLvls() << " levels as a Sorcerer.\n";
+          std::cin.get();
+          continue;
+        }
       }
+      skill += 44;
+      player_abilities.push_back(skills[skill]);
     } while (skill != 0 && player_abilities.size() < 6);
     break;
   case Vocations::Assassin:
     do {
+      system("clear");
       assassin_skills();
       std::cout << "0) None\n\n";
       std::cout << "[ ";
@@ -632,30 +730,38 @@ void skill_choosing(Player *player) {
       }
       std::cout << " ]\n";
       std::cout << "\nChoose which skill you want to add to your roaster\n>> ";
-      skill = check_skill(31, 36);
+      skill = check_skill(6);
       std::cin.ignore();
       if (!skill)
         break;
-      if (((skill - 1 == 35) || (skill - 1 == 31)) &&
-          player->getAssassinLvls() < 2) {
-        std::cout
-            << "\nYou cannot set this skill yet.\nYou have to do at least 2 "
-               "levels as a Assassin.\nNow you currently have "
-            << player->getAssassinLvls() << " levels as a Assassin.\n";
+      if (find_skill(player_abilities, skills[skill + 29])) {
+        std::cout << "You already have this skill set.\n";
         std::cin.get();
-      } else if (skill - 1 == 33 && player->getAssassinLvls() < 4) {
-        std::cout
-            << "\nYou cannot set this skill yet.\nYou have to do at least 4 "
-               "levels as an Assassin.\nNow you currently have "
-            << player->getAssassinLvls() << " levels as an Assassin.\n";
-        std::cin.get();
+        continue;
       } else {
-        player_abilities.push_back(skills[skill - 1]);
+        if (((skill == 2) || (skill == 6)) && (player->getAssassinLvls() < 2)) {
+          std::cout << "\nYou cannot set this skill yet.\nYou have to do at "
+                       "least 2 "
+                       "levels as an Assassin.\nNow you currently have "
+                    << player->getAssassinLvls() << " levels as Assassin.\n";
+          std::cin.get();
+          continue;
+        } else if ((skill == 4) && (player->getAssassinLvls() < 3)) {
+          std::cout << "\nYou cannot set this skill yet.\nYou have to do at "
+                       "least 3 "
+                       "levels as an Assassin.\nNow you currently have "
+                    << player->getAssassinLvls() << " levels as Assassin.\n";
+          std::cin.get();
+          continue;
+        }
       }
+      skill += 29;
+      player_abilities.push_back(skills[skill]);
     } while (skill != 0 && player_abilities.size() < 6);
     break;
   case Vocations::MagickArcher:
     do {
+      system("clear");
       magickarcher_skills();
       std::cout << "0) None\n\n";
       std::cout << "[ ";
@@ -667,30 +773,40 @@ void skill_choosing(Player *player) {
       }
       std::cout << " ]\n";
       std::cout << "\nChoose which skill you want to add to your roaster\n>> ";
-      skill = check_skill(56, 61);
+      skill = check_skill(7);
       std::cin.ignore();
       if (!skill)
         break;
-      if ((skill - 1 == 57) ||
-          (skill - 1 == 58) && player->getMagickArcherLvls() < 3) {
-        std::cout
-            << "\nYou cannot set this skill yet.\nYou have to do at least 3 "
-               "levels as a Magick-Archer.\nNow you currently have "
-            << player->getMagickArcherLvls() << " levels as a Magick-Archer.\n";
+      if (find_skill(player_abilities, skills[skill + 54])) {
+        std::cout << "You already have this skill set.\n";
         std::cin.get();
-      } else if (skill - 1 == 61 && player->getMagickArcherLvls() < 5) {
-        std::cout
-            << "\nYou cannot set this skill yet.\nYou have to do at least 5 "
-               "levels as a Magick-Archer.\nNow you currently have "
-            << player->getMagickArcherLvls() << " levels as a Magick-Archer.\n";
-        std::cin.get();
+        continue;
       } else {
-        player_abilities.push_back(skills[skill - 1]);
+        if ((isInRange(skill, 3, 4)) && (player->getMagickArcherLvls() < 3)) {
+          std::cout << "\nYou cannot set this skill yet.\nYou have to do at "
+                       "least 3 "
+                       "levels as a Magick Archer.\nNow you currently have "
+                    << player->getMagickArcherLvls()
+                    << " levels as a Magick Archer.\n";
+          std::cin.get();
+          continue;
+        } else if ((skill == 7) && (player->getMagickArcherLvls() < 5)) {
+          std::cout << "\nYou cannot set this skill yet.\nYou have to do at "
+                       "least 5 "
+                       "levels as a Magick Archer.\nNow you currently have "
+                    << player->getMagickArcherLvls()
+                    << " levels as a Magick Archer.\n";
+          std::cin.get();
+          continue;
+        }
       }
+      skill += 54;
+      player_abilities.push_back(skills[skill]);
     } while (skill != 0 && player_abilities.size() < 6);
     break;
   case Vocations::Paladin:
     do {
+      system("clear");
       paladin_skills();
       std::cout << "0) None\n\n";
       std::cout << "[ ";
@@ -702,18 +818,26 @@ void skill_choosing(Player *player) {
       }
       std::cout << " ]\n";
       std::cout << "\nChoose which skill you want to add to your roaster\n>> ";
-      skill = check_skill(13, 18);
+      skill = check_skill(6);
       std::cin.ignore();
       if (!skill)
         break;
-      if (skill - 1 == 14 && player->getPaladinLvls() < 4) {
-        std::cout
-            << "\nYou cannot set this skill yet.\nYou have to do at least 4 "
-               "levels as a Paladin.\nNow you currently have "
-            << player->getPaladinLvls() << " levels as a Paladin.\n";
+      if (find_skill(player_abilities, skills[skill + 11])) {
+        std::cout << "You already have this skill set.\n";
         std::cin.get();
+        continue;
+      } else {
+        if ((skill == 3) && (player->getPaladinLvls() < 4)) {
+          std::cout << "\nYou cannot set this skill yet.\nYou have to do at "
+                       "least 4 "
+                       "levels as a Paladin.\nNow you currently have "
+                    << player->getPaladinLvls() << " levels as a Paladin.\n";
+          std::cin.get();
+          continue;
+        }
       }
-      player_abilities.push_back(skills[skill - 1]);
+      skill += 11;
+      player_abilities.push_back(skills[skill]);
     } while (skill != 0 && player_abilities.size() < 6);
     break;
   }
@@ -731,4 +855,19 @@ void skill_choosing(Player *player) {
   std::cout << " ]\n";
   player->setSkills(player_abilities);
 }
+
+void skill_removing(Player *player) {
+  uint skill = 0;
+  std::vector<Skill> player_abilities = player->getPlayerSkills();
+  std::cout << "[ ";
+  for (uint i = 0; i < player_abilities.size(); i++) {
+    if (i == player_abilities.size() - 1) {
+      std::cout << i + 1 << "." << player_abilities[i].getName();
+    } else {
+      std::cout << i + 1 << "." << player_abilities[i].getName() << ", ";
+    }
+  }
+  std::cout << " ]\n";
+}
+
 } // namespace ddgm

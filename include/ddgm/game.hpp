@@ -18,6 +18,8 @@ int start_menu();
 // declaring a function for the new game start
 void new_game(Player *player, Pawn *pawn);
 
+void load_characterData(Player *player, Pawn *pawn, nlohmann::json data);
+
 // Declaring a function for the menu in-game
 int game_menu();
 
@@ -60,5 +62,7 @@ void magickarcher_skills();
 // to choose what skills to use, from a minimum of 0
 // to a maximum of 6
 void skill_choosing(Player *player);
+
+void skill_removing(Player *player);
 
 } // namespace ddgm

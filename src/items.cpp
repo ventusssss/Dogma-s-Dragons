@@ -28,6 +28,14 @@ std::string Item::getName() const { return this->name; }
 uint Item::getValue() const { return this->value; }
 std::string Item::Item::getDescription() const { return this->description; }
 
+void Item::setName(std::string name) { this->name = name; }
+
+void Item::setValue(uint value) { this->value = value; }
+
+void Item::setDescription(std::string description) {
+  this->description = description;
+}
+
 nlohmann::json Item::getJson() const {
   nlohmann::json data = {{"name", this->name},
                          {"value", this->value},

@@ -16,6 +16,7 @@ namespace ddgm {
 /*
   Calling and initializing Player's constructor
 */
+
 Player::Player(std::string name, uint hp, uint atk, uint matk, uint def,
                uint mdef, Vocations vocation, uint xp)
     : Entity(name, hp, atk, matk, def, mdef, xp), vocation(vocation) {
@@ -357,15 +358,17 @@ uint Player::getPaladinLvls() const { return this->paladin_levels; }
 uint Player::getAssassinLvls() const { return this->assassin_levels; }
 uint Player::getMagickArcherLvls() const { return this->magickarcher_levels; }
 
-std::vector<Skill> Player::getPlayerSkills() { return this->player_skills; }
-std::vector<Skill> *Player::getSkillsAddr() { return &this->player_skills; }
-
-void Player::setSkills(std::vector<Skill> player_abilities) {
-  this->player_skills = player_abilities;
+std::vector<Skill> Player::getPlayerSkills() const {
+  return this->player_skills;
 }
+std::vector<Skill> *Player::getSkillsAddr() { return &this->player_skills; }
 
 nlohmann::json Player::getJson() const {
   nlohmann::json items;
+  nlohmann::json skills;
+  for (Skill &skill : this->getPlayerSkills()) {
+    skills.push_back(skill.getJson());
+  }
   for (Item *item : this->getInventory()) {
     items.push_back(item->getJson());
   }
@@ -388,6 +391,7 @@ nlohmann::json Player::getJson() const {
                          {"mage_levels", this->mage_levels},
                          {"sorcerer_levels", this->sorcerer_levels},
                          {"magickarcher_levels", this->magickarcher_levels},
+                         {"skills", skills},
                          {"inventory", items}};
 
   return data;
@@ -431,4 +435,11 @@ void Player::setDef(uint def) { this->def = def; }
 void Player::setMdef(uint mdef) { this->mdef = mdef; }
 void Player::setVocation(Vocations vocation) { this->vocation = vocation; }
 void Player::setXp(uint xp) { this->xp = xp; }
+void Player::setInventory(std::vector<Item *> items) {
+  this->inventory = items;
+}
+void Player::setSkills(std::vector<Skill> player_abilities) {
+  this->player_skills = player_abilities;
+}
+
 } // namespace ddgm

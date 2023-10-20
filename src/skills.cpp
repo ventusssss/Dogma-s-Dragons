@@ -32,4 +32,21 @@ std::string Skill::getName() const { return this->name; }
 uint Skill::getCd() const { return this->cd; }
 uint Skill::getActualCd() const { return this->actual_cd; }
 float Skill::getMultiplier() const { return this->multiplier; }
+
+void Skill::setName(std::string name) { this->name = name; }
+
+void Skill::setMultiplier(float multiplier) { this->multiplier = multiplier; }
+
+void Skill::setType(uint type) { this->type = (Skill::SkillType)type; }
+
+void Skill::setCooldown(uint cooldown) { this->cd = cooldown; }
+
+nlohmann::json Skill::getJson() const {
+  nlohmann::json data = {{"name", this->getName()},
+                         {"type", this->returnSkillType()},
+                         {"cooldown", this->getCd()},
+                         {"multiplier", this->getMultiplier()}};
+  return data;
+}
+
 } // namespace ddgm

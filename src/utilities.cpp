@@ -8,6 +8,7 @@
 #include <fstream>
 #include <iostream>
 #include <random>
+#include <stdexcept>
 #include <unistd.h>
 #include <vector>
 
@@ -59,22 +60,37 @@ bool casuality(uint perc) {
   return std::ceil(dmg);
 }*/
 
-uint check_skill(uint start, uint end) {
-  uint k = 0;
-  std::cin >> k;
-  while (std::cin.fail() || (k < start || k > end)) {
-    std::cin.clear();
-    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-    std::cout << "Choose a skill between the ones listed.\n>> ";
+uint check_skill(uint end) {
+  uint num = 0;
+  std::string k = "";
+  do {
     std::cin >> k;
-  }
-  return k;
+    try {
+      num = std::stoi(k);
+      if (num > end || num < 0) {
+        throw std::invalid_argument(std::string(""));
+      }
+      break;
+    } catch (std::invalid_argument) {
+      std::cout << "Choose a skill among the ones listed: ";
+    }
+  } while (true);
+  return num;
 }
 
 bool search_skill(std::vector<Skill::SkillType> vector,
                   Skill::SkillType skill) {
   for (uint i = 0; i < vector.size(); i++) {
     if (skill == vector[i]) {
+      return true;
+    }
+  }
+  return false;
+}
+
+bool find_skill(std::vector<Skill> skillsVector, Skill skillToFind) {
+  for (uint i = 0; i < skillsVector.size(); i++) {
+    if (skillToFind.getName() == skillsVector[i].getName()) {
       return true;
     }
   }

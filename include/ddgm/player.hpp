@@ -93,9 +93,7 @@ public:
 
   // Getter function that returns the
   // player_skills vector
-  std::vector<Skill> getPlayerSkills();
-
-  void setSkills(std::vector<Skill> player_abilities);
+  std::vector<Skill> getPlayerSkills() const;
 
   std::vector<Skill> *getSkillsAddr();
 
@@ -113,6 +111,8 @@ public:
   void setVocation(Vocations vocation);
   void setXp(uint xp);
   void setStartingVocation(uint vocation);
+  void setInventory(std::vector<Item *> items);
+  void setSkills(std::vector<Skill> player_abilities);
 };
 
 // Operator overloading that allows to print

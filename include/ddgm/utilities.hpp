@@ -36,9 +36,13 @@ bool casuality(uint perc);
 
 uint totalDmg(uint dmg, float multiplier);
 
-uint check_skill(uint start, uint end);
+uint check_skill(uint end);
+
+int controllo_int();
 
 bool search_skill(std::vector<Skill::SkillType> vector, Skill::SkillType skill);
+
+bool find_skill(std::vector<Skill> skillsVector, Skill skillToFind);
 
 class Enemy;
 
