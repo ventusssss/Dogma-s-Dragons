@@ -36,7 +36,7 @@ protected:
 
   // Declaring a vector of type Item
   // to represent the player's inventory
-  std::vector<Item *> inventory;
+  std::vector<Item> inventory;
 
   // Declaring a vector of type Skill
   // that contains all the usable skill
@@ -78,7 +78,7 @@ public:
   // Declaring function that respectively allow
   // the player to add an item to his inventory
   // or to use one
-  void addItem(Item *item);
+  void addItem(Item item);
   void useItem(uint pos, Entity *obj = nullptr);
 
   // do not remove this unless you want the code to stop working
@@ -99,7 +99,7 @@ public:
 
   nlohmann::json getJson() const;
 
-  inline std::vector<Item *> getInventory() const { return this->inventory; }
+  inline std::vector<Item> getInventory() const { return this->inventory; }
 
   // setter functions for the name and the starting vocation
   void setName(std::string name);
@@ -111,7 +111,7 @@ public:
   void setVocation(Vocations vocation);
   void setXp(uint xp);
   void setStartingVocation(uint vocation);
-  void setInventory(std::vector<Item *> items);
+  void setInventory(std::vector<Item> items);
   void setSkills(std::vector<Skill> player_abilities);
 };
 

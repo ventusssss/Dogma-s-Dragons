@@ -97,6 +97,18 @@ bool find_skill(std::vector<Skill> skillsVector, Skill skillToFind) {
   return false;
 }
 
+void show_skills(std::vector<Skill> skills) {
+  std::cout << "[ ";
+  for (uint i = 0; i < skills.size(); i++) {
+    if (i == skills.size() - 1) {
+      std::cout << i + 1 << ". " << skills[i].getName();
+    } else {
+      std::cout << i + 1 << ". " << skills[i].getName() << ", ";
+    }
+  }
+  std::cout << " ]\n";
+}
+
 bool search_enemy(std::vector<Enemy> enemies, Enemy enemy) {
   for (uint i = 0; i < enemies.size(); i++) {
     if (enemy.getName() == enemies[i].getName())

@@ -18,10 +18,19 @@ int start_menu();
 // declaring a function for the new game start
 void new_game(Player *player, Pawn *pawn);
 
-void load_characterData(Player *player, Pawn *pawn, nlohmann::json data);
+void load_characterData(Player &player, Pawn &pawn, nlohmann::json data);
 
 // Declaring a function for the menu in-game
 int game_menu();
+
+// Declaring the in-game functions
+void travel();
+
+void change_abilities(Player *player, Pawn *pawn);
+
+void change_vocation(Player *player, Pawn *pawn);
+
+void check_stats(Player *player, Pawn *pawn);
 
 // Declaring a function for the final credits of the game
 void game_credits();

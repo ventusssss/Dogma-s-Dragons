@@ -5,6 +5,8 @@
 
 namespace ddgm {
 
+Item::Item() {}
+
 // Defining the constructor of each item
 Item::Item(std::string name, uint value, std::string description)
     : name(name), value(value), description(description) {}

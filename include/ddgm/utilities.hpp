@@ -44,6 +44,8 @@ bool search_skill(std::vector<Skill::SkillType> vector, Skill::SkillType skill);
 
 bool find_skill(std::vector<Skill> skillsVector, Skill skillToFind);
 
+void show_skills(std::vector<Skill> skills);
+
 class Enemy;
 
 bool search_enemy(std::vector<Enemy> enemies, Enemy enemy);

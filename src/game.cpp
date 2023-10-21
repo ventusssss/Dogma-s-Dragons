@@ -91,51 +91,34 @@ void new_game(Player *player, Pawn *pawn) {
   save(*player, *pawn);
 }
 
-void load_characterData(Player *player, Pawn *pawn, nlohmann::json data) {
+void load_characterData(Player &player, Pawn &pawn, nlohmann::json data) {
   if (data != nlohmann::json::parse("{}")) {
+    player.setName(data["player"]["name"]);
+    player.setHp(data["player"]["hp"]);
+    player.setAtk(data["player"]["atk"]);
+    player.setMatk(data["player"]["matk"]);
+    player.setDef(data["player"]["def"]);
+    player.setMdef(data["player"]["mdef"]);
+    player.setVocation((Vocations)data["player"]["vocation"]);
+    player.setXp(data["player"]["xp"]);
 
-    player->setName(data["player"]["name"]);
-    player->setHp(data["player"]["hp"]);
-    player->setAtk(data["player"]["atk"]);
-    player->setMatk(data["player"]["matk"]);
-    player->setDef(data["player"]["def"]);
-    player->setMdef(data["player"]["mdef"]);
-    player->setVocation((Vocations)data["player"]["vocation"]);
-    player->setXp(data["player"]["xp"]);
+    Skill tmpSkill;
+    std::vector<Skill> skills;
 
-    std::vector<Skill> tmpSkills;
-
-    for (const auto &skill : data["player"]["skills"]) {
-      if (skill.is_object() && skill.contains("name") &&
-          skill.contains("type") && skill.contains("multiplier") &&
-          skill.contains("cooldown")) {
-        uint tmpCd = skill["cooldown"];
-        float tmpMul = skill["multiplier"];
-        std::string tmpName = skill["name"];
-        uint tmpType = skill["type"];
-        Skill tmpSkill(tmpName, tmpCd, (Skill::SkillType)tmpType, tmpMul);
-        tmpSkills.push_back(tmpSkill);
-      }
+    for (auto skill : data["player"]["skills"]) {
+      tmpSkill.copySkill(skill["name"], skill["cooldown"], skill["type"],
+                         skill["multiplier"]);
+      skills.push_back(tmpSkill);
     }
-    player->setSkills(tmpSkills);
-    tmpSkills.clear();
-    tmpSkills.shrink_to_fit();
+    player.setSkills(skills);
 
-    std::vector<Item *> tmpItems;
-
-    for (const auto &item : data["player"]["inventory"]) {
-      if (item.is_object() && item.contains("name") && item.contains("value") &&
-          item.contains("description")) {
-        std::string tmpDescription = item["description"];
-        std::string tmpName = item["name"];
-        uint tmpValue = item["value"];
-        Item tmpItem(tmpName, tmpValue, tmpDescription);
-        tmpItems.push_back(&tmpItem);
-      }
+    Item tmpItem;
+    std::vector<Item> items;
+    for (auto item : data["player"]["inventory"]) {
+      tmpItem.copyItem(item["name"], item["value"], item["description"]);
+      items.push_back(tmpItem);
     }
-    player->setInventory(tmpItems);
-    tmpItems.clear();
-    tmpItems.shrink_to_fit();
+    player.setInventory(items);
   }
 }
 
@@ -156,6 +139,60 @@ int game_menu() {
   }
   return c;
 }
+
+void travel(Player *player, Pawn *pawn) {
+  // 60% battle possibility
+  // 40% item find possibility
+  uint travelPossibilities = generateRandom(1, 100);
+  if (travelPossibilities <= 60) {
+    battle();
+  } else {
+    uint itemTypeFound = generateRandom(1, 4);
+    uint itemFound = 0;
+    uint itemDestination = generateRandom(0, 1);
+    switch (itemTypeFound) {
+    case 1:
+      itemFound = generateRandom(0, 10);
+      if (itemDestination) {
+        player->addItem(availableHealingItems[itemFound]);
+      } else {
+        pawn->addItem(availableHealingItems[itemFound]);
+      }
+      break;
+    case 2:
+      itemFound = generateRandom(0, 1);
+      if (itemDestination) {
+        player->addItem(availableAttackItems[itemFound]);
+      } else {
+        pawn->addItem(availableAttackItems[itemFound]);
+      }
+      break;
+    case 3:
+      itemFound = generateRandom(0, 2);
+      if (itemDestination) {
+        player->addItem(availableMagicItems[itemFound]);
+      } else {
+        pawn->addItem(availableMagicItems[itemFound]);
+      }
+      break;
+    case 4:
+      itemFound = generateRandom(0, 3);
+      if (itemDestination) {
+        player->addItem(availableBufferItems[itemFound]);
+      } else {
+        pawn->addItem(availableBufferItems[itemFound]);
+      }
+      break;
+    }
+    itemFind();
+  }
+}
+
+void change_abilities(Player *player, Pawn *pawn) {}
+
+void change_vocation(Player *player, Pawn *pawn) {}
+
+void check_stats(Player *player, Pawn *pawn) {}
 
 void game_introduction() {
   system("clear");
@@ -182,11 +219,13 @@ void game_introduction() {
          "to fight The Dragon.\n";
 
   std::cin.get();
-  std::cout << "The brave one was just a fisherman, but he wielded a rusted "
-               "sword\nand challenged the Dragon. He stood no choice.\nThe "
-               "Dragon struck him with his paw,\nbut in that moment, the "
-               "fisherman also managed\nto thrust the weapon into the Dragon's "
-               "hand.\n";
+  std::cout
+
+      << "The brave one was just a fisherman, but he wielded a rusted "
+         "sword\nand challenged the Dragon. He stood no choice.\nThe "
+         "Dragon struck him with his paw,\nbut in that moment, the "
+         "fisherman also managed\nto thrust the weapon into the Dragon's "
+         "hand.\n";
 
   std::cin.get();
   std::cout
@@ -208,9 +247,11 @@ void game_introduction() {
                "told him before.\n";
 
   std::cin.get();
-  std::cout << "Then, his beloved entered the room. To check if he was well,"
-               "\nshe asked a few questions,\nbeginning with simply asking him "
-               "his name.\n";
+  std::cout
+
+      << "Then, his beloved entered the room. To check if he was well,"
+         "\nshe asked a few questions,\nbeginning with simply asking him "
+         "his name.\n";
 
   std::cin.get();
 }
@@ -223,10 +264,12 @@ void game_progression(Pawn *pawn) {
          "order to find the dragon, and get your heart back.\n";
   std::cin.ignore();
   std::cin.get();
-  std::cout << "But, before leaving, you notice a strange rock,\nwith strange "
-               "symbols and patterns hollowed out.\nSuddently, the rock starts "
-               "glowing with a bluish color,\nand from inside, you hear a "
-               "voice.\n";
+  std::cout
+
+      << "But, before leaving, you notice a strange rock,\nwith strange "
+         "symbols and patterns hollowed out.\nSuddently, the rock starts "
+         "glowing with a bluish color,\nand from inside, you hear a "
+         "voice.\n";
   std::cin.get();
   std::cout
       << "\"Arisen, chosen one. Come and touch this Rift "
@@ -271,15 +314,19 @@ void game_progression(Pawn *pawn) {
          "rest. And ehm, one more thing.\nDon't call me Master, please. "
          "You make me unconfortable!\"\n";
   std::cin.get();
-  std::cout << "The Pawn strangely looks at you, and nods with his head.\nThen "
-               "you ask him \"So...what is YOUR name?\nI mean, you must have "
-               "one, everyone does\"\nThe Pawn looks at you with a puzzled "
-               "look, and says\n\"Master, you know my name is "
-            << pawn->getName() << ", it was you who gave it to me.\"\n";
+  std::cout
+
+      << "The Pawn strangely looks at you, and nods with his head.\nThen "
+         "you ask him \"So...what is YOUR name?\nI mean, you must have "
+         "one, everyone does\"\nThe Pawn looks at you with a puzzled "
+         "look, and says\n\"Master, you know my name is "
+      << pawn->getName() << ", it was you who gave it to me.\"\n";
   std::cin.get();
-  std::cout << "Upon hearing that name, your face goes pale, and you say\n"
-               "\"Wait, wait wait...that is not possible...THAT was...my best "
-               "friend's name...how could this be...\"\n";
+  std::cout
+
+      << "Upon hearing that name, your face goes pale, and you say\n"
+         "\"Wait, wait wait...that is not possible...THAT was...my best "
+         "friend's name...how could this be...\"\n";
   std::cin.get();
   std::cout << "The Pawn replies saying \"Pawns are made in the image and "
                "likeness of the Arisen's dearest people\"\n";
@@ -477,7 +524,9 @@ void skill_choosing(Player *player) {
           std::cout << player_abilities[i].getName();
       }
       std::cout << " ]\n";
-      std::cout << "\nChoose which skill you want to add to your roaster\n>> ";
+      std::cout
+
+          << "\nChoose which skill you want to add to your roaster\n>> ";
       skill = check_skill(6);
       std::cin.ignore();
       if (!skill)
@@ -520,7 +569,9 @@ void skill_choosing(Player *player) {
           std::cout << player_abilities[i].getName();
       }
       std::cout << " ]\n";
-      std::cout << "\nChoose which skill you want to add to your roaster\n>> ";
+      std::cout
+
+          << "\nChoose which skill you want to add to your roaster\n>> ";
       skill = check_skill(6);
       std::cin.ignore();
       if (!skill)
@@ -530,7 +581,9 @@ void skill_choosing(Player *player) {
         std::cin.get();
         continue;
       } else {
-        if (((skill == 3) || (skill == 5)) && (player->getStriderLvls() < 2)) {
+        if (((skill == 3) || (skill == 5)) &&
+
+            (player->getStriderLvls() < 2)) {
           std::cout << "\nYou cannot set this skill yet.\nYou have to do at "
                        "least 2 "
                        "levels as a Strider.\nNow you currently have "
@@ -555,9 +608,11 @@ void skill_choosing(Player *player) {
       system("clear");
       mage_skills();
       std::cout << "0) None\n\n";
-      std::cout << "Skills that end with the word \"Pact\"\nare a special kind "
-                   "of skills\nthat do not damage the enemy, but instead\nthey "
-                   "buff the Arisen's weapon\nwith that specific element.\n";
+      std::cout
+
+          << "Skills that end with the word \"Pact\"\nare a special kind "
+             "of skills\nthat do not damage the enemy, but instead\nthey "
+             "buff the Arisen's weapon\nwith that specific element.\n";
       std::cout << "\nHigh Spellscrean is a skill that allows the healing of "
                    "an Arisen or a Pawn.\n";
       std::cout << "\n[ ";
@@ -568,7 +623,9 @@ void skill_choosing(Player *player) {
           std::cout << player_abilities[i].getName();
       }
       std::cout << " ]\n";
-      std::cout << "\nChoose which skill you want to add to your roaster\n>> ";
+      std::cout
+
+          << "\nChoose which skill you want to add to your roaster\n>> ";
       skill = check_skill(9);
       std::cin.ignore();
       if (!skill)
@@ -604,7 +661,9 @@ void skill_choosing(Player *player) {
           std::cout << player_abilities[i].getName();
       }
       std::cout << " ]\n";
-      std::cout << "\nChoose which skill you want to add to your roaster\n>> ";
+      std::cout
+
+          << "\nChoose which skill you want to add to your roaster\n>> ";
       skill = check_skill(6);
       std::cin.ignore();
       if (!skill)
@@ -647,7 +706,9 @@ void skill_choosing(Player *player) {
           std::cout << player_abilities[i].getName();
       }
       std::cout << " ]\n";
-      std::cout << "\nChoose which skill you want to add to your roaster\n>> ";
+      std::cout
+
+          << "\nChoose which skill you want to add to your roaster\n>> ";
       skill = check_skill(6);
       std::cin.ignore();
       if (!skill)
@@ -682,9 +743,11 @@ void skill_choosing(Player *player) {
       system("clear");
       sorcerer_skills();
       std::cout << "0) None\n\n";
-      std::cout << "Skills that end with the word \"Pact\"\nare a special kind "
-                   "of skills\nthat do not damage the enemy, but instead\nthey "
-                   "buff the Arisen's weapon\nwith that specific element.\n";
+      std::cout
+
+          << "Skills that end with the word \"Pact\"\nare a special kind "
+             "of skills\nthat do not damage the enemy, but instead\nthey "
+             "buff the Arisen's weapon\nwith that specific element.\n";
       std::cout << "\n[ ";
       for (uint i = 0; i < player_abilities.size(); i++) {
         if (i != player_abilities.size() - 1)
@@ -693,7 +756,9 @@ void skill_choosing(Player *player) {
           std::cout << player_abilities[i].getName();
       }
       std::cout << " ]\n";
-      std::cout << "\nChoose which skill you want to add to your roaster\n>> ";
+      std::cout
+
+          << "\nChoose which skill you want to add to your roaster\n>> ";
       skill = check_skill(10);
       std::cin.ignore();
       if (!skill)
@@ -707,7 +772,9 @@ void skill_choosing(Player *player) {
           std::cout << "\nYou cannot set this skill yet.\nYou have to do at "
                        "least 5 "
                        "levels as a Sorcerer.\nNow you currently have "
-                    << player->getSorcererLvls() << " levels as a Sorcerer.\n";
+                    << player->getSorcererLvls()
+
+                    << " levels as a Sorcerer.\n";
           std::cin.get();
           continue;
         }
@@ -729,7 +796,9 @@ void skill_choosing(Player *player) {
           std::cout << player_abilities[i].getName();
       }
       std::cout << " ]\n";
-      std::cout << "\nChoose which skill you want to add to your roaster\n>> ";
+      std::cout
+
+          << "\nChoose which skill you want to add to your roaster\n>> ";
       skill = check_skill(6);
       std::cin.ignore();
       if (!skill)
@@ -739,7 +808,9 @@ void skill_choosing(Player *player) {
         std::cin.get();
         continue;
       } else {
-        if (((skill == 2) || (skill == 6)) && (player->getAssassinLvls() < 2)) {
+        if (((skill == 2) || (skill == 6)) &&
+
+            (player->getAssassinLvls() < 2)) {
           std::cout << "\nYou cannot set this skill yet.\nYou have to do at "
                        "least 2 "
                        "levels as an Assassin.\nNow you currently have "
@@ -772,7 +843,9 @@ void skill_choosing(Player *player) {
           std::cout << player_abilities[i].getName();
       }
       std::cout << " ]\n";
-      std::cout << "\nChoose which skill you want to add to your roaster\n>> ";
+      std::cout
+
+          << "\nChoose which skill you want to add to your roaster\n>> ";
       skill = check_skill(7);
       std::cin.ignore();
       if (!skill)
@@ -817,7 +890,9 @@ void skill_choosing(Player *player) {
           std::cout << player_abilities[i].getName();
       }
       std::cout << " ]\n";
-      std::cout << "\nChoose which skill you want to add to your roaster\n>> ";
+      std::cout
+
+          << "\nChoose which skill you want to add to your roaster\n>> ";
       skill = check_skill(6);
       std::cin.ignore();
       if (!skill)
@@ -859,15 +934,28 @@ void skill_choosing(Player *player) {
 void skill_removing(Player *player) {
   uint skill = 0;
   std::vector<Skill> player_abilities = player->getPlayerSkills();
-  std::cout << "[ ";
-  for (uint i = 0; i < player_abilities.size(); i++) {
-    if (i == player_abilities.size() - 1) {
-      std::cout << i + 1 << "." << player_abilities[i].getName();
-    } else {
-      std::cout << i + 1 << "." << player_abilities[i].getName() << ", ";
+
+  do {
+    system("clear");
+    show_skills(player_abilities);
+    std::cout << "Choose the skill you want to remove\n";
+    std::cout << "Write 0 to get out: ";
+    std::cin >> skill;
+    while (std::cin.fail() || (skill < 0 || skill > player_abilities.size())) {
+      std::cin.clear();
+      std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+      std::cout << "Please choose a valid skill: ";
+      std::cin >> skill;
     }
-  }
-  std::cout << " ]\n";
+
+    if (!skill)
+      break;
+
+    player_abilities.erase(player_abilities.begin() + (skill - 1));
+
+  } while (skill != 0);
+
+  player->setSkills(player_abilities);
 }
 
 } // namespace ddgm

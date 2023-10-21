@@ -109,7 +109,6 @@ uint Enemy::getResperc() const { return this->resperc; }
 
 // attack methods
 void Enemy::attack(Entity &obj) {
-
   uint dmg = generateRandom(this->atk - percu(this->atk, 10),
                             this->atk + percu(this->atk, 10)),
        dmg_eff = (dmg > obj.getDef() ? dmg - obj.getDef() : obj.getDef() - dmg);

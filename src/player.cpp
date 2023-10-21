@@ -288,27 +288,27 @@ void Player::changeVocation(Vocations vocation) {
   }
 }
 
-void Player::addItem(Item *item) { this->inventory.push_back(item); }
+void Player::addItem(Item item) { this->inventory.push_back(item); }
 
 // Defining the method for using the items, that will affect
 // the player, or the object which the item is directed to
 void Player::useItem(uint pos, Entity *obj) {
-  if (dynamic_cast<HealingItem *>(this->inventory[pos])) {
-    this->hp += this->inventory[pos]->getValue();
+  if (dynamic_cast<HealingItem *>(&this->inventory[pos])) {
+    this->hp += this->inventory[pos].getValue();
     this->hp = (this->hp > this->max_hp ? this->max_hp : this->hp);
-  } else if (dynamic_cast<AttackItem *>(this->inventory[pos])) {
-    obj->getHit(this->inventory[pos]->getValue());
-  } else if (dynamic_cast<MagicItem *>(this->inventory[pos])) {
-    obj->getHit(this->inventory[pos]->getValue());
-  } else if (dynamic_cast<BufferItem *>(this->inventory[pos])) {
-    if (this->inventory[pos]->getName() == "Conqueror's Periapt")
-      this->atk *= this->inventory[pos]->getValue();
-    else if (this->inventory[pos]->getName() == "Angel's Periapt")
-      this->def *= this->inventory[pos]->getValue();
-    else if (this->inventory[pos]->getName() == "Demon's Periapt")
-      this->matk *= this->inventory[pos]->getValue();
-    else if (this->inventory[pos]->getName() == "Mage's Periapt")
-      this->mdef *= this->inventory[pos]->getValue();
+  } else if (dynamic_cast<AttackItem *>(&this->inventory[pos])) {
+    obj->getHit(this->inventory[pos].getValue());
+  } else if (dynamic_cast<MagicItem *>(&this->inventory[pos])) {
+    obj->getHit(this->inventory[pos].getValue());
+  } else if (dynamic_cast<BufferItem *>(&this->inventory[pos])) {
+    if (this->inventory[pos].getName() == "Conqueror's Periapt")
+      this->atk *= this->inventory[pos].getValue();
+    else if (this->inventory[pos].getName() == "Angel's Periapt")
+      this->def *= this->inventory[pos].getValue();
+    else if (this->inventory[pos].getName() == "Demon's Periapt")
+      this->matk *= this->inventory[pos].getValue();
+    else if (this->inventory[pos].getName() == "Mage's Periapt")
+      this->mdef *= this->inventory[pos].getValue();
   }
 
   this->inventory.erase(this->inventory.begin() + pos);
@@ -369,8 +369,8 @@ nlohmann::json Player::getJson() const {
   for (Skill &skill : this->getPlayerSkills()) {
     skills.push_back(skill.getJson());
   }
-  for (Item *item : this->getInventory()) {
-    items.push_back(item->getJson());
+  for (Item item : this->getInventory()) {
+    items.push_back(item.getJson());
   }
 
   nlohmann::json data = {{"name", this->name},
@@ -435,9 +435,7 @@ void Player::setDef(uint def) { this->def = def; }
 void Player::setMdef(uint mdef) { this->mdef = mdef; }
 void Player::setVocation(Vocations vocation) { this->vocation = vocation; }
 void Player::setXp(uint xp) { this->xp = xp; }
-void Player::setInventory(std::vector<Item *> items) {
-  this->inventory = items;
-}
+void Player::setInventory(std::vector<Item> items) { this->inventory = items; }
 void Player::setSkills(std::vector<Skill> player_abilities) {
   this->player_skills = player_abilities;
 }

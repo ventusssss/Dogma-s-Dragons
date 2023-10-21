@@ -19,6 +19,7 @@ protected:
   virtual void magicFunc() {}
 
 public:
+  Item();
   // Declaring the constructor for the item class
   Item(std::string name, uint value, std::string description);
 
@@ -32,6 +33,12 @@ public:
   void setDescription(std::string description);
 
   nlohmann::json getJson() const;
+
+  inline void copyItem(std::string name, uint value, std::string description) {
+    this->name = name;
+    this->value = value;
+    this->description = description;
+  }
 };
 
 // Creating class HealingItem that contains all

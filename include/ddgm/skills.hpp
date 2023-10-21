@@ -35,6 +35,9 @@ private:
 public:
   // Declaring and initializing the constructor for
   // the skill class
+
+  Skill(){};
+
   Skill(std::string name, uint cd, SkillType type, float multiplier)
       : name(name), cd(cd), actual_cd(0), type(type), actualType(type),
         multiplier(multiplier) {}
@@ -68,6 +71,14 @@ public:
   void setCooldown(uint cooldown);
 
   nlohmann::json getJson() const;
+
+  inline void copySkill(std::string name, uint cd, SkillType type,
+                        float multiplier) {
+    this->name = name;
+    this->cd = cd;
+    this->type = type;
+    this->multiplier = multiplier;
+  }
 };
 
 // Declaring and initializing a vector of type Skill

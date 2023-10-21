@@ -31,15 +31,15 @@ int main() {
   // player.updateStats();
   // player.addItem((Item *)&availableHealingItems[1]);
   json data = load();
-  load_characterData(&player, &pawn, data);
+  load_characterData(player, pawn, data);
 
-  for (int i = 0; i < player.getInventory().size(); i++) {
-    std::cout << player.getInventory()[i]->getName() << "\n";
+  /* for (const auto &item : player.getInventory()) {
+    std::cout << item.getName() << "\n";
   }
 
   for (int i = 0; i < player.getPlayerSkills().size(); i++) {
     std::cout << player.getPlayerSkills()[i].getName() << "\n";
-  }
+  } */
 
   uint choice = 0;
   std::cout << "Welcome to Dogma's Dragons!\nThanks for playing our game,\nwe "
@@ -87,12 +87,12 @@ int main() {
   // save(player, pawn);
   */
   // skill_choosing(&player);
-  //     skill_removing(&player);
-  //     std::cout << "\n";
-  //     skill_choosing(&pawn);
-  //     skill_removing(&pawn);
+  // skill_removing(&player);
+  //      std::cout << "\n";
+  //      skill_choosing(&pawn);
+  //      skill_removing(&pawn);
 
-  // save(player, pawn);
+  save(player, pawn);
 
   return int(bool(nullptr)) ? !(bool(nullptr)) : bool(nullptr);
 }
