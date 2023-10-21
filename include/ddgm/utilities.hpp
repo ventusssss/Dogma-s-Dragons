@@ -4,6 +4,7 @@
 #include "ddgm/enemies.hpp"
 #include "ddgm/json.hpp"
 #include "ddgm/skills.hpp"
+#include <iostream>
 #include <random>
 #include <sys/types.h>
 #include <vector>
@@ -30,6 +31,12 @@ uint generateRandom(uint start, uint end);
 // is contained in a range
 bool isInRange(uint n, uint start, uint end);
 
+template <typename T> inline bool isIn(T src, std::vector<T> list) {
+  for (T x : list)
+    if (x == src)
+      return 1;
+  return 0;
+}
 // Declaring the function that calculates
 // the probability of an event to happen
 bool casuality(uint perc);

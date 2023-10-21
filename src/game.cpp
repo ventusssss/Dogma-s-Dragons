@@ -1,60 +1,17 @@
 #include "ddgm/game.hpp"
+#include "ddgm/enemies.hpp"
 #include "ddgm/items.hpp"
 #include "ddgm/player.hpp"
 #include "ddgm/skills.hpp"
 #include "ddgm/utilities.hpp"
 #include <array>
+#include <asm-generic/errno.h>
 #include <cctype>
 #include <iostream>
 #include <unistd.h>
 #include <vector>
 
 namespace ddgm {
-
-void itemFind() {
-  uint i = generateRandom(1, 100);
-  if (isInRange(i, 1, 20)) {
-    std::cout << availableHealingItems[0].getName() << "\n";
-  } else if (isInRange(i, 21, 32)) {
-    std::cout << availableHealingItems[1].getName() << "\n";
-  } else if (isInRange(i, 33, 42)) {
-    std::cout << availableHealingItems[2].getName() << "\n";
-  } else if (isInRange(i, 43, 52)) {
-    std::cout << availableHealingItems[3].getName() << "\n";
-  } else if (isInRange(i, 53, 59)) {
-    std::cout << availableHealingItems[4].getName() << "\n";
-  } else if (isInRange(i, 60, 64)) {
-    std::cout << availableHealingItems[5].getName() << "\n";
-  } else if (isInRange(i, 65, 68)) {
-    std::cout << availableHealingItems[6].getName() << "\n";
-  } else if (isInRange(i, 69, 71)) {
-    std::cout << availableHealingItems[7].getName() << "\n";
-  } else if (isInRange(i, 72, 74)) {
-    std::cout << availableHealingItems[8].getName() << "\n";
-  } else if (i == 75) {
-    std::cout << availableHealingItems[9].getName() << "\n";
-  } else if (isInRange(i, 76, 77)) {
-    std::cout << availableHealingItems[10].getName() << "\n";
-  } else if (isInRange(i, 78, 79)) {
-    std::cout << availableAttackItems[0].getName() << "\n";
-  } else if (isInRange(i, 80, 82)) {
-    std::cout << availableAttackItems[1].getName() << "\n";
-  } else if (isInRange(i, 83, 86)) {
-    std::cout << availableMagicItems[0].getName() << "\n";
-  } else if (isInRange(i, 87, 90)) {
-    std::cout << availableMagicItems[1].getName() << "\n";
-  } else if (isInRange(i, 91, 92)) {
-    std::cout << availableMagicItems[2].getName() << "\n";
-  } else if (isInRange(i, 93, 94)) {
-    std::cout << availableBufferItems[0].getName() << "\n";
-  } else if (isInRange(i, 95, 96)) {
-    std::cout << availableBufferItems[1].getName() << "\n";
-  } else if (isInRange(i, 97, 98)) {
-    std::cout << availableBufferItems[2].getName() << "\n";
-  } else {
-    std::cout << availableBufferItems[3].getName() << "\n";
-  }
-}
 
 // Credits of the game
 void game_credits() {
@@ -140,9 +97,7 @@ int game_menu() {
   return c;
 }
 
-void travel(Player *player, Pawn *pawn) {
-  // 60% battle possibility
-  // 40% item find possibility
+void travel(Player &player, Pawn &pawn) {
   uint travelPossibilities = generateRandom(1, 100);
   if (travelPossibilities <= 60) {
     battle();
@@ -150,49 +105,134 @@ void travel(Player *player, Pawn *pawn) {
     uint itemTypeFound = generateRandom(1, 4);
     uint itemFound = 0;
     uint itemDestination = generateRandom(0, 1);
+
     switch (itemTypeFound) {
     case 1:
-      itemFound = generateRandom(0, 10);
+      itemFound = generateRandom(0, availableHealingItems.size() - 1);
       if (itemDestination) {
-        player->addItem(availableHealingItems[itemFound]);
+        player.addItem(availableHealingItems[itemFound]);
       } else {
-        pawn->addItem(availableHealingItems[itemFound]);
+        pawn.addItem(availableHealingItems[itemFound]);
       }
       break;
     case 2:
-      itemFound = generateRandom(0, 1);
+      itemFound = generateRandom(0, availableAttackItems.size() - 1);
       if (itemDestination) {
-        player->addItem(availableAttackItems[itemFound]);
+        player.addItem(availableAttackItems[itemFound]);
       } else {
-        pawn->addItem(availableAttackItems[itemFound]);
+        pawn.addItem(availableAttackItems[itemFound]);
       }
       break;
     case 3:
-      itemFound = generateRandom(0, 2);
+      itemFound = generateRandom(0, availableMagicItems.size() - 1);
       if (itemDestination) {
-        player->addItem(availableMagicItems[itemFound]);
+        player.addItem(availableMagicItems[itemFound]);
       } else {
-        pawn->addItem(availableMagicItems[itemFound]);
+        pawn.addItem(availableMagicItems[itemFound]);
       }
       break;
     case 4:
-      itemFound = generateRandom(0, 3);
+      itemFound = generateRandom(0, availableBufferItems.size() - 1);
       if (itemDestination) {
-        player->addItem(availableBufferItems[itemFound]);
+        player.addItem(availableBufferItems[itemFound]);
       } else {
-        pawn->addItem(availableBufferItems[itemFound]);
+        pawn.addItem(availableBufferItems[itemFound]);
       }
       break;
     }
-    itemFind();
+
+    for (auto &item : player.getInventory()) {
+      std::cout << "Item inside PLAYER inventory\n";
+      std::cout << item.getName() << "\n";
+    }
+
+    for (auto &item : pawn.getInventory()) {
+      std::cout << "Item inside PAWN inventory\n";
+      std::cout << item.getName() << "\n";
+    }
   }
 }
 
-void change_abilities(Player *player, Pawn *pawn) {}
+void battle() {
+  Enemy enemyGroup =
+      selectable_enemies[generateRandom(0, (selectable_enemies.size() - 1))];
 
-void change_vocation(Player *player, Pawn *pawn) {}
+  std::vector<Enemy> enemiesToFight;
+  uint enemyNumber = 1;
 
-void check_stats(Player *player, Pawn *pawn) {}
+  if (isIn(enemyGroup.getName(), {"Golbin", "Undead", "Bandit", "Saurian",
+                                  "Harpy", "Skeleton", "Wolf"})) {
+    enemyNumber = generateRandom(1, 3);
+
+    for (uint i = enemyNumber; i > 0; i--)
+      enemiesToFight.push_back(enemyGroup);
+  }
+
+  std::cout << "Stand forth, Arisen! ";
+  if (isIn(enemyGroup.getName(), {"Golbin", "Undead", "Bandit", "Saurian",
+                                  "Harpy", "Skeleton", "Wolf"})) {
+    switch (enemyNumber) {
+    case 1:
+      if (isIn(enemyGroup.getName(),
+               {"Golbin", "Wolf", "Bandit", "Saurian", "Skeleton"})) {
+        std::cout << "A " << enemyGroup.getName() << " has appeared!\n";
+      } else {
+        std::cout << "An " << enemyGroup.getName() << " has appeared!\n";
+      }
+      break;
+    case 2:
+      if (enemyGroup.getName() == "Golbin") {
+        std::cout << "Two Golbins have appeared!\n";
+      } else if (enemyGroup.getName() == "Wolf") {
+        std::cout << "Two Wolfs have appeared!\n";
+        std::cout << "Remember Arisen, Wolfs hunt in packs!\n";
+      } else if (enemyGroup.getName() == "Undead") {
+        std::cout << "Two Undeads have appeared!\n";
+      } else if (enemyGroup.getName() == "Bandit") {
+        std::cout << "Two Bandits have appeared!\n";
+      } else if (enemyGroup.getName() == "Saurian") {
+        std::cout << "Two Saurians have appeared!\n";
+      } else if (enemyGroup.getName() == "Harpy") {
+        std::cout << "Two Harpies have appeared!\n";
+      } else if (enemyGroup.getName() == "Skeleton") {
+        std::cout << "Two Skeletons have appeared!\n";
+      }
+      break;
+    case 3:
+      if (enemyGroup.getName() == "Golbin") {
+        std::cout << "Three Golbins have appeared!\n";
+      } else if (enemyGroup.getName() == "Wolf") {
+        std::cout << "Three Wolfs have appeared!\n";
+        std::cout << "Remember Arisen, Wolfs hunt in packs!\n";
+      } else if (enemyGroup.getName() == "Undead") {
+        std::cout << "Three Undeads have appeared!\n";
+      } else if (enemyGroup.getName() == "Bandit") {
+        std::cout << "Three Bandits have appeared!\n";
+      } else if (enemyGroup.getName() == "Saurian") {
+        std::cout << "Three Saurians have appeared!\n";
+      } else if (enemyGroup.getName() == "Harpy") {
+        std::cout << "Three Harpies have appeared!\n";
+      } else if (enemyGroup.getName() == "Skeleton") {
+        std::cout << "Three Skeletons have appeared!\n";
+      }
+      break;
+    }
+  } else {
+    if (isIn(enemyGroup.getName(),
+             {"Gargoyle", "Succubus", "Ghost", "Vile Eye", "Cyclope", "Chimera",
+              "Golem", "Wyrm", "Frost Wyrm", "Drake"})) {
+      std::cout << "A " << enemyGroup.getName() << " has appeared!\n";
+    } else {
+      std::cout << "An " << enemyGroup.getName() << " has appeared!\n";
+    }
+  }
+}
+
+void change_abilities(Player &player, Pawn &pawn) {}
+
+void change_vocation(Player &player, Pawn &pawn) {}
+
+void check_stats(Player &player, Pawn *pawn) {}
 
 void game_introduction() {
   system("clear");
@@ -431,8 +471,6 @@ void characterCreation(Player *player) {
     player->setStartingVocation(vocation);
   }
 }
-
-void battle() {}
 
 // Those functions show the entirety of the vocations' skills
 void fighter_skills() {
@@ -843,9 +881,7 @@ void skill_choosing(Player *player) {
           std::cout << player_abilities[i].getName();
       }
       std::cout << " ]\n";
-      std::cout
-
-          << "\nChoose which skill you want to add to your roaster\n>> ";
+      std::cout << "\nChoose which skill you want to add to your roaster\n>> ";
       skill = check_skill(7);
       std::cin.ignore();
       if (!skill)

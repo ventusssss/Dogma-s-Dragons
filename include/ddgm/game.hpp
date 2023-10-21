@@ -24,13 +24,15 @@ void load_characterData(Player &player, Pawn &pawn, nlohmann::json data);
 int game_menu();
 
 // Declaring the in-game functions
-void travel();
+void travel(Player &player, Pawn &pawn);
 
-void change_abilities(Player *player, Pawn *pawn);
+void battle();
 
-void change_vocation(Player *player, Pawn *pawn);
+void change_abilities(Player &player, Pawn &pawn);
 
-void check_stats(Player *player, Pawn *pawn);
+void change_vocation(Player &player, Pawn &pawn);
+
+void check_stats(Player &player, Pawn &pawn);
 
 // Declaring a function for the final credits of the game
 void game_credits();
@@ -51,9 +53,6 @@ std::string pawnChooseName();
 uint chooseStartingVocation();
 
 void characterCreation(Player *player);
-
-// Declaring the function for the battles
-void battle();
 
 // Defining the function to print all
 // the vocations' skills

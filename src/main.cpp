@@ -25,7 +25,7 @@ int main() {
   system("clear");
   srand(time(0));
 
-  Player player("noName", 0, 0, 0, 0, 0, Vocations::Assassin, 5000);
+  Player player("noName", 0, 0, 0, 0, 0, Vocations::Assassin, 0);
   Pawn pawn("noName", 0, 0, 0, 0, 0, Vocations::MagickArcher, 0);
 
   // player.updateStats();
@@ -91,6 +91,9 @@ int main() {
   //      std::cout << "\n";
   //      skill_choosing(&pawn);
   //      skill_removing(&pawn);
+
+  // travel(player, pawn);
+  battle();
 
   save(player, pawn);
 
