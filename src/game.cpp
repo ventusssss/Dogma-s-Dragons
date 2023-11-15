@@ -1,11 +1,11 @@
 #include "ddgm/game.hpp"
 #include "ddgm/enemies.hpp"
 #include "ddgm/items.hpp"
+#include "ddgm/pawn.hpp"
 #include "ddgm/player.hpp"
 #include "ddgm/skills.hpp"
 #include "ddgm/utilities.hpp"
 #include <array>
-#include <asm-generic/errno.h>
 #include <cctype>
 #include <iostream>
 #include <unistd.h>
@@ -52,6 +52,7 @@ void load_characterData(Player &player, Pawn &pawn, nlohmann::json data) {
   if (data != nlohmann::json::parse("{}")) {
     player.setName(data["player"]["name"]);
     player.setHp(data["player"]["hp"]);
+    player.setMaxHp(player.getHp());
     player.setAtk(data["player"]["atk"]);
     player.setMatk(data["player"]["matk"]);
     player.setDef(data["player"]["def"]);
@@ -59,23 +60,50 @@ void load_characterData(Player &player, Pawn &pawn, nlohmann::json data) {
     player.setVocation((Vocations)data["player"]["vocation"]);
     player.setXp(data["player"]["xp"]);
 
-    Skill tmpSkill;
     std::vector<Skill> skills;
 
-    for (auto skill : data["player"]["skills"]) {
-      tmpSkill.copySkill(skill["name"], skill["cooldown"], skill["type"],
-                         skill["multiplier"]);
+    for (nlohmann::json skill : data["player"]["skills"]) {
+      Skill tmpSkill(skill["name"], skill["cooldown"],
+                     (Skill::SkillType)skill["type"], skill["multiplier"]);
       skills.push_back(tmpSkill);
     }
     player.setSkills(skills);
 
-    Item tmpItem;
     std::vector<Item> items;
     for (auto item : data["player"]["inventory"]) {
-      tmpItem.copyItem(item["name"], item["value"], item["description"]);
+      Item tmpItem(item["name"], item["value"], item["description"]);
       items.push_back(tmpItem);
     }
     player.setInventory(items);
+
+    skills.clear();
+    skills.shrink_to_fit();
+
+    items.clear();
+    items.shrink_to_fit();
+
+    pawn.setName(data["pawn"]["name"]);
+    pawn.setHp(data["pawn"]["hp"]);
+    pawn.setMaxHp(pawn.getHp());
+    pawn.setAtk(data["pawn"]["atk"]);
+    pawn.setMatk(data["pawn"]["matk"]);
+    pawn.setDef(data["pawn"]["def"]);
+    pawn.setMdef(data["pawn"]["mdef"]);
+    pawn.setVocation((Vocations)data["pawn"]["vocation"]);
+    pawn.setXp(data["pawn"]["xp"]);
+
+    for (auto skill : data["pawn"]["skills"]) {
+      Skill tmpSkill(skill["name"], skill["cooldown"],
+                     (Skill::SkillType)skill["type"], skill["multiplier"]);
+      skills.push_back(tmpSkill);
+    }
+    pawn.setSkills(skills);
+
+    for (auto item : data["pawn"]["inventory"]) {
+      Item tmpItem(item["name"], item["value"], item["description"]);
+      items.push_back(tmpItem);
+    }
+    pawn.setInventory(items);
   }
 }
 
@@ -100,7 +128,7 @@ int game_menu() {
 void travel(Player &player, Pawn &pawn) {
   uint travelPossibilities = generateRandom(1, 100);
   if (travelPossibilities <= 60) {
-    battle();
+    battle(player, pawn);
   } else {
     uint itemTypeFound = generateRandom(1, 4);
     uint itemFound = 0;
@@ -140,92 +168,261 @@ void travel(Player &player, Pawn &pawn) {
       }
       break;
     }
-
-    for (auto &item : player.getInventory()) {
-      std::cout << "Item inside PLAYER inventory\n";
-      std::cout << item.getName() << "\n";
-    }
-
-    for (auto &item : pawn.getInventory()) {
-      std::cout << "Item inside PAWN inventory\n";
-      std::cout << item.getName() << "\n";
-    }
   }
 }
 
-void battle() {
-  Enemy enemyGroup =
-      selectable_enemies[generateRandom(0, (selectable_enemies.size() - 1))];
-
+std::vector<Enemy> enemies_appearing(uint enemyNumber) {
   std::vector<Enemy> enemiesToFight;
-  uint enemyNumber = 1;
+  std::vector<std::string> aEnemies = {
+      "Golbin",   "Wolf",     "Bandit", "Saurian",    "Skeleton",
+      "Gargoyle", "Succubus", "Ghost",  "Vile Eye",   "Cyclope",
+      "Chimera",  "Golem",    "Wyrm",   "Frost Wyrm", "Drake"};
 
-  if (isIn(enemyGroup.getName(), {"Golbin", "Undead", "Bandit", "Saurian",
-                                  "Harpy", "Skeleton", "Wolf"})) {
-    enemyNumber = generateRandom(1, 3);
-
-    for (uint i = enemyNumber; i > 0; i--)
-      enemiesToFight.push_back(enemyGroup);
+  for (uint i = 0; i < enemyNumber; i++) {
+    enemiesToFight.push_back(
+        selectable_enemies[generateRandom(0, selectable_enemies.size() - 1)]);
   }
 
-  std::cout << "Stand forth, Arisen! ";
-  if (isIn(enemyGroup.getName(), {"Golbin", "Undead", "Bandit", "Saurian",
-                                  "Harpy", "Skeleton", "Wolf"})) {
-    switch (enemyNumber) {
-    case 1:
-      if (isIn(enemyGroup.getName(),
-               {"Golbin", "Wolf", "Bandit", "Saurian", "Skeleton"})) {
-        std::cout << "A " << enemyGroup.getName() << " has appeared!\n";
+  for (uint i = 0; i < enemiesToFight.size(); i++) {
+    if (enemiesToFight.size() == 1) {
+      if (isIn(enemiesToFight[i].getName(), aEnemies)) {
+        std::cout << "A " << enemiesToFight[i].getName() << " has appeared!\n";
       } else {
-        std::cout << "An " << enemyGroup.getName() << " has appeared!\n";
+        std::cout << "An " << enemiesToFight[i].getName() << " has appeared!\n";
       }
-      break;
-    case 2:
-      if (enemyGroup.getName() == "Golbin") {
-        std::cout << "Two Golbins have appeared!\n";
-      } else if (enemyGroup.getName() == "Wolf") {
-        std::cout << "Two Wolfs have appeared!\n";
-        std::cout << "Remember Arisen, Wolfs hunt in packs!\n";
-      } else if (enemyGroup.getName() == "Undead") {
-        std::cout << "Two Undeads have appeared!\n";
-      } else if (enemyGroup.getName() == "Bandit") {
-        std::cout << "Two Bandits have appeared!\n";
-      } else if (enemyGroup.getName() == "Saurian") {
-        std::cout << "Two Saurians have appeared!\n";
-      } else if (enemyGroup.getName() == "Harpy") {
-        std::cout << "Two Harpies have appeared!\n";
-      } else if (enemyGroup.getName() == "Skeleton") {
-        std::cout << "Two Skeletons have appeared!\n";
-      }
-      break;
-    case 3:
-      if (enemyGroup.getName() == "Golbin") {
-        std::cout << "Three Golbins have appeared!\n";
-      } else if (enemyGroup.getName() == "Wolf") {
-        std::cout << "Three Wolfs have appeared!\n";
-        std::cout << "Remember Arisen, Wolfs hunt in packs!\n";
-      } else if (enemyGroup.getName() == "Undead") {
-        std::cout << "Three Undeads have appeared!\n";
-      } else if (enemyGroup.getName() == "Bandit") {
-        std::cout << "Three Bandits have appeared!\n";
-      } else if (enemyGroup.getName() == "Saurian") {
-        std::cout << "Three Saurians have appeared!\n";
-      } else if (enemyGroup.getName() == "Harpy") {
-        std::cout << "Three Harpies have appeared!\n";
-      } else if (enemyGroup.getName() == "Skeleton") {
-        std::cout << "Three Skeletons have appeared!\n";
-      }
-      break;
-    }
-  } else {
-    if (isIn(enemyGroup.getName(),
-             {"Gargoyle", "Succubus", "Ghost", "Vile Eye", "Cyclope", "Chimera",
-              "Golem", "Wyrm", "Frost Wyrm", "Drake"})) {
-      std::cout << "A " << enemyGroup.getName() << " has appeared!\n";
     } else {
-      std::cout << "An " << enemyGroup.getName() << " has appeared!\n";
+      if (enemiesToFight.size() == 2) {
+        if (!i) {
+          if (isIn(enemiesToFight[i].getName(), aEnemies)) {
+            std::cout << "A " << enemiesToFight[i].getName() << " ";
+          } else {
+            std::cout << "An " << enemiesToFight[i].getName() << " ";
+          }
+        } else {
+          std::cout << "and ";
+          if (isIn(enemiesToFight[i].getName(), aEnemies)) {
+            std::cout << "a " << enemiesToFight[i].getName()
+                      << " have appeared!\n";
+          } else {
+            std::cout << "an " << enemiesToFight[i].getName()
+                      << " have appeared!\n";
+          }
+        }
+      } else if (enemiesToFight.size() > 2) {
+        if (!i) {
+          if (isIn(enemiesToFight[i].getName(), aEnemies)) {
+            std::cout << "A " << enemiesToFight[i].getName() << ", ";
+          } else {
+            std::cout << "An " << enemiesToFight[i].getName() << ", ";
+          }
+        } else if (i > 0 && i < (enemiesToFight.size() - 1)) {
+          if (i == (enemiesToFight.size() - 2)) {
+            if (isIn(enemiesToFight[i].getName(), aEnemies)) {
+              std::cout << "a " << enemiesToFight[i].getName() << " ";
+            } else {
+              std::cout << "an " << enemiesToFight[i].getName() << " ";
+            }
+          } else {
+            if (isIn(enemiesToFight[i].getName(), aEnemies)) {
+              std::cout << "a " << enemiesToFight[i].getName() << ", ";
+            } else {
+              std::cout << "an " << enemiesToFight[i].getName() << ", ";
+            }
+          }
+        } else if (i == (enemiesToFight.size() - 1)) {
+          std::cout << "and ";
+          if (isIn(enemiesToFight[i].getName(), aEnemies)) {
+            std::cout << "a " << enemiesToFight[i].getName()
+                      << " have appeared!\n";
+          } else {
+            std::cout << "an " << enemiesToFight[i].getName()
+                      << " have appeared!\n";
+          }
+        }
+      }
     }
   }
+  return enemiesToFight;
+}
+
+uint battle_start() {
+  uint battleChoice = 0;
+  std::cout << "\n";
+  std::cout << "1. Attack\n";
+  std::cout << "2. Use Item\n";
+  std::cout << "3. Flee\n";
+  std::cout << ">> ";
+  std::cin >> battleChoice;
+
+  while (std::cin.fail() || (battleChoice < 1 || battleChoice > 3)) {
+    std::cin.clear();
+    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+    std::cout << "Choose a valid option: ";
+    std::cin >> battleChoice;
+  }
+  std::cout << "\n";
+
+  return battleChoice;
+}
+
+/*
+  Returns subject index on user input
+*/
+uint enemy_choosing(std::vector<Enemy> vector) {
+  uint enemyTarget = 0;
+  std::cout << "Select the number of the enemy you want to attack";
+  std::cout << "\nSelecting 0 will go back to the Battle Choice: ";
+  std::cin >> enemyTarget;
+  while (std::cin.fail() || (enemyTarget < 0 || enemyTarget > vector.size())) {
+    std::cin.clear();
+    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+    std::cout << "Choose a valid enemy: ";
+    std::cin >> enemyTarget;
+  }
+  return enemyTarget;
+}
+
+uint attack_choice(std::vector<Skill *> usable_skills) {
+  uint action = 0;
+  std::cin >> action;
+  while (std::cin.fail() || (action < 0 || action > usable_skills.size())) {
+    std::cin.clear();
+    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+    std::cout << "Choose a valid action: ";
+    std::cin >> action;
+  }
+  return action;
+}
+
+void battle(Player &player, Pawn &pawn) {
+  std::vector<Enemy> enemies = enemies_appearing(generateRandom(1, 3));
+  Enemy *subject = nullptr;
+
+  std::vector<Skill> player_skills = player.getSkills();
+  std::vector<Skill *> usable_skills;
+  Skill *skill = nullptr;
+
+  std::cin.get();
+  do {
+    system("clear");
+    uint choice = 0;
+    bool is_flee_success = false;
+
+    // displaying all the enemies names and hp on screen
+    for (size_t i = 0; i < enemies.size(); i++) {
+      std::cout << i + 1 << ") " << enemies[i].getName() << ": "
+                << enemies[i].getHp() << "/" << enemies[i].getMaxHp() << "\n";
+    }
+
+    // clears the usable_skills vector
+    usable_skills.clear();
+    usable_skills.shrink_to_fit();
+
+    // select available skills
+    for (Skill &skill : player_skills) {
+      std::cout << skill.getName() << ": " << skill.getActualCd() << "\n";
+      if (!skill.getActualCd()) 
+        // if the skill is available (actual cd 0)
+        // it gets pushed inside the usable_skills vect
+        usable_skills.push_back(&skill);
+      else 
+        // else, it means that has been already used,
+        // so the cd gets decremented
+        skill.decrement_cd();
+    }
+
+    // displays player and pawn names/hps
+    std::cout << "\n- " << player.getName() << ": " << player.getHp() << "/"
+              << player.getMaxHp() << "\n";
+    std::cout << "- " << pawn.getName() << ": " << pawn.getHp() << "/"
+              << pawn.getMaxHp() << "\n";
+
+    // starts the battle
+    switch (battle_start()) {
+    // attack
+    case 1: {
+      pawn.battleTalk(casuality(100),
+                      enemies[generateRandom(0, enemies.size() - 1)]);
+      std::cout << "\n";
+      uint enemy_target = enemy_choosing(enemies);
+      if (!enemy_target)
+        continue;
+      subject = &enemies[--enemy_target];
+
+      std::cout << "\nSelect an action\n";
+      if (usable_skills.size()) {
+        for (size_t i = 0; i < usable_skills.size(); i++) {
+          std::cout << i + 1 << ". " << usable_skills[i]->getName() << " ("
+                    << usable_skills[i]->getSkillType() << ")"
+                    << "\n";
+        }
+        std::cout << "0. Attack\n>> ";
+        choice = attack_choice(usable_skills);
+        if (!choice) {
+          std::cout << "You dealt " << player.attack(*subject, nullptr)
+                    << " damage to " << subject->getName() << "\n";
+        } else {
+          choice--;
+          skill = usable_skills[choice];
+          std::cout << "Used skill: " << skill->getName() << "\n";
+          std::cout << "You dealt "
+                    << player.attack(*subject, skill)
+                    << " damage to " << subject->getName() << "\n";
+          skill->use();
+          usable_skills.erase(usable_skills.begin() + choice);
+        }
+      } else {
+        std::cout << "You have no usable skills.\n";
+        std::cout << "You will use a normal attack.\n";
+        std::cout << "You dealt " << player.attack(*subject, nullptr)
+                  << " damage to " << subject->getName() << "\n";
+      }
+      std::cout << "Remaining HP: " << subject->getHp() << "\n";
+
+      // checking if enemy is dead (hp 0)
+      if (!subject->getHp()) {
+        std::cout << subject->getName() << " was defeated!\n";
+        enemies.erase(enemies.begin() + enemy_target);
+      }
+
+      if (pawn.getHp()) {
+        std::cout << "\n";
+        subject = &enemies[generateRandom(0, enemies.size() - 1)];
+        std::cout << pawn.getName() << " attacked " << subject->getName();
+        std::cout << " and dealt " << pawn.pawn_attack(*subject, player) << " damage\n\n";
+      }
+
+      if (enemies.size()) {
+        // algorithm to make a random enemy attack the player
+        subject = &enemies[generateRandom(0, enemies.size() - 1)];
+
+        // deciding if to attack pawn or player
+        if (generateRandom(0, 1)) {
+          std::cout << subject->getName() << " dealt "
+                    << subject->attack(player) << " damage to "
+                    << player.getName() << "\n";
+          std::cout << "Remaining HP: " << player.getHp() << "\n";
+        } else {
+          std::cout << subject->getName() << " dealt " << subject->attack(pawn)
+                    << " damage to " << pawn.getName() << "\n";
+          std::cout << "Remaining HP: " << pawn.getHp() << "\n";
+        }
+      }
+      std::cin.ignore();
+      std::cin.get();
+      break;
+    }
+    // use item
+    case 2:
+      break;
+    // flee
+    case 3:
+      break;
+    // brok
+    case 0:
+      continue;
+    }
+  } while (enemies.size() && player.getHp());
 }
 
 void change_abilities(Player &player, Pawn &pawn) {}
@@ -969,7 +1166,7 @@ void skill_choosing(Player *player) {
 
 void skill_removing(Player *player) {
   uint skill = 0;
-  std::vector<Skill> player_abilities = player->getPlayerSkills();
+  std::vector<Skill> player_abilities = player->getSkills();
 
   do {
     system("clear");

@@ -13,8 +13,7 @@ protected:
   // Defining the various attributes
   // of a generic entity
   std::string name;
-  const uint max_hp;
-  uint hp, atk, matk, def, mdef;
+  uint max_hp, hp, atk, matk, def, mdef;
   uint xp;
   // Actually we don't know why but
   // without this the code breaks
@@ -29,6 +28,7 @@ public:
   // the private/protected members
   std::string getName() const;
   uint getHp() const;
+  void setMaxHp(uint max_hp);
   uint getMaxHp() const;
   uint getAtk() const;
   uint getMatk() const;

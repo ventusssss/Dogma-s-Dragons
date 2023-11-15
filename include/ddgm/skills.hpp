@@ -3,6 +3,7 @@
 
 #include "ddgm/entity.hpp"
 #include "ddgm/json.hpp"
+#include <iostream>
 #include <ostream>
 #include <string>
 #include <vector>
@@ -29,7 +30,7 @@ private:
   SkillType type, actualType;
   std::string name;
   // 5/0
-  uint cd, actual_cd;
+  uint cd, actual_cd = 0;
   float multiplier;
 
 public:
@@ -42,18 +43,11 @@ public:
       : name(name), cd(cd), actual_cd(0), type(type), actualType(type),
         multiplier(multiplier) {}
 
-  inline void use() {
-    if (!actual_cd)
-      this->actual_cd = this->cd;
-  }
-  inline Skill operator--() {
-    if (this->actual_cd)
-      this->actual_cd--;
-    return *this;
-  }
-
+  void use();
+  void decrement_cd();
   // Getter functions that return the private
   // values of the class
+
   std::string getSkillType() const;
   SkillType returnSkillType() const;
   SkillType returnActualType() const;

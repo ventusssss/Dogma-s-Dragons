@@ -1,9 +1,7 @@
 #include "ddgm/entity.hpp"
 #include "ddgm/player.hpp"
 #include "ddgm/utilities.hpp"
-// #include <chrono>
 #include <iostream>
-// #include <random>
 #include <sys/types.h>
 
 // ALL THE MEANINGS OF THE FUNCTIONS
@@ -24,6 +22,8 @@ void Entity::getHit(uint dmg) {
 std::string Entity::getName() const { return this->name; }
 
 uint Entity::getHp() const { return this->hp; }
+
+void Entity::setMaxHp(uint max_hp) { this->max_hp = max_hp; }
 
 uint Entity::getMaxHp() const { return this->max_hp; }
 

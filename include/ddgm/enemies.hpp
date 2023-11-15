@@ -26,11 +26,7 @@ public:
 
   // Defining the attack function for
   // physical class enemies
-  void attack(Entity &obj);
-
-  // Declaring the attack function for
-  // magic class enemies
-  void magicAttack(Entity &obj);
+  int attack(Entity &obj);
 
   // Declaring two functions that are related to the battle
   // (that's why we haven't used them in the definition files)

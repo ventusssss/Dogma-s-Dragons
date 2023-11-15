@@ -4,6 +4,15 @@
 namespace ddgm {
 // Defining the function to return the type of the skill
 // as a string so it's readable by the player
+
+void Skill::use() {
+  this->actual_cd = this->cd;
+}
+void Skill::decrement_cd() {
+  if (actual_cd)
+    this->actual_cd--;
+}
+
 std::string Skill::getSkillType() const {
   switch (this->actualType) {
   case SkillType::slash:

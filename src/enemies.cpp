@@ -4,6 +4,7 @@
 #include "ddgm/utilities.hpp"
 #include <array>
 #include <iostream>
+#include <math.h>
 #include <random>
 #include <vector>
 
@@ -107,20 +108,30 @@ void Enemy::printResistances() const {
 uint Enemy::getVulperc() const { return this->vulperc; }
 uint Enemy::getResperc() const { return this->resperc; }
 
-// attack methods
-void Enemy::attack(Entity &obj) {
-  uint dmg = generateRandom(this->atk - percu(this->atk, 10),
-                            this->atk + percu(this->atk, 10)),
-       dmg_eff = (dmg > obj.getDef() ? dmg - obj.getDef() : obj.getDef() - dmg);
+// attack method
+int Enemy::attack(Entity &obj) {
+  int dmg = 0, dmg_eff = 0;
+  if (dynamic_cast<Magic *>(this)) {
+    dmg = generateRandom(this->matk - percu(this->matk, 10),
+                         this->matk + percu(this->matk, 10));
+    if (dmg >= obj.getMdef()) {
+      dmg_eff = dmg - obj.getMdef();
+    } else {
+      dmg_eff =
+          ceil(log((3 * pow(obj.getMdef(), 2)) - (4 * obj.getMdef()) + dmg));
+    }
+  } else {
+    dmg = generateRandom(this->atk - percu(this->atk, 10),
+                         this->atk + percu(this->atk, 10));
+    if (dmg >= obj.getDef()) {
+      dmg_eff = dmg - obj.getDef();
+    } else {
+      dmg_eff =
+          ceil(log((3 * pow(obj.getDef(), 2)) - (4 * obj.getMdef()) + dmg));
+    }
+  }
   obj.getHit(dmg_eff);
-}
-
-void Enemy::magicAttack(Entity &obj) {
-  uint dmg = generateRandom(this->matk - percu(this->matk, 10),
-                            this->matk + percu(this->matk, 10)),
-       dmg_eff =
-           (dmg > obj.getMdef() ? dmg - obj.getMdef() : obj.getMdef() - dmg);
-  obj.getHit(dmg_eff);
+  return dmg_eff;
 }
 
 bool Enemy::isEffective(Skill::SkillType skill) {

@@ -49,7 +49,7 @@ bool isInRange(uint n, uint start, uint end) {
 // of an event to verify
 bool casuality(uint perc) {
   // creating the actual casual number
-  if (generateRandom(0, 100) < perc)
+  if (generateRandom(1, 100) <= perc)
     return true;
   else
     return false;
@@ -78,10 +78,10 @@ uint check_skill(uint end) {
   return num;
 }
 
-bool search_skill(std::vector<Skill::SkillType> vector,
-                  Skill::SkillType skill) {
-  for (uint i = 0; i < vector.size(); i++) {
-    if (skill == vector[i]) {
+bool search_skill(std::vector<Skill::SkillType> skill_typesVector,
+                  Skill::SkillType skill_type) {
+  for (uint i = 0; i < skill_typesVector.size(); i++) {
+    if (skill_type == skill_typesVector[i]) {
       return true;
     }
   }
@@ -101,9 +101,11 @@ void show_skills(std::vector<Skill> skills) {
   std::cout << "[ ";
   for (uint i = 0; i < skills.size(); i++) {
     if (i == skills.size() - 1) {
-      std::cout << i + 1 << ". " << skills[i].getName();
+      std::cout << i + 1 << ". " << skills[i].getName() << ": "
+                << skills[i].getSkillType();
     } else {
-      std::cout << i + 1 << ". " << skills[i].getName() << ", ";
+      std::cout << i + 1 << ". " << skills[i].getName() << ": "
+                << skills[i].getSkillType() << ", ";
     }
   }
   std::cout << " ]\n";

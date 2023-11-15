@@ -26,7 +26,15 @@ int game_menu();
 // Declaring the in-game functions
 void travel(Player &player, Pawn &pawn);
 
-void battle();
+std::vector<Enemy> enemies_appearing(uint enemyNumber);
+
+uint battle_start();
+
+uint enemy_choosing(std::vector<Enemy> enemiesToFight);
+
+uint attack_choice(std::vector<Skill *> usable_skills);
+
+void battle(Player &player, Pawn &pawn);
 
 void change_abilities(Player &player, Pawn &pawn);
 

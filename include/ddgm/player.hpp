@@ -83,7 +83,7 @@ public:
 
   // do not remove this unless you want the code to stop working
   // void attack(Entity &obj);
-  void attack(Enemy &obj, Skill skill);
+  uint attack(Enemy &obj, Skill *skill);
 
   // Getter functions for the level counters
   uint getFighterLvls() const, getStriderLvls() const, getMageLvls() const,
@@ -93,7 +93,7 @@ public:
 
   // Getter function that returns the
   // player_skills vector
-  std::vector<Skill> getPlayerSkills() const;
+  std::vector<Skill> getSkills() const;
 
   std::vector<Skill> *getSkillsAddr();
 

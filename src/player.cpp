@@ -6,6 +6,7 @@
 #include "ddgm/utilities.hpp"
 #include <chrono>
 #include <cmath>
+#include <cstddef>
 #include <iostream>
 #include <math.h>
 #include <random>
@@ -31,9 +32,6 @@ void Player::addXp(const uint xp) { this->xp += xp; }
 void Player::updateStats() {
   this->hp = max_hp;
   uint tmp_lvl = this->lvl;
-
-  // xp = 123 * lvl^2 - 123 * lvl
-  // lvl = (123 + sqrt(123^2-4(123)(-xp))) / 123 * 2;
 
   // Creating an xp curve and a levelling system
   uint delta = std::pow(123, 2) - (4 * 123 * (-this->xp));
@@ -218,7 +216,7 @@ std::string Player::returnVocation() const {
   case Vocations::Paladin:
     return "Paladin";
   default:
-    return "Unknown (unexpected behavior nigga)";
+    return "Unknown (unexpected behavior)";
   }
 }
 
@@ -314,38 +312,43 @@ void Player::useItem(uint pos, Entity *obj) {
   this->inventory.erase(this->inventory.begin() + pos);
 }
 
-void Player::attack(Enemy &obj, Skill skill) {
-  // creating random generator
-  // std::random_device rd;
-  // std::mt19937 rng(rd());
+uint Player::attack(Enemy &obj, Skill *skill) {
+  uint dmg = 0, dmg_eff = 0;
 
-  // range of damage
-  /*std::uniform_int_distribution<uint> uni(this->atk - percu(this->atk, 10),
-                                          this->atk + percu(this->atk, 10));*/
-
-  // std::uniform_int_distribution<uint> uni;
-  uint dmg = 0;
   if (dynamic_cast<Magic *>(&obj))
     dmg = generateRandom(this->matk - percu(this->matk, 10),
                          this->matk + percu(this->matk, 10));
-  // uni = std::uniform_int_distribution<uint>(
-  // this->matk - percu(this->matk, 10), this->matk + percu(this->matk, 10));
   else
     dmg = generateRandom(this->atk - percu(this->atk, 10),
                          this->atk + percu(this->atk, 10));
-  // uni = std::uniform_int_distribution<uint>(this->atk - percu(this->atk,
-  // 10), this->atk + percu(this->atk, 10));
-  uint dmg_eff = 0;
-  dmg *= skill.getMultiplier();
-  if (obj.isEffective(skill.returnSkillType()))
-    dmg += percu(dmg, obj.getVulperc());
-  else if (obj.isResistant(skill.returnSkillType()))
-    dmg -= percu(dmg, obj.getResperc());
-  if (dynamic_cast<Magic *>(&obj))
-    dmg_eff = (dmg > obj.getMdef() ? dmg - obj.getMdef() : obj.getMdef() - dmg);
-  else
-    dmg_eff = (dmg > obj.getDef() ? dmg - obj.getDef() : obj.getDef() - dmg);
+
+  if (!skill) {
+    dmg_eff = dmg;
+  } else {
+    dmg *= skill->getMultiplier();
+    if (obj.isEffective(skill->returnSkillType()))
+      dmg += percu(dmg, obj.getVulperc());
+    else if (obj.isResistant(skill->returnSkillType()))
+      dmg -= percu(dmg, obj.getResperc());
+
+    if (dynamic_cast<Magic *>(&obj)) {
+      if (dmg >= obj.getMdef()) {
+        dmg_eff = dmg - obj.getMdef();
+      } else {
+        dmg_eff =
+            ceil(log((3 * pow(obj.getMdef(), 2)) - (4 * obj.getMdef()) + dmg));
+      }
+    } else {
+      if (dmg >= obj.getDef()) {
+        dmg_eff = dmg - obj.getDef();
+      } else {
+        dmg_eff =
+            ceil(log((3 * pow(obj.getDef(), 2)) - (4 * obj.getMdef()) + dmg));
+      }
+    }
+  }
   obj.getHit(dmg_eff);
+  return dmg_eff;
 }
 
 uint Player::getFighterLvls() const { return this->fighter_levels; }
@@ -358,7 +361,7 @@ uint Player::getPaladinLvls() const { return this->paladin_levels; }
 uint Player::getAssassinLvls() const { return this->assassin_levels; }
 uint Player::getMagickArcherLvls() const { return this->magickarcher_levels; }
 
-std::vector<Skill> Player::getPlayerSkills() const {
+std::vector<Skill> Player::getSkills() const {
   return this->player_skills;
 }
 std::vector<Skill> *Player::getSkillsAddr() { return &this->player_skills; }
@@ -366,7 +369,7 @@ std::vector<Skill> *Player::getSkillsAddr() { return &this->player_skills; }
 nlohmann::json Player::getJson() const {
   nlohmann::json items;
   nlohmann::json skills;
-  for (Skill &skill : this->getPlayerSkills()) {
+  for (Skill &skill : this->getSkills()) {
     skills.push_back(skill.getJson());
   }
   for (Item item : this->getInventory()) {

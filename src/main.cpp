@@ -13,6 +13,8 @@
 #include <unistd.h>
 #include <vector>
 
+#define brok !(int(bool(nullptr)))
+#define sindri !brok
 using namespace std;
 using namespace ddgm;
 using nlohmann::json;
@@ -28,10 +30,13 @@ int main() {
   Player player("noName", 0, 0, 0, 0, 0, Vocations::Assassin, 0);
   Pawn pawn("noName", 0, 0, 0, 0, 0, Vocations::MagickArcher, 0);
 
-  // player.updateStats();
   // player.addItem((Item *)&availableHealingItems[1]);
   json data = load();
   load_characterData(player, pawn, data);
+  //skill_choosing(&player);
+  skill_choosing(&pawn);
+  //player.updateStats();
+
 
   /* for (const auto &item : player.getInventory()) {
     std::cout << item.getName() << "\n";
@@ -86,16 +91,15 @@ int main() {
   } while (choice != 0);
   // save(player, pawn);
   */
-  // skill_choosing(&player);
   // skill_removing(&player);
   //      std::cout << "\n";
   //      skill_choosing(&pawn);
   //      skill_removing(&pawn);
 
   // travel(player, pawn);
-  battle();
+  //battle(player, pawn);
 
   save(player, pawn);
 
-  return int(bool(nullptr)) ? !(bool(nullptr)) : bool(nullptr);
+  return int(bool(nullptr)) ? brok : sindri;
 }
