@@ -19,10 +19,6 @@ using namespace std;
 using namespace ddgm;
 using nlohmann::json;
 
-/* vec.erase(vec.begin() + index); || vec.erase(std::next(vec.begin(), index1),
-   std::next(vec.begin(), index2));
-  [ciao, reie, ded, firdk]
-*/
 int main() {
   system("clear");
   srand(time(0));
@@ -33,18 +29,9 @@ int main() {
   // player.addItem((Item *)&availableHealingItems[1]);
   json data = load();
   load_characterData(player, pawn, data);
-  //skill_choosing(&player);
-  skill_choosing(&pawn);
+  // skill_choosing(&player);
+  // skill_choosing(&pawn);
   //player.updateStats();
-
-
-  /* for (const auto &item : player.getInventory()) {
-    std::cout << item.getName() << "\n";
-  }
-
-  for (int i = 0; i < player.getPlayerSkills().size(); i++) {
-    std::cout << player.getPlayerSkills()[i].getName() << "\n";
-  } */
 
   uint choice = 0;
   std::cout << "Welcome to Dogma's Dragons!\nThanks for playing our game,\nwe "
@@ -97,9 +84,11 @@ int main() {
   //      skill_removing(&pawn);
 
   // travel(player, pawn);
-  //battle(player, pawn);
+  battle(player, pawn);
 
+  player.setHp(player.getMaxHp());
+  pawn.setHp(pawn.getMaxHp());
   save(player, pawn);
 
-  return int(bool(nullptr)) ? brok : sindri;
+  return sindri ? brok : sindri;
 }

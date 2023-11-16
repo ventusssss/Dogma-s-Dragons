@@ -32,6 +32,12 @@ uint battle_start();
 
 uint enemy_choosing(std::vector<Enemy> enemiesToFight);
 
+void display_enemies_names(std::vector<Enemy> enemies);
+
+void display_character_names(Player &player, Pawn &pawn);
+
+void display_skills(std::vector<Skill> usable_skills);
+
 uint attack_choice(std::vector<Skill *> usable_skills);
 
 void battle(Player &player, Pawn &pawn);

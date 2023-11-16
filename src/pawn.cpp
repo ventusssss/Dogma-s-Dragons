@@ -256,7 +256,7 @@ void Pawn::battleTalk(bool cas, Enemy &obj) {
       std::cout << " against " << obj.getName() << ", Master!";
       break;
     }
-    std::cout << "\n";
+    std::cout << "\n\n";
   }
 }
 

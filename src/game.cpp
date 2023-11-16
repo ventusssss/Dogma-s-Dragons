@@ -48,8 +48,12 @@ void new_game(Player *player, Pawn *pawn) {
   save(*player, *pawn);
 }
 
+// function to load the stats contained in the "save.json" file
 void load_characterData(Player &player, Pawn &pawn, nlohmann::json data) {
+  // checking if the file isn't empty
   if (data != nlohmann::json::parse("{}")) {
+    // setting all the attributes value to the
+    // corresponding value inside the file
     player.setName(data["player"]["name"]);
     player.setHp(data["player"]["hp"]);
     player.setMaxHp(player.getHp());
@@ -60,15 +64,33 @@ void load_characterData(Player &player, Pawn &pawn, nlohmann::json data) {
     player.setVocation((Vocations)data["player"]["vocation"]);
     player.setXp(data["player"]["xp"]);
 
+    player.setFighterLvls(data["player"]["fighter_levels"]);
+    player.setStriderLvls(data["player"]["strider_levels"]);
+    player.setMageLvls(data["player"]["mage_levels"]);
+    player.setWarriorLvls(data["player"]["warrior_levels"]);
+    player.setRangerLvls(data["player"]["ranger_levels"]);
+    player.setSorcererLvls(data["player"]["sorcerer_levels"]);
+    player.setAssassinLvls(data["player"]["assassin_levels"]);
+    player.setMagickArcherLvls(data["player"]["magickarcher_levels"]);
+    player.setPaladinLvls(data["player"]["paladin_levels"]);
+
+    // creating a temporary vector of type skills to store
+    // each skill contained in the file
     std::vector<Skill> skills;
 
+    // iterating through all of the file skills
     for (nlohmann::json skill : data["player"]["skills"]) {
+      // creating a temporary skill object to push inside
+      // the skills vector
       Skill tmpSkill(skill["name"], skill["cooldown"],
                      (Skill::SkillType)skill["type"], skill["multiplier"]);
       skills.push_back(tmpSkill);
     }
+
+    // and setting the skills vector as the player skills
     player.setSkills(skills);
 
+    // doing literally the same thing as skills for items
     std::vector<Item> items;
     for (auto item : data["player"]["inventory"]) {
       Item tmpItem(item["name"], item["value"], item["description"]);
@@ -76,12 +98,15 @@ void load_characterData(Player &player, Pawn &pawn, nlohmann::json data) {
     }
     player.setInventory(items);
 
+    // clearing the two vectors because we'll have to use them
+    // for the pawn too
     skills.clear();
     skills.shrink_to_fit();
 
     items.clear();
     items.shrink_to_fit();
 
+    // and doing the same thing we did with player
     pawn.setName(data["pawn"]["name"]);
     pawn.setHp(data["pawn"]["hp"]);
     pawn.setMaxHp(pawn.getHp());
@@ -91,6 +116,15 @@ void load_characterData(Player &player, Pawn &pawn, nlohmann::json data) {
     pawn.setMdef(data["pawn"]["mdef"]);
     pawn.setVocation((Vocations)data["pawn"]["vocation"]);
     pawn.setXp(data["pawn"]["xp"]);
+    pawn.setFighterLvls(data["pawn"]["fighter_levels"]);
+    pawn.setStriderLvls(data["pawn"]["strider_levels"]);
+    pawn.setMageLvls(data["pawn"]["mage_levels"]);
+    pawn.setWarriorLvls(data["pawn"]["warrior_levels"]);
+    pawn.setRangerLvls(data["pawn"]["ranger_levels"]);
+    pawn.setSorcererLvls(data["pawn"]["sorcerer_levels"]);
+    pawn.setAssassinLvls(data["pawn"]["assassin_levels"]);
+    pawn.setMagickArcherLvls(data["pawn"]["magickarcher_levels"]);
+    pawn.setPaladinLvls(data["pawn"]["paladin_levels"]);
 
     for (auto skill : data["pawn"]["skills"]) {
       Skill tmpSkill(skill["name"], skill["cooldown"],
@@ -107,6 +141,7 @@ void load_characterData(Player &player, Pawn &pawn, nlohmann::json data) {
   }
 }
 
+// creating the game menu for the in-game actions
 int game_menu() {
   uint c;
   std::cout << "1. Travel\n";
@@ -125,43 +160,50 @@ int game_menu() {
   return c;
 }
 
+// defining the travel function that has a 60% possibility
+// of getting the players into a fight, and the remaining 40% to
+// find an item
 void travel(Player &player, Pawn &pawn) {
   uint travelPossibilities = generateRandom(1, 100);
   if (travelPossibilities <= 60) {
     battle(player, pawn);
   } else {
+    // itemTypeFound is created to decide what type of item is found
+    // (Healing, Buffer, Attack, Magick)
     uint itemTypeFound = generateRandom(1, 4);
     uint itemFound = 0;
-    uint itemDestination = generateRandom(0, 1);
 
     switch (itemTypeFound) {
-    case 1:
+    // inside each case it generates the random item
+    // from the correspoding list AND a temporary value (0 or 1)
+    // that indicates the item destination (1 player, 0 pawn)
+    case 1: // case Healing
       itemFound = generateRandom(0, availableHealingItems.size() - 1);
-      if (itemDestination) {
+      if (generateRandom(0, 1)) {
         player.addItem(availableHealingItems[itemFound]);
       } else {
         pawn.addItem(availableHealingItems[itemFound]);
       }
       break;
-    case 2:
+    case 2: // case Attack
       itemFound = generateRandom(0, availableAttackItems.size() - 1);
-      if (itemDestination) {
+      if (generateRandom(0, 1)) {
         player.addItem(availableAttackItems[itemFound]);
       } else {
         pawn.addItem(availableAttackItems[itemFound]);
       }
       break;
-    case 3:
+    case 3: // case Magick
       itemFound = generateRandom(0, availableMagicItems.size() - 1);
-      if (itemDestination) {
+      if (generateRandom(0, 1)) {
         player.addItem(availableMagicItems[itemFound]);
       } else {
         pawn.addItem(availableMagicItems[itemFound]);
       }
       break;
-    case 4:
+    case 4: // case Buffer
       itemFound = generateRandom(0, availableBufferItems.size() - 1);
-      if (itemDestination) {
+      if (generateRandom(0, 1)) {
         player.addItem(availableBufferItems[itemFound]);
       } else {
         pawn.addItem(availableBufferItems[itemFound]);
@@ -171,6 +213,8 @@ void travel(Player &player, Pawn &pawn) {
   }
 }
 
+// substantialy, a function to display the enemies names
+// when appearing in a grammatically correct way
 std::vector<Enemy> enemies_appearing(uint enemyNumber) {
   std::vector<Enemy> enemiesToFight;
   std::vector<std::string> aEnemies = {
@@ -245,6 +289,7 @@ std::vector<Enemy> enemies_appearing(uint enemyNumber) {
   return enemiesToFight;
 }
 
+// function to read the battle choice from user
 uint battle_start() {
   uint battleChoice = 0;
   std::cout << "\n";
@@ -254,6 +299,7 @@ uint battle_start() {
   std::cout << ">> ";
   std::cin >> battleChoice;
 
+  // controls if number is in range
   while (std::cin.fail() || (battleChoice < 1 || battleChoice > 3)) {
     std::cin.clear();
     std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
@@ -270,8 +316,8 @@ uint battle_start() {
 */
 uint enemy_choosing(std::vector<Enemy> vector) {
   uint enemyTarget = 0;
-  std::cout << "Select the number of the enemy you want to attack";
-  std::cout << "\nSelecting 0 will go back to the Battle Choice: ";
+  std::cout << "Select the number of the enemy target\n";
+  std::cout << "Selecting 0 gets back to Battle Choice\n>> ";
   std::cin >> enemyTarget;
   while (std::cin.fail() || (enemyTarget < 0 || enemyTarget > vector.size())) {
     std::cin.clear();
@@ -282,10 +328,35 @@ uint enemy_choosing(std::vector<Enemy> vector) {
   return enemyTarget;
 }
 
+void display_enemies_names(std::vector<Enemy> enemies) {
+  for (size_t i = 0; i < enemies.size(); i++) {
+    std::cout << i + 1 << ") " << enemies[i].getName() << ": "
+              << enemies[i].getHp() << "/" << enemies[i].getMaxHp() << "\n";
+  }
+}
+
+void display_character_names(Player &player, Pawn &pawn) {
+  std::cout << "\n- " << player.getName() << ": " << player.getHp() << "/"
+            << player.getMaxHp() << "\n";
+  std::cout << "- " << pawn.getName() << ": " << pawn.getHp() << "/"
+            << pawn.getMaxHp() << "\n";
+}
+
+void display_skills(std::vector<Skill *> usable_skills) {
+  for (size_t i = 0; i < usable_skills.size(); i++) {
+    std::cout << i + 1 << ". " << usable_skills[i]->getName() << " ("
+              << usable_skills[i]->getSkillType() << ")"
+              << "\n";
+  }
+  std::cout << "0. Base Attack\n";
+  std::cout << usable_skills.size() + 1 << ". Target Selection\n>> ";
+}
+
+// function to decide action choice (skills or normal attack)
 uint attack_choice(std::vector<Skill *> usable_skills) {
   uint action = 0;
   std::cin >> action;
-  while (std::cin.fail() || (action < 0 || action > usable_skills.size())) {
+  while (std::cin.fail() || (action < 0 || action > usable_skills.size() + 1)) {
     std::cin.clear();
     std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
     std::cout << "Choose a valid action: ";
@@ -294,8 +365,16 @@ uint attack_choice(std::vector<Skill *> usable_skills) {
   return action;
 }
 
+// final battle function
 void battle(Player &player, Pawn &pawn) {
-  std::vector<Enemy> enemies = enemies_appearing(generateRandom(1, 3));
+  // creating an enemies vector that contains all the enemies
+  // spawned by the enemies_appearing function
+  std::vector<Enemy> enemies = enemies_appearing(generateRandom(1, 1));
+
+  // creating an object of type enemy that will make as
+  // destination for our attacks
+  // then will change and will be a randomly chosen enemy
+  // to attack
   Enemy *subject = nullptr;
 
   std::vector<Skill> player_skills = player.getSkills();
@@ -306,13 +385,11 @@ void battle(Player &player, Pawn &pawn) {
   do {
     system("clear");
     uint choice = 0;
+    bool on_turn = true;
     bool is_flee_success = false;
 
     // displaying all the enemies names and hp on screen
-    for (size_t i = 0; i < enemies.size(); i++) {
-      std::cout << i + 1 << ") " << enemies[i].getName() << ": "
-                << enemies[i].getHp() << "/" << enemies[i].getMaxHp() << "\n";
-    }
+    display_enemies_names(enemies);
 
     // clears the usable_skills vector
     usable_skills.clear();
@@ -320,53 +397,57 @@ void battle(Player &player, Pawn &pawn) {
 
     // select available skills
     for (Skill &skill : player_skills) {
-      std::cout << skill.getName() << ": " << skill.getActualCd() << "\n";
-      if (!skill.getActualCd()) 
+      if (!skill.getActualCd())
         // if the skill is available (actual cd 0)
         // it gets pushed inside the usable_skills vect
         usable_skills.push_back(&skill);
-      else 
+      else
         // else, it means that has been already used,
         // so the cd gets decremented
         skill.decrement_cd();
     }
 
     // displays player and pawn names/hps
-    std::cout << "\n- " << player.getName() << ": " << player.getHp() << "/"
-              << player.getMaxHp() << "\n";
-    std::cout << "- " << pawn.getName() << ": " << pawn.getHp() << "/"
-              << pawn.getMaxHp() << "\n";
+    display_character_names(player, pawn);
 
     // starts the battle
+    std::cout << "\nSelect an action";
     switch (battle_start()) {
     // attack
     case 1: {
-      pawn.battleTalk(casuality(100),
-                      enemies[generateRandom(0, enemies.size() - 1)]);
+      system("clear");
+      display_enemies_names(enemies);
       std::cout << "\n";
+      pawn.battleTalk(casuality(60),
+                      enemies[generateRandom(0, enemies.size() - 1)]);
       uint enemy_target = enemy_choosing(enemies);
       if (!enemy_target)
-        continue;
-      subject = &enemies[--enemy_target];
+        break;
+      subject = &enemies[enemy_target - 1];
 
-      std::cout << "\nSelect an action\n";
       if (usable_skills.size()) {
-        for (size_t i = 0; i < usable_skills.size(); i++) {
-          std::cout << i + 1 << ". " << usable_skills[i]->getName() << " ("
-                    << usable_skills[i]->getSkillType() << ")"
-                    << "\n";
-        }
-        std::cout << "0. Attack\n>> ";
+        bool is_choice_reset = false;
+        display_skills(usable_skills);
         choice = attack_choice(usable_skills);
-        if (!choice) {
+        while (choice == usable_skills.size() + 1) {
+          system("clear");
+          display_enemies_names(enemies);
+          std::cout << "\n";
+          enemy_target = enemy_choosing(enemies);
+          if (!enemy_target)
+            break;
+          enemy_target--;
+          display_skills(usable_skills);
+          choice = attack_choice(usable_skills);
+        }
+        if (!enemy_target) continue;
+        if (!choice)
           std::cout << "You dealt " << player.attack(*subject, nullptr)
                     << " damage to " << subject->getName() << "\n";
-        } else {
+        else {
           choice--;
           skill = usable_skills[choice];
-          std::cout << "Used skill: " << skill->getName() << "\n";
-          std::cout << "You dealt "
-                    << player.attack(*subject, skill)
+          std::cout << "You dealt " << player.attack(*subject, skill)
                     << " damage to " << subject->getName() << "\n";
           skill->use();
           usable_skills.erase(usable_skills.begin() + choice);
@@ -382,14 +463,20 @@ void battle(Player &player, Pawn &pawn) {
       // checking if enemy is dead (hp 0)
       if (!subject->getHp()) {
         std::cout << subject->getName() << " was defeated!\n";
-        enemies.erase(enemies.begin() + enemy_target);
+        enemies.erase(enemies.begin() + enemy_target - 1);
+        if (!enemies.size()) {
+          std::cin.ignore();
+          std::cin.get();
+          break;
+        }
       }
 
-      if (pawn.getHp()) {
+      if (pawn.getHp() && enemies.size()) {
         std::cout << "\n";
         subject = &enemies[generateRandom(0, enemies.size() - 1)];
         std::cout << pawn.getName() << " attacked " << subject->getName();
-        std::cout << " and dealt " << pawn.pawn_attack(*subject, player) << " damage\n\n";
+        std::cout << " and dealt " << pawn.pawn_attack(*subject, player)
+                  << " damage\n\n";
       }
 
       if (enemies.size()) {
@@ -397,11 +484,21 @@ void battle(Player &player, Pawn &pawn) {
         subject = &enemies[generateRandom(0, enemies.size() - 1)];
 
         // deciding if to attack pawn or player
-        if (generateRandom(0, 1)) {
+        if (!pawn.getHp()) {
+          std::cout << subject->getName() << " dealt "
+                    << subject->attack(player) << " damage to "
+                    << player.getName() << "\n";
+        } else if (generateRandom(0, 1)) {
           std::cout << subject->getName() << " dealt "
                     << subject->attack(player) << " damage to "
                     << player.getName() << "\n";
           std::cout << "Remaining HP: " << player.getHp() << "\n";
+          if (!player.getHp()) {
+            std::cout << "And so...the Arisen died...\n";
+            std::cin.ignore();
+            std::cin.get();
+            break;
+          }
         } else {
           std::cout << subject->getName() << " dealt " << subject->attack(pawn)
                     << " damage to " << pawn.getName() << "\n";
@@ -410,19 +507,20 @@ void battle(Player &player, Pawn &pawn) {
       }
       std::cin.ignore();
       std::cin.get();
-      break;
-    }
+    } break;
     // use item
     case 2:
       break;
     // flee
     case 3:
       break;
-    // brok
-    case 0:
-      continue;
     }
   } while (enemies.size() && player.getHp());
+  system("clear");
+  if (!player.getHp())
+    std::cout << "The enemies got their best on you...\n";
+  else
+    std::cout << "You defeated all the enemies!\n";
 }
 
 void change_abilities(Player &player, Pawn &pawn) {}

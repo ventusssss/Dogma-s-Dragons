@@ -41,6 +41,9 @@ void Player::updateStats() {
   // Checking how many levels the player gained after acquiring xp
   // And boosting specific stats for whatever vocation the player is.
   uint diff = this->lvl - tmp_lvl;
+  if (diff)
+    std::cout << "You reached level " << this->lvl << "\n";
+  
   for (uint i = 0; i < diff; i++) {
     switch (this->vocation) {
     case Vocations::Fighter:
@@ -361,9 +364,7 @@ uint Player::getPaladinLvls() const { return this->paladin_levels; }
 uint Player::getAssassinLvls() const { return this->assassin_levels; }
 uint Player::getMagickArcherLvls() const { return this->magickarcher_levels; }
 
-std::vector<Skill> Player::getSkills() const {
-  return this->player_skills;
-}
+std::vector<Skill> Player::getSkills() const { return this->player_skills; }
 std::vector<Skill> *Player::getSkillsAddr() { return &this->player_skills; }
 
 nlohmann::json Player::getJson() const {
@@ -385,7 +386,7 @@ nlohmann::json Player::getJson() const {
                          {"xp", this->xp},
                          {"lvl", this->lvl},
                          {"vocation", this->getVocation()},
-                         {"fighter_lvls", this->fighter_levels},
+                         {"fighter_levels", this->fighter_levels},
                          {"warrior_levels", this->warrior_levels},
                          {"paladin_levels", this->paladin_levels},
                          {"strider_levels", this->strider_levels},
@@ -396,7 +397,6 @@ nlohmann::json Player::getJson() const {
                          {"magickarcher_levels", this->magickarcher_levels},
                          {"skills", skills},
                          {"inventory", items}};
-
   return data;
 }
 
@@ -441,6 +441,33 @@ void Player::setXp(uint xp) { this->xp = xp; }
 void Player::setInventory(std::vector<Item> items) { this->inventory = items; }
 void Player::setSkills(std::vector<Skill> player_abilities) {
   this->player_skills = player_abilities;
+}
+
+void Player::setFighterLvls(uint fighter_levels) {
+  this->fighter_levels = fighter_levels;
+}
+void Player::setStriderLvls(uint strider_levels) {
+  this->strider_levels = strider_levels;
+}
+void Player::setMageLvls(uint mage_levels) { this->mage_levels = mage_levels; }
+
+void Player::setWarriorLvls(uint warrior_levels) {
+  this->warrior_levels = warrior_levels;
+}
+void Player::setRangerLvls(uint ranger_levels) {
+  this->ranger_levels = ranger_levels;
+}
+void Player::setSorcererLvls(uint sorcerer_levels) {
+  this->sorcerer_levels = sorcerer_levels;
+}
+void Player::setAssassinLvls(uint assassin_levels) {
+  this->assassin_levels = assassin_levels;
+}
+void Player::setPaladinLvls(uint paladin_levels) {
+  this->paladin_levels = paladin_levels;
+}
+void Player::setMagickArcherLvls(uint magickarcher_levels) {
+  this->magickarcher_levels = magickarcher_levels;
 }
 
 } // namespace ddgm

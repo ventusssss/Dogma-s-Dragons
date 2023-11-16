@@ -113,6 +113,17 @@ public:
   void setStartingVocation(uint vocation);
   void setInventory(std::vector<Item> items);
   void setSkills(std::vector<Skill> player_abilities);
+
+  void setFighterLvls(uint fighter_levels);
+  void setStriderLvls(uint strider_levels);
+  void setMageLvls(uint mage_levels);
+  void setWarriorLvls(uint warrior_levels);
+  void setRangerLvls(uint ranger_levels);
+  void setSorcererLvls(uint sorcerer_levels);
+  void setAssassinLvls(uint assassin_levels);
+  void setPaladinLvls(uint paladin_levels);
+  void setMagickArcherLvls(uint magickarcher_levels);
+
 };
 
 // Operator overloading that allows to print

@@ -29,6 +29,8 @@ std::string Skill::getSkillType() const {
     return "Holy";
   case SkillType::dark:
     return "Dark";
+  case SkillType::cure:
+    return "Cure";
   default:
     return "None";
   }
