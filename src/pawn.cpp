@@ -296,7 +296,7 @@ uint Pawn::pawn_attack(Enemy &obj, Player &player) {
   for (uint i = 0; i < this->player_skills.size(); i++) {
     if ((this->player_skills[i].returnSkillType() == Skill::SkillType::cure) &&
         player.getHp() <= percu(player.getMaxHp(), 35)) {
-          Skill skill = this->player_skills[i];
+      Skill skill = this->player_skills[i];
       player.healEntity(percu(player.getMaxHp(), 40));
       skill.use();
       return 0;
@@ -332,6 +332,8 @@ uint Pawn::pawn_attack(Enemy &obj, Player &player) {
       for (Skill &x : *p_skills) {
         x.setSkillType(skill->returnSkillType());
       }
+      skill->use();
+      return 0;
     } else {
       dmg *= skill->getMultiplier();
       if (obj.isEffective(skill->returnSkillType())) {

@@ -343,6 +343,7 @@ void display_character_names(Player &player, Pawn &pawn) {
 }
 
 void display_skills(std::vector<Skill *> usable_skills) {
+  std::cout << "Choose action to perform\n";
   for (size_t i = 0; i < usable_skills.size(); i++) {
     std::cout << i + 1 << ". " << usable_skills[i]->getName() << " ("
               << usable_skills[i]->getSkillType() << ")"
@@ -350,6 +351,53 @@ void display_skills(std::vector<Skill *> usable_skills) {
   }
   std::cout << "0. Base Attack\n";
   std::cout << usable_skills.size() + 1 << ". Target Selection\n>> ";
+}
+
+std::vector<Entity> display_entities(Player &player, Pawn &pawn,
+                                     std::vector<Enemy> enemies) {
+  // entity number to take count of all entities
+  uint entity_number = 1;
+
+  // vector to store the entities
+  std::vector<Entity> entities;
+  std::cout << "Select the entity you want to cure\n";
+  std::cout << entity_number++ << ". "
+            << "|Player| " << player.getName() << ": " << player.getHp() << "/"
+            << player.getMaxHp() << "\n";
+  entities.push_back(player);
+  if (pawn.getHp()) {
+    std::cout << entity_number++ << ". "
+              << "|Pawn| " << pawn.getName() << ": " << pawn.getHp() << "/"
+              << pawn.getMaxHp() << "\n";
+    entities.push_back(pawn);
+    for (Enemy &enemy : enemies) {
+      std::cout << entity_number++ << ". "
+                << "|Enemy| " << enemy.getName() << ": " << enemy.getHp() << "/"
+                << enemy.getMaxHp() << "\n";
+      entities.push_back(enemy);
+    }
+  } else {
+    for (Enemy &enemy : enemies) {
+      std::cout << entity_number++ << ". "
+                << "|Enemy| " << enemy.getName() << ": " << enemy.getHp() << "/"
+                << enemy.getMaxHp() << "\n";
+      entities.push_back(enemy);
+    }
+  }
+  std::cout << ">> ";
+  return entities;
+}
+
+uint entity_choice(std::vector<Entity> entities) {
+  uint choice = 0;
+  std::cin >> choice;
+  while (std::cin.fail() || (choice < 1 || choice > entities.size())) {
+    std::cin.clear();
+    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+    std::cout << "Choose a valid entity: ";
+    std::cin >> choice;
+  }
+  return --choice;
 }
 
 // function to decide action choice (skills or normal attack)
@@ -369,7 +417,7 @@ uint attack_choice(std::vector<Skill *> usable_skills) {
 void battle(Player &player, Pawn &pawn) {
   // creating an enemies vector that contains all the enemies
   // spawned by the enemies_appearing function
-  std::vector<Enemy> enemies = enemies_appearing(generateRandom(1, 1));
+  std::vector<Enemy> enemies = enemies_appearing(generateRandom(1, 3));
 
   // creating an object of type enemy that will make as
   // destination for our attacks
@@ -429,6 +477,7 @@ void battle(Player &player, Pawn &pawn) {
         bool is_choice_reset = false;
         display_skills(usable_skills);
         choice = attack_choice(usable_skills);
+        std::cout << "\n";
         while (choice == usable_skills.size() + 1) {
           system("clear");
           display_enemies_names(enemies);
@@ -440,15 +489,52 @@ void battle(Player &player, Pawn &pawn) {
           display_skills(usable_skills);
           choice = attack_choice(usable_skills);
         }
-        if (!enemy_target) continue;
+        if (!enemy_target)
+          continue;
         if (!choice)
           std::cout << "You dealt " << player.attack(*subject, nullptr)
                     << " damage to " << subject->getName() << "\n";
         else {
           choice--;
           skill = usable_skills[choice];
-          std::cout << "You dealt " << player.attack(*subject, skill)
-                    << " damage to " << subject->getName() << "\n";
+          if (skill->returnSkillType() == Skill::SkillType::cure) {
+            system("clear");
+            std::vector<Entity> entities =
+                display_entities(player, pawn, enemies);
+            // index for the entity to heal
+            uint entity_to_heal = entity_choice(entities);
+            Entity &entity = entities[entity_to_heal];
+            uint previous_entity_hp = entity.getHp();
+            entity.healEntity(percu(entity.getMaxHp(), 40));
+            uint entity_heal_value = entity.getHp() - previous_entity_hp;
+            std::cout << entity.getName() << " was healed of "
+                      << entity_heal_value << "!\n";
+          } else if (skill->getName() == "Fire Pact" ||
+                     skill->getName() == "Ice Pact" ||
+                     skill->getName() == "Thunder Pact" ||
+                     skill->getName() == "Holy Pact" ||
+                     skill->getName() == "Dark Pact") {
+            if ((pawn.getVocation() == Vocations::Mage) ||
+                (pawn.getVocation() == Vocations::Sorcerer)) {
+              std::cout
+                  << "This action can't be performed on Mage and Sorcerers\n";
+              std::cin.ignore();
+              std::cin.get();
+              continue;
+            } else {
+              std::vector<Skill> *pawn_skills = pawn.getSkillsAddr();
+              for (Skill &x : *pawn_skills) {
+                x.setSkillType(skill->returnSkillType());
+              }
+              std::cout << "All of " << pawn.getName()
+                        << "'s skill types have turned to "
+                        << skill->getSkillType()
+                        << " for the rest of the battle!\n";
+            }
+          } else {
+            std::cout << "You dealt " << player.attack(*subject, skill)
+                      << " damage to " << subject->getName() << "\n";
+          }
           skill->use();
           usable_skills.erase(usable_skills.begin() + choice);
         }

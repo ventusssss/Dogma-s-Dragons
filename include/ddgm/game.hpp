@@ -38,6 +38,10 @@ void display_character_names(Player &player, Pawn &pawn);
 
 void display_skills(std::vector<Skill> usable_skills);
 
+std::vector<Entity> display_entities(Player &player, Pawn &pawn, std::vector<Enemy> enemies);
+
+uint entity_choice(std::vector<Entity> entities);
+
 uint attack_choice(std::vector<Skill *> usable_skills);
 
 void battle(Player &player, Pawn &pawn);
