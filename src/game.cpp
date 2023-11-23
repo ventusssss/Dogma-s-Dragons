@@ -509,11 +509,9 @@ void battle(Player &player, Pawn &pawn) {
             uint entity_heal_value = entity.getHp() - previous_entity_hp;
             std::cout << entity.getName() << " was healed of "
                       << entity_heal_value << "!\n";
-          } else if (skill->getName() == "Fire Pact" ||
-                     skill->getName() == "Ice Pact" ||
-                     skill->getName() == "Thunder Pact" ||
-                     skill->getName() == "Holy Pact" ||
-                     skill->getName() == "Dark Pact") {
+          } else if (isIn(skill->getName(),
+                          {"Fire Pact", "Ice Pact", "Thunder Pact", "Holy Pact",
+                           "Dark Pact"})) {
             if ((pawn.getVocation() == Vocations::Mage) ||
                 (pawn.getVocation() == Vocations::Sorcerer)) {
               std::cout
@@ -560,9 +558,8 @@ void battle(Player &player, Pawn &pawn) {
       if (pawn.getHp() && enemies.size()) {
         std::cout << "\n";
         subject = &enemies[generateRandom(0, enemies.size() - 1)];
-        std::cout << pawn.getName() << " attacked " << subject->getName();
-        std::cout << " and dealt " << pawn.pawn_attack(*subject, player)
-                  << " damage\n\n";
+        pawn.calculate_dmg(*subject, pawn.pawn_attack(*subject, player));
+        std::cout << "\n";
       }
 
       if (enemies.size()) {

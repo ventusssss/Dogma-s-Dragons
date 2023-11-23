@@ -282,85 +282,125 @@ void Pawn::pawndeathTalk() {
   }
 }
 
-uint Pawn::pawn_attack(Enemy &obj, Player &player) {
-  std::vector<Skill *> usable_skills;
+void Pawn::calculate_dmg(Enemy &obj, Skill *skill) {
   uint dmg = dynamic_cast<Magic *>(&obj)
                  ? generateRandom(this->matk - percu(this->matk, 10),
                                   this->matk + percu(this->matk, 10))
                  : generateRandom(this->atk - percu(this->atk, 10),
                                   this->atk + percu(this->atk, 10)),
        dmg_eff = 0;
-  Skill *skill = nullptr;
 
-  // looks for usable skills
-  for (uint i = 0; i < this->player_skills.size(); i++) {
-    if ((this->player_skills[i].returnSkillType() == Skill::SkillType::cure) &&
-        player.getHp() <= percu(player.getMaxHp(), 35)) {
-      Skill skill = this->player_skills[i];
-      player.healEntity(percu(player.getMaxHp(), 40));
-      skill.use();
-      return 0;
-    }
-
-    if (obj.isEffective(this->player_skills[i].returnSkillType()) &&
-        !this->player_skills[i].getActualCd()) {
-      usable_skills.push_back(&this->player_skills[i]);
-    }
-  }
-
-  // looks for effective skills
-  if (usable_skills.size()) {
-    std::vector<Skill *> eff_skills;
-    for (uint i = 0; i < usable_skills.size(); i++) {
-      if (obj.isEffective(usable_skills[i]->returnSkillType())) {
-        eff_skills.push_back(usable_skills[i]);
-      }
-    }
-    if (eff_skills.size())
-      usable_skills = eff_skills;
-  }
-
-  // if it found an effective skill, it'll use one
-  // else, it'll use a normal skill
-  if (usable_skills.size()) {
-    skill = usable_skills[generateRandom(0, usable_skills.size() - 1)];
-    if ((skill->getName() == "Fire Pact" || skill->getName() == "Ice Pact" ||
-         skill->getName() == "Thunder Pact" ||
-         skill->getName() == "Holy Pact" || skill->getName() == "Dark Pact") &&
-        (!skill->getActualCd())) {
-      std::vector<Skill> *p_skills = player.getSkillsAddr();
-      for (Skill &x : *p_skills) {
-        x.setSkillType(skill->returnSkillType());
-      }
-      skill->use();
-      return 0;
+  if (skill) {
+    if (isIn(skill->getName(), {"Fire Pact", "Ice Pact", "Thunder Pact",
+                                "Holy Pact", "Dark Pact"})) {
+      std::cout << this->name << " used " << skill->getName() << "!\n";
+      std::cout
+          << "This means that all of your skill types have been changed\n";
+      std::cout << "to " << skill->getSkillType()
+                << " for the rest of the battle\n";
+      return;
+    } else if (skill->returnSkillType() == Skill::SkillType::cure) {
+      std::cout << this->name << " used " << skill->getName()
+                << " and healed you!\n";
+      return;
     } else {
+      // calculating the damage based on the skill multiplier
       dmg *= skill->getMultiplier();
       if (obj.isEffective(skill->returnSkillType())) {
         dmg += percu(dmg, obj.getVulperc());
       } else if (obj.isResistant(skill->returnSkillType())) {
         dmg -= percu(dmg, obj.getResperc());
       }
-    }
-    skill->use();
-  }
 
-  if (dynamic_cast<Magic *>(&obj)) {
-    if (dmg >= obj.getMdef()) {
-      dmg_eff = dmg - obj.getMdef();
-    } else {
-      dmg_eff =
-          ceil(log((3 * pow(obj.getMdef(), 2)) - (4 * obj.getMdef()) + dmg));
+      if (dynamic_cast<Magic *>(&obj)) {
+        if (dmg >= obj.getMdef()) {
+          dmg_eff = dmg - obj.getMdef();
+        } else {
+          dmg_eff = ceil(
+              log((3 * pow(obj.getMdef(), 2)) - (4 * obj.getMdef()) + dmg));
+        }
+      } else {
+        if (dmg >= obj.getDef()) {
+          dmg_eff = dmg - obj.getDef();
+        } else {
+          dmg_eff =
+              ceil(log((3 * pow(obj.getDef(), 2)) - (4 * obj.getMdef()) + dmg));
+        }
+      }
     }
   } else {
-    if (dmg >= obj.getDef()) {
-      dmg_eff = dmg - obj.getDef();
-    } else {
-      dmg_eff =
-          ceil(log((3 * pow(obj.getDef(), 2)) - (4 * obj.getMdef()) + dmg));
+    dmg_eff = dmg;
+  }
+  obj.getHit(dmg_eff);
+  std::cout << this->name << " used " << skill->getName() << " and dealt "
+            << dmg_eff << " damage to " << obj.getName() << "\n";
+}
+
+Skill *Pawn::pawn_attack(Enemy &obj, Player &player) {
+  // vector to store usable skills
+  std::vector<Skill *> usable_skills;
+  Skill *skill_to_use = nullptr;
+
+  for (uint i = 0; i < this->player_skills.size(); i++) {
+    // checks if there is a healing skill
+    // and if it can be used
+    if ((this->player_skills[i].returnSkillType() == Skill::SkillType::cure) &&
+        (!this->player_skills[i].getActualCd()) &&
+        (player.getHp() <= percu(player.getMaxHp(), 35))) {
+      skill_to_use = &this->player_skills[i];
+      skill_to_use->use();
+      player.healEntity(percu(player.getMaxHp(), 40));
+      return skill_to_use;
+    }
+
+    // checks if there are usable skills
+    // and pushes back
+    if ((!obj.isResistant(this->player_skills[i].returnSkillType())) &&
+        (!this->player_skills[i].getActualCd())) {
+      usable_skills.push_back(&this->player_skills[i]);
     }
   }
-  obj.getHit(dmg);
-  return dmg;
+
+  // if skills were found, proceeds to search for
+  // effective ones
+  if (usable_skills.size()) {
+    std::vector<Skill *> effective_skills;
+    for (uint i = 0; i < usable_skills.size(); i++) {
+      if (obj.isEffective(usable_skills[i]->returnSkillType())) {
+        effective_skills.push_back(usable_skills[i]);
+      }
+    }
+
+    // and, if it found some, overloads the usable_skills
+    // vector with the effective_skills one
+    if (effective_skills.size()) {
+      usable_skills = effective_skills;
+    }
+  }
+
+  if (usable_skills.size()) {
+    // generates a random skill among the effective ones
+    bool is_skill_chosen = false;
+    do {
+      std::cout << "enters here\n";
+      skill_to_use = usable_skills[generateRandom(0, usable_skills.size() - 1)];
+      if ((isIn(skill_to_use->getName(),
+                {"Fire Pact", "Ice Pact", "Thunder Pact", "Holy Pact",
+                 "Dark Pact"}))) {
+        if ((isIn(player.getVocation(),
+                  {Vocations::Mage, Vocations::Sorcerer}))) {
+          continue;
+        } else {
+          std::vector<Skill> *p_skills = player.getSkillsAddr();
+          for (Skill &x : *p_skills) {
+            x.setSkillType(skill_to_use->returnSkillType());
+          }
+          skill_to_use->use();
+        }
+      }
+      is_skill_chosen = true;
+    } while (!is_skill_chosen);
+  }
+  return skill_to_use;
 }
 } // namespace ddgm

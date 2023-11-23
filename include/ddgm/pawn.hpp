@@ -28,7 +28,10 @@ public:
   // Declaring a function that allows the pawn to attack
   // managing the attack choice based on the enemy vulnerabilities
   // and resistances
-  uint pawn_attack(Enemy &obj, Player &player);
+
+  void calculate_dmg(Enemy &obj, Skill *skill);
+
+  Skill* pawn_attack(Enemy &obj, Player &player);
 };
 } // namespace ddgm
 
