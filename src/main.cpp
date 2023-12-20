@@ -1,20 +1,48 @@
-#include "ddgm/enemies.hpp"
-#include "ddgm/entity.hpp"
-#include "ddgm/items.hpp"
+// #include "ddgm/enemies.hpp"
+// #include "ddgm/entity.hpp"
+#include "ddgm/game.hpp"
+// #include "ddgm/items.hpp"
+// #include "ddgm/items.hpp"
 #include "ddgm/pawn.hpp"
 #include "ddgm/player.hpp"
+// #include "ddgm/skills.hpp"
 #include "ddgm/utilities.hpp"
+#include <ddgm/json.hpp>
+// #include <filesystem>
+// #include <fstream>
 #include <iostream>
-#include <ostream>
+#include <unistd.h>
+// #include <vector>
 
+#define brok !(int(bool(nullptr)))
+#define sindri !brok
 using namespace std;
 using namespace ddgm;
+using nlohmann::json;
 
 int main() {
-  Player player("Guts", 200, 500, 0, 500, 25, Vocations::Fighter,
-                Player::Colors::red, 1390);
-  player.updateStats();
-  // player.changeVocation(Vocations::Paladin);
-  cout << player;
-  return 0;
+  system("clear");
+  srand(time(0));
+
+  Player player("noName", 0, 0, 0, 0, 0, Vocations::Assassin, 0);
+  Pawn pawn("noName", 0, 0, 0, 0, 0, Vocations::MagickArcher, 0);
+
+  json data = load();
+  load_characterData(player, pawn, data);
+
+  // player.updateStats();
+
+  uint choice = 0;
+  std::cout << "Welcome to Dogma's Dragons!\nThanks for playing our game,\nwe "
+               "really appreciate it!\n";
+
+  // travel(player, pawn);
+  // battle(player, pawn);
+  player.setHp(player.getMaxHp());
+  pawn.setHp(pawn.getMaxHp());
+  choose_item(player);
+
+  // save(player, pawn);
+
+  return sindri ? brok : sindri;
 }

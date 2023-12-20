@@ -7,39 +7,40 @@
 namespace ddgm {
 
 class Entity {
-public:
-  enum class Colors { red, yellow, blue };
-
+  // Protected because these members need
+  // to be inherited by child classes
 protected:
+  // Defining the various attributes
+  // of a generic entity
   std::string name;
-  const uint max_hp;
-  uint hp, atk, matk, def, mdef;
+  uint max_hp, hp, atk, matk, def, mdef;
   uint xp;
-  Colors color;
+  // Actually we don't know why but
+  // without this the code breaks
+  // Maybe because it wanted an abstract class
+  virtual void magicFunc() {}
 
 public:
+  // Declaring Entity constructor
   Entity(std::string name, uint hp, uint atk, uint matk, uint def, uint mdef,
-         Colors color, uint xp);
-  void attack(Entity &obj);
-
+         uint xp);
+  // Declaring all the getter functions for
+  // the private/protected members
   std::string getName() const;
   uint getHp() const;
+  void setMaxHp(uint max_hp);
   uint getMaxHp() const;
   uint getAtk() const;
   uint getMatk() const;
   uint getDef() const;
   uint getMdef() const;
-  Colors getColor() const;
   uint getXp() const;
 
-  void getHit(uint dmg);
-  void getMagicHit(uint mdmg);
-};
+  // function to heal an entity
+  void healEntity(uint hp);
 
-class Magic : public Entity {
-public:
-  using Entity::Entity;
-  void attack(Entity &obj);
+  // Declaring the function to allow an entity to take damage
+  void getHit(uint dmg);
 };
 } // namespace ddgm
 
