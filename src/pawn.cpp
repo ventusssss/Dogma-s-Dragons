@@ -3,12 +3,21 @@
 #include "ddgm/player.hpp"
 #include "ddgm/skills.hpp"
 #include "ddgm/utilities.hpp"
+<<<<<<< HEAD
 //#include <algorithm>
 //#include <chrono>
 #include <iostream>
 //#include <random>
 #include <sys/types.h>
 //#include <system_error>
+=======
+#include <algorithm>
+#include <chrono>
+#include <iostream>
+#include <random>
+#include <sys/types.h>
+#include <system_error>
+>>>>>>> origin/dev
 
 // ALL THE MEANINGS OF THE FUNCTIONS
 // ARE EXPLAINED IN THE HPP FILE

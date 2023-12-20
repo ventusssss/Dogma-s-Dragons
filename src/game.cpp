@@ -5,7 +5,11 @@
 #include "ddgm/player.hpp"
 #include "ddgm/skills.hpp"
 #include "ddgm/utilities.hpp"
+<<<<<<< HEAD
 // #include <array>
+=======
+#include <array>
+>>>>>>> origin/dev
 #include <cctype>
 #include <iostream>
 #include <unistd.h>
@@ -16,7 +20,11 @@ namespace ddgm {
 // Credits of the game
 void game_credits() {
   std::cout << "- DOGMA'S DRAGONS -\n";
+<<<<<<< HEAD
   std::cout << "Game made by Kai and Ventus\n";
+=======
+  std::cout << "Game made by Kenkai and Ventus\n";
+>>>>>>> origin/dev
   std::cout << "Additional help by Salhell\n";
   std::cout << "Based on CAPCOM's already existing game \"Dragon's Dogma.\"\n";
 }
@@ -428,15 +436,24 @@ void battle(Player &player, Pawn &pawn) {
   std::vector<Skill> player_skills = player.getSkills();
   std::vector<Skill *> usable_skills;
   Skill *skill = nullptr;
+<<<<<<< HEAD
   bool is_flee_success = false;
 
   std::cin.get();
 
+=======
+
+  std::cin.get();
+>>>>>>> origin/dev
   do {
     system("clear");
     uint choice = 0;
     bool on_turn = true;
+<<<<<<< HEAD
     uint flee_percent = 0;
+=======
+    bool is_flee_success = false;
+>>>>>>> origin/dev
 
     // displaying all the enemies names and hp on screen
     display_enemies_names(enemies);
@@ -468,10 +485,15 @@ void battle(Player &player, Pawn &pawn) {
       system("clear");
       display_enemies_names(enemies);
       std::cout << "\n";
+<<<<<<< HEAD
       if (pawn.getHp()) {
         pawn.battleTalk(casuality(60),
                       enemies[generateRandom(0, enemies.size() - 1)]);
       }
+=======
+      pawn.battleTalk(casuality(60),
+                      enemies[generateRandom(0, enemies.size() - 1)]);
+>>>>>>> origin/dev
       uint enemy_target = enemy_choosing(enemies);
       if (!enemy_target)
         break;
@@ -551,8 +573,11 @@ void battle(Player &player, Pawn &pawn) {
       // checking if enemy is dead (hp 0)
       if (!subject->getHp()) {
         std::cout << subject->getName() << " was defeated!\n";
+<<<<<<< HEAD
         player.addXp(subject->getXp());
         pawn.addXp(subject->getHp());
+=======
+>>>>>>> origin/dev
         enemies.erase(enemies.begin() + enemy_target - 1);
         if (!enemies.size()) {
           std::cin.ignore();
@@ -599,6 +624,7 @@ void battle(Player &player, Pawn &pawn) {
     } break;
     // use item
     case 2:
+<<<<<<< HEAD
       
       break;
     // flee
@@ -628,6 +654,17 @@ void battle(Player &player, Pawn &pawn) {
     std::cout << "The enemies got their best on you...\n";
   else if (is_flee_success) 
     std::cout << "";
+=======
+      break;
+    // flee
+    case 3:
+      break;
+    }
+  } while (enemies.size() && player.getHp());
+  system("clear");
+  if (!player.getHp())
+    std::cout << "The enemies got their best on you...\n";
+>>>>>>> origin/dev
   else
     std::cout << "You defeated all the enemies!\n";
 }

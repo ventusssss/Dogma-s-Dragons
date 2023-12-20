@@ -4,12 +4,21 @@
 #include "ddgm/items.hpp"
 #include "ddgm/skills.hpp"
 #include "ddgm/utilities.hpp"
+<<<<<<< HEAD
 // #include <chrono>
 #include <cmath>
 // #include <cstddef>
 #include <iostream>
 #include <math.h>
 // #include <random>
+=======
+#include <chrono>
+#include <cmath>
+#include <cstddef>
+#include <iostream>
+#include <math.h>
+#include <random>
+>>>>>>> origin/dev
 #include <string>
 #include <sys/types.h>
 
@@ -43,7 +52,11 @@ void Player::updateStats() {
   uint diff = this->lvl - tmp_lvl;
   if (diff)
     std::cout << "You reached level " << this->lvl << "\n";
+<<<<<<< HEAD
 
+=======
+  
+>>>>>>> origin/dev
   for (uint i = 0; i < diff; i++) {
     switch (this->vocation) {
     case Vocations::Fighter:
@@ -315,6 +328,7 @@ void Player::useItem(uint pos, Entity *obj) {
   this->inventory.erase(this->inventory.begin() + pos);
 }
 
+<<<<<<< HEAD
 void Player::useItem(std::string item_name, Entity *obj) {
   int pos = get_item_index(item_name, this->getInventory());
 
@@ -341,6 +355,8 @@ void Player::useItem(std::string item_name, Entity *obj) {
   this->inventory.erase(this->inventory.begin() + pos);
 }
 
+=======
+>>>>>>> origin/dev
 uint Player::attack(Enemy &obj, Skill *skill) {
   uint dmg = 0, dmg_eff = 0;
 

@@ -1,0 +1,27 @@
+# specifica la versione minima richiesta di cmake
+cmake_minimum_required(VERSION 3.0)
+set(CMAKE_CXX_STANDARD 17)
+# nome del progetto
+project(ddgm)
+
+# dichiarazione di una "variabile"
+set( 
+  # variabile che racchiude la lista delle risorse
+  SRC 
+  # path relativi al CMakeLists.txt
+  src/enemies.cpp
+  src/entity.cpp
+  src/game.cpp
+  src/items.cpp
+  src/main.cpp 
+  src/pawn.cpp
+  src/player.cpp
+  src/skills.cpp
+  src/utilities.cpp
+  )
+
+# crea l'eseguibile con nome (p1) e risorsa (p2)
+add_executable(${CMAKE_PROJECT_NAME} ${SRC})
+
+# include la cartella "include" del progetto, permettendo un path relativo alla compilazione
+target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE include)
