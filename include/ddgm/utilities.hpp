@@ -1,7 +1,6 @@
 #ifndef DDGM_UTILITIES_HPP
 #define DDGM_UTILITIES_HPP
 
-<<<<<<< HEAD
 //#include "ddgm/enemies.hpp"
 #include "ddgm/json.hpp"
 #include "ddgm/skills.hpp"
@@ -10,25 +9,14 @@
 //#include <random>
 #include <sys/types.h>
 #include <map>
-=======
-#include "ddgm/enemies.hpp"
-#include "ddgm/json.hpp"
-#include "ddgm/skills.hpp"
-#include <iostream>
-#include <random>
-#include <sys/types.h>
->>>>>>> origin/dev
 #include <vector>
 
 namespace ddgm {
 
 struct Player;
 struct Pawn;
-<<<<<<< HEAD
 struct Enemy;
 struct Item;
-=======
->>>>>>> origin/dev
 
 // Declaring the functions to load and save the datas
 nlohmann::json load();
@@ -47,17 +35,13 @@ uint generateRandom(uint start, uint end);
 // is contained in a range
 bool isInRange(uint n, uint start, uint end);
 
-<<<<<<< HEAD
 // function to check if single element is in list
-=======
->>>>>>> origin/dev
 template <typename T> inline bool isIn(T src, std::vector<T> list) {
   for (T x : list)
     if (x == src)
       return 1;
   return 0;
 }
-<<<<<<< HEAD
 
 // function to check if elements in a list are in another list
 template <typename T> inline bool isIn(std::vector<T> src, std::vector<T> list) {
@@ -78,8 +62,6 @@ inline bool isIn(std::string src, std::map<std::string, std::pair<uint, uint>> m
 
 bool is_enemy_in_list(std::vector<std::string> enemies_names, std::vector<Enemy> enemies);
 
-=======
->>>>>>> origin/dev
 // Declaring the function that calculates
 // the probability of an event to happen
 bool casuality(uint perc);
@@ -92,15 +74,12 @@ int controllo_int();
 
 bool search_skill(std::vector<Skill::SkillType> vector, Skill::SkillType skill);
 
-<<<<<<< HEAD
 std::map<std::string, std::pair<uint, uint>> normalize_inventory(std::vector<Item> inventory);
 
 void choose_item(Player &players);
 
 int get_item_index(std::string item_name, std::vector<Item> inventory);
 
-=======
->>>>>>> origin/dev
 bool find_skill(std::vector<Skill> skillsVector, Skill skillToFind);
 
 void show_skills(std::vector<Skill> skills);

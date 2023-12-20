@@ -1,15 +1,9 @@
 #ifndef DDGM_ITEMS_HPP
 #define DDGM_ITEMS_HPP
 
-<<<<<<< HEAD
 //#include "ddgm/entity.hpp"
 #include "ddgm/json.hpp"
 //#include <ostream>
-=======
-#include "ddgm/entity.hpp"
-#include "ddgm/json.hpp"
-#include <ostream>
->>>>>>> origin/dev
 #include <vector>
 
 namespace ddgm {

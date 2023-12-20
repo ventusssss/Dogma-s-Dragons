@@ -1,6 +1,5 @@
 #include "ddgm/utilities.hpp"
 #include "ddgm/enemies.hpp"
-<<<<<<< HEAD
 #include "ddgm/items.hpp"
 #include "ddgm/pawn.hpp"
 #include "ddgm/player.hpp"
@@ -11,16 +10,6 @@
 #include <iostream>
 #include <map>
 // #include <random>
-=======
-#include "ddgm/pawn.hpp"
-#include "ddgm/player.hpp"
-#include "ddgm/skills.hpp"
-#include <chrono>
-#include <cmath>
-#include <fstream>
-#include <iostream>
-#include <random>
->>>>>>> origin/dev
 #include <stdexcept>
 #include <unistd.h>
 #include <vector>
@@ -58,7 +47,6 @@ bool isInRange(uint n, uint start, uint end) {
   return false;
 }
 
-<<<<<<< HEAD
 bool is_enemy_in_list(std::vector<std::string> enemies_names,
                       std::vector<Enemy> enemies) {
   for (Enemy enemy : enemies) {
@@ -70,8 +58,6 @@ bool is_enemy_in_list(std::vector<std::string> enemies_names,
   return false;
 }
 
-=======
->>>>>>> origin/dev
 // defining a function to calculate (randomically) the chance
 // of an event to verify
 bool casuality(uint perc) {
@@ -138,7 +124,6 @@ void show_skills(std::vector<Skill> skills) {
   std::cout << " ]\n";
 }
 
-<<<<<<< HEAD
 std::map<std::string, std::pair<uint, uint>>
 normalize_inventory(std::vector<Item> inventory) {
   std::map<std::string, std::pair<uint, uint>> printable_inventory;
@@ -203,8 +188,6 @@ int get_item_index(std::string item_name, std::vector<Item> inventory) {
   return -1;
 }
 
-=======
->>>>>>> origin/dev
 bool search_enemy(std::vector<Enemy> enemies, Enemy enemy) {
   for (uint i = 0; i < enemies.size(); i++) {
     if (enemy.getName() == enemies[i].getName())
