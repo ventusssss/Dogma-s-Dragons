@@ -30,19 +30,17 @@ int main() {
   json data = load();
   load_characterData(player, pawn, data);
 
-  // player.updateStats();
-
   uint choice = 0;
   std::cout << "Welcome to Dogma's Dragons!\nThanks for playing our game,\nwe "
                "really appreciate it!\n";
 
-  // travel(player, pawn);
-  // battle(player, pawn);
   player.setHp(player.getMaxHp());
   pawn.setHp(pawn.getMaxHp());
+  for (Item item: player.getInventory()) 
+    std::cout << item.getName() << "\n";
   choose_item(player);
 
-  // save(player, pawn);
+  save(player, pawn);
 
   return sindri ? brok : sindri;
 }

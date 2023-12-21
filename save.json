@@ -54,9 +54,19 @@
         "hp": 0,
         "inventory": [
             {
-                "description": "A herb that is the subject of many rumors.\nIt is said that it can change the fate of those who take it.\n- Restores 100 HP.\n",
-                "name": "Destiny Grass",
-                "value": 100
+                "description": "A herb common across the peninsula.\n- Restores 30 HP.\n",
+                "name": "Gransys Herb",
+                "value": 30
+            },
+            {
+                "description": "A common herb used in preparing tisanes.\n- Restores 120 HP.\n",
+                "name": "Greenwarish",
+                "value": 120
+            },
+            {
+                "description": "The milky water that remains from washing a hardy harspud.\n-Restores 150 HP.\n",
+                "name": "Harspud Milk",
+                "value": 150
             },
             {
                 "description": "A herb that is the subject of many rumors.\nIt is said that it can change the fate of those who take it.\n- Restores 100 HP.\n",
@@ -64,34 +74,9 @@
                 "value": 100
             },
             {
-                "description": "A herb that is the subject of many rumors.\nIt is said that it can change the fate of those who take it.\n- Restores 100 HP.\n",
-                "name": "Destiny Grass",
-                "value": 100
-            },
-            {
-                "description": "A herb that is the subject of many rumors.\nIt is said that it can change the fate of those who take it.\n- Restores 100 HP.\n",
-                "name": "Destiny Grass",
-                "value": 100
-            },
-            {
-                "description": "A herb that is the subject of many rumors.\nIt is said that it can change the fate of those who take it.\n- Restores 100 HP.\n",
-                "name": "Destiny Grass",
-                "value": 100
-            },
-            {
-                "description": "A small explosive of flammable powder packed into a flask.\nHandle with extreme care.\n- Deals 1000 HP of physical damage to enemy.\n",
-                "name": "Throwblast",
-                "value": 1000
-            },
-            {
-                "description": "A small explosive of flammable powder packed into a flask.\nHandle with extreme care.\n- Deals 1000 HP of physical damage to enemy.\n",
-                "name": "Throwblast",
-                "value": 1000
-            },
-            {
-                "description": "A coin purse said to help relieve one of material desires.\nIt allows money to be used as a throwing weapon.\n- Deals 350 HP of physical damage to the enemy.\n",
-                "name": "Purse of Charity",
-                "value": 350
+                "description": "A herb common across the peninsula.\n- Restores 30 HP.\n",
+                "name": "Gransys Herb",
+                "value": 30
             }
         ],
         "lvl": 1,

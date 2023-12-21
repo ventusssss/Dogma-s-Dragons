@@ -142,6 +142,7 @@ normalize_inventory(std::vector<Item> inventory) {
   return printable_inventory;
 }
 
+/*
 void choose_item(Player &player) {
   std::map<std::string, std::pair<uint, uint>> normalized_inventory =
       normalize_inventory(player.getInventory());
@@ -176,6 +177,15 @@ void choose_item(Player &player) {
   std::cout << "item name before use: " << item_name << "\n";
   player.useItem(item_name);
   std::cout << "used";
+}*/
+
+void choose_item_(Player &player) {
+  std::map<std::string, std::pair<uint, uint>> inventory =
+      normalize_inventory(player.getInventory());
+  
+  for (auto x: inventory) {
+    std::cout << x.first << "\n";
+  }
 }
 
 int get_item_index(std::string item_name, std::vector<Item> inventory) {

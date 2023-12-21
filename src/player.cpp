@@ -188,6 +188,7 @@ void Player::updateStats() {
                                          {Skill::SkillType::fire}, 50, 80));
     }
   }
+  sort(this->inventory.begin(), this->inventory.end());
 }
 
 uint Player::getLvl() const { return this->lvl; }
