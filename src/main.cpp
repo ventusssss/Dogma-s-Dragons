@@ -1,8 +1,10 @@
 // #include "ddgm/enemies.hpp"
 // #include "ddgm/entity.hpp"
+#include "ddgm/enemies.hpp"
 #include "ddgm/game.hpp"
 // #include "ddgm/items.hpp"
 // #include "ddgm/items.hpp"
+#include "ddgm/items.hpp"
 #include "ddgm/pawn.hpp"
 #include "ddgm/player.hpp"
 // #include "ddgm/skills.hpp"
@@ -36,10 +38,9 @@ int main() {
 
   player.setHp(player.getMaxHp());
   pawn.setHp(pawn.getMaxHp());
-  for (Item item: player.getInventory()) 
-    std::cout << item.getName() << "\n";
-  choose_item(player);
 
+  choose_item(player, selectable_enemies);
+  
   save(player, pawn);
 
   return sindri ? brok : sindri;

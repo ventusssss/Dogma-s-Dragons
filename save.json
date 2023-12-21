@@ -14,32 +14,7 @@
         "name": "noName",
         "paladin_levels": 0,
         "ranger_levels": 0,
-        "skills": [
-            {
-                "cooldown": 2,
-                "multiplier": 1.7999999523162842,
-                "name": "Explosive Bolt",
-                "type": 2
-            },
-            {
-                "cooldown": 2,
-                "multiplier": 2.0999999046325684,
-                "name": "Magickal Gleam",
-                "type": 5
-            },
-            {
-                "cooldown": 0,
-                "multiplier": 1.100000023841858,
-                "name": "Bitting Wind",
-                "type": 1
-            },
-            {
-                "cooldown": 0,
-                "multiplier": 1.2000000476837158,
-                "name": "Hundred Kisses",
-                "type": 0
-            }
-        ],
+        "skills": null,
         "sorcerer_levels": 0,
         "strider_levels": 0,
         "vocation": 7,
@@ -54,19 +29,14 @@
         "hp": 0,
         "inventory": [
             {
-                "description": "A herb common across the peninsula.\n- Restores 30 HP.\n",
-                "name": "Gransys Herb",
-                "value": 30
-            },
-            {
                 "description": "A common herb used in preparing tisanes.\n- Restores 120 HP.\n",
                 "name": "Greenwarish",
                 "value": 120
             },
             {
-                "description": "The milky water that remains from washing a hardy harspud.\n-Restores 150 HP.\n",
-                "name": "Harspud Milk",
-                "value": 150
+                "description": "A herb common across the peninsula.\n- Restores 30 HP.\n",
+                "name": "Gransys Herb",
+                "value": 30
             },
             {
                 "description": "A herb that is the subject of many rumors.\nIt is said that it can change the fate of those who take it.\n- Restores 100 HP.\n",
@@ -74,9 +44,9 @@
                 "value": 100
             },
             {
-                "description": "A herb common across the peninsula.\n- Restores 30 HP.\n",
-                "name": "Gransys Herb",
-                "value": 30
+                "description": "The milky water that remains from washing a hardy harspud.\n-Restores 150 HP.\n",
+                "name": "Harspud Milk",
+                "value": 150
             }
         ],
         "lvl": 1,
@@ -87,26 +57,7 @@
         "name": "noName",
         "paladin_levels": 0,
         "ranger_levels": 0,
-        "skills": [
-            {
-                "cooldown": 1,
-                "multiplier": 1.2999999523162842,
-                "name": "Blind Strike",
-                "type": 0
-            },
-            {
-                "cooldown": 2,
-                "multiplier": 1.7999999523162842,
-                "name": "Cutting Wind",
-                "type": 1
-            },
-            {
-                "cooldown": 1,
-                "multiplier": 1.7999999523162842,
-                "name": "Fivefold Flurry",
-                "type": 1
-            }
-        ],
+        "skills": null,
         "sorcerer_levels": 0,
         "strider_levels": 0,
         "vocation": 6,

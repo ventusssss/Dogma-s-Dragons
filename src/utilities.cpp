@@ -1,5 +1,6 @@
 #include "ddgm/utilities.hpp"
 #include "ddgm/enemies.hpp"
+#include "ddgm/game.hpp"
 #include "ddgm/items.hpp"
 #include "ddgm/pawn.hpp"
 #include "ddgm/player.hpp"
@@ -12,6 +13,7 @@
 // #include <random>
 #include <stdexcept>
 #include <unistd.h>
+#include <utility>
 #include <vector>
 
 namespace ddgm {
@@ -124,78 +126,76 @@ void show_skills(std::vector<Skill> skills) {
   std::cout << " ]\n";
 }
 
-std::map<std::string, std::pair<uint, uint>>
-normalize_inventory(std::vector<Item> inventory) {
-  std::map<std::string, std::pair<uint, uint>> printable_inventory;
-  for (uint i = 0; i < inventory.size(); i++) {
-    if (isIn(inventory[i].getName(), printable_inventory)) {
-      printable_inventory[inventory[i].getName()].first++;
+std::vector<std::pair<std::string, uint>>
+normalize_inventory(const std::vector<Item> &player_inventory) {
+  std::vector<std::pair<std::string, uint>> inventory;
+
+  for (const auto &player_item : player_inventory) {
+    auto it = std::find_if(
+        inventory.begin(), inventory.end(), [&](const auto &inventory_item) {
+          return player_item.getName() == inventory_item.first;
+        });
+    if (it != inventory.end()) {
+      it->second++;
     } else {
-      printable_inventory[inventory[i].getName()].first = 1;
-      if (i == 0)
-        printable_inventory[inventory[i].getName()].second = i;
-      else if (inventory[i - 1].getName() != inventory[i].getName())
-        printable_inventory[inventory[i].getName()].second =
-            printable_inventory[inventory[i - 1].getName()].second + 1;
+      inventory.emplace_back(player_item.getName(), 1);
     }
   }
-  return printable_inventory;
+
+  return inventory;
 }
 
-/*
-void choose_item(Player &player) {
-  std::map<std::string, std::pair<uint, uint>> normalized_inventory =
-      normalize_inventory(player.getInventory());
-  uint item_to_use = 0;
-  std::map<std::string, std::pair<uint, uint>>::iterator it =
-      normalized_inventory.begin();
-  for (uint i = 0; it != normalized_inventory.end();) {
-    std::cout << it->second.second << ". Name: " << it->first
-              << ", Quantity: " << it->second.first << "\n";
-    ++it, ++i;
+void choose_item(Player &player, std::vector<Enemy> enemies) {
+  auto inventory = normalize_inventory(player.getInventory());
+  int item_to_use = -1;
+
+  for (uint i = 0; i < inventory.size(); i++) {
+    std::cout << i + 1 << ". Name: " << inventory[i].first
+              << ", Quantity: " << inventory[i].second << "\n";
   }
+
   std::cout << "Choose the item to use\n>> ";
   std::cin >> item_to_use;
+
   while ((std::cin.fail()) ||
-         (item_to_use < 1 || item_to_use > normalized_inventory.size())) {
+         (item_to_use < 1 || item_to_use > inventory.size())) {
     std::cin.clear();
     std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
     std::cout << "Choose a valid item: ";
     std::cin >> item_to_use;
   }
-  //--item_to_use;
-  std::cout << "item to use: " << item_to_use << "\n";
-  std::string item_name = "";
-  for (auto item : normalized_inventory) {
-    std::cout << "it index" << item.second.second << "\n";
-    if (item.second.second == item_to_use) {
-      std::cout << "entering\n";
-      item_name = item.first;
+  --item_to_use;
+
+  for (uint index = 0; index < inventory.size(); index++) {
+    if (inventory[item_to_use].first ==
+        player.getInventory()[index].getName()) {
+      item_to_use = index;
       break;
     }
   }
-  std::cout << "item name before use: " << item_name << "\n";
-  player.useItem(item_name);
-  std::cout << "used";
-}*/
 
-void choose_item_(Player &player) {
-  std::map<std::string, std::pair<uint, uint>> inventory =
-      normalize_inventory(player.getInventory());
-  
-  for (auto x: inventory) {
-    std::cout << x.first << "\n";
+  uint target = 0;
+  bool is_item_used = false;
+  while (!is_item_used) {
+    if ((dynamic_cast<AttackItem *>(&player.getInventory()[item_to_use])) ||
+        (dynamic_cast<MagicItem *>(&player.getInventory()[item_to_use]))) {
+      display_enemies_names(enemies);
+      std::cout << "Choose the enemy target: ";
+      std::cin >> target;
+      while (target < 1 || target > enemies.size() || std::cin.fail()) {
+        std::cin.clear();
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+        std::cout << "Choose a valid target: ";
+        std::cin >> target;
+      }
+      player.useItem(item_to_use, &enemies[--target]);
+    } else if ((dynamic_cast<HealingItem *>(
+                   &player.getInventory()[item_to_use])) ||
+               (dynamic_cast<BufferItem *>(
+                   &player.getInventory()[item_to_use]))) {
+      player.useItem(item_to_use);
+    }
   }
-}
-
-int get_item_index(std::string item_name, std::vector<Item> inventory) {
-  for (int i = 0; i < inventory.size(); i++) {
-    // std::cout << "item name: " << item_name << "\n";
-    std::cout << "inventory[i] name: " << inventory[i].getName() << "\n";
-    if (item_name == inventory[i].getName())
-      return i;
-  }
-  return -1;
 }
 
 bool search_enemy(std::vector<Enemy> enemies, Enemy enemy) {

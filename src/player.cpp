@@ -188,7 +188,6 @@ void Player::updateStats() {
                                          {Skill::SkillType::fire}, 50, 80));
     }
   }
-  sort(this->inventory.begin(), this->inventory.end());
 }
 
 uint Player::getLvl() const { return this->lvl; }
@@ -316,7 +315,7 @@ void Player::useItem(uint pos, Entity *obj) {
   this->inventory.erase(this->inventory.begin() + pos);
 }
 
-void Player::useItem(std::string item_name, Entity *obj) {
+/*void Player::useItem(std::string item_name, Entity *obj) {
   int pos = get_item_index(item_name, this->getInventory());
 
   std::cout << "item position in inventory: " << pos << "\n";
@@ -340,7 +339,7 @@ void Player::useItem(std::string item_name, Entity *obj) {
   }
 
   this->inventory.erase(this->inventory.begin() + pos);
-}
+}*/
 
 uint Player::attack(Enemy &obj, Skill *skill) {
   uint dmg = 0, dmg_eff = 0;

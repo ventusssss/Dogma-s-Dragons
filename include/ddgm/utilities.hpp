@@ -1,14 +1,14 @@
 #ifndef DDGM_UTILITIES_HPP
 #define DDGM_UTILITIES_HPP
 
-//#include "ddgm/enemies.hpp"
+// #include "ddgm/enemies.hpp"
 #include "ddgm/json.hpp"
 #include "ddgm/skills.hpp"
-//#include "ddgm/items.hpp"
-//#include <iostream>
-//#include <random>
-#include <sys/types.h>
+// #include "ddgm/items.hpp"
+// #include <iostream>
+// #include <random>
 #include <map>
+#include <sys/types.h>
 #include <vector>
 
 namespace ddgm {
@@ -44,23 +44,26 @@ template <typename T> inline bool isIn(T src, std::vector<T> list) {
 }
 
 // function to check if elements in a list are in another list
-template <typename T> inline bool isIn(std::vector<T> src, std::vector<T> list) {
-  for (T x: list)
-    for (T y: src)
-      if (x == y) return 1;
+template <typename T>
+inline bool isIn(std::vector<T> src, std::vector<T> list) {
+  for (T x : list)
+    for (T y : src)
+      if (x == y)
+        return 1;
   return 0;
 }
 
-inline bool isIn(std::string src, std::map<std::string, std::pair<uint, uint>> map) {
-  for (uint i = 0; i < map.size(); i++) {
-    if (map.count(src)) {
-        return true;
-    }
+inline bool isIn(std::string src,
+                 std::vector<std::pair<std::string, uint>> vec) {
+  for (uint i = 0; i < vec.size(); i++) {
+    if (vec[i].first == src)
+      return true;
   }
   return false;
 }
 
-bool is_enemy_in_list(std::vector<std::string> enemies_names, std::vector<Enemy> enemies);
+bool is_enemy_in_list(std::vector<std::string> enemies_names,
+                      std::vector<Enemy> enemies);
 
 // Declaring the function that calculates
 // the probability of an event to happen
@@ -74,11 +77,15 @@ int controllo_int();
 
 bool search_skill(std::vector<Skill::SkillType> vector, Skill::SkillType skill);
 
-std::map<std::string, std::pair<uint, uint>> normalize_inventory(std::vector<Item> inventory);
+/*
+std::vector<std::pair<std::string, uint>>
+normalize_inventory(std::vector<Item> inventory);
+*/
 
-void choose_item(Player &players);
+std::vector<std::pair<std::string, uint>>
+normalize_inventory(const std::vector<Item> &player_inventory);
 
-int get_item_index(std::string item_name, std::vector<Item> inventory);
+void choose_item(Player &player, std::vector<Enemy> enemies);
 
 bool find_skill(std::vector<Skill> skillsVector, Skill skillToFind);
 

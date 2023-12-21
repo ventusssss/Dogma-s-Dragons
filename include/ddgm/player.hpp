@@ -80,7 +80,7 @@ public:
   // or to use one
   void addItem(Item item);
   void useItem(uint pos, Entity *obj = nullptr);
-  void useItem(std::string item_name, Entity *obj = nullptr);
+  /*void useItem(std::string item_name, Entity *obj = nullptr);*/
 
   // do not remove this unless you want the code to stop working
   // void attack(Entity &obj);
