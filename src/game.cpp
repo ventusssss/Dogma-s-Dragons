@@ -7,6 +7,7 @@
 #include "ddgm/utilities.hpp"
 // #include <array>
 #include <cctype>
+#include <cstdlib>
 #include <iostream>
 #include <unistd.h>
 #include <vector>
@@ -599,7 +600,8 @@ void battle(Player &player, Pawn &pawn) {
     } break;
     // use item
     case 2:
-      
+      system("clear");
+      choose_item(player, pawn, enemies);
       break;
     // flee
     case 3:

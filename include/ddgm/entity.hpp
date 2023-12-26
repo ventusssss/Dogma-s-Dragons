@@ -41,6 +41,12 @@ public:
 
   // Declaring the function to allow an entity to take damage
   void getHit(uint dmg);
+
+  // Declaring a function that increases the stats of an entity
+  void increase_atk(uint increase);
+  void increase_def(uint increase);
+  void increase_matk(uint increase);
+  void increase_mdef(uint increase);
 };
 } // namespace ddgm
 

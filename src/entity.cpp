@@ -1,7 +1,7 @@
 #include "ddgm/entity.hpp"
-#include "ddgm/player.hpp"
-#include "ddgm/utilities.hpp"
-#include <iostream>
+//#include "ddgm/player.hpp"
+//#include "ddgm/utilities.hpp"
+//#include <iostream>
 #include <sys/types.h>
 
 // ALL THE MEANINGS OF THE FUNCTIONS
@@ -39,6 +39,22 @@ uint Entity::getXp() const { return this->xp; }
 
 void Entity::healEntity(uint heal) {
   this->hp = (this->hp + heal > this->max_hp ? this->max_hp : this->hp + heal);
+}
+
+void Entity::increase_atk(uint increase) {
+  this->atk *= increase;
+}
+
+void Entity::increase_def(uint increase) {
+  this->def *= increase;
+}
+
+void Entity::increase_matk(uint increase) {
+  this->matk *= increase;
+}
+
+void Entity::increase_mdef(uint increase) {
+  this->mdef *= increase;
 }
 
 } // namespace ddgm

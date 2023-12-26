@@ -294,52 +294,34 @@ void Player::addItem(Item item) { this->inventory.push_back(item); }
 // Defining the method for using the items, that will affect
 // the player, or the object which the item is directed to
 void Player::useItem(uint pos, Entity *obj) {
-  if (dynamic_cast<HealingItem *>(&this->inventory[pos])) {
-    this->hp += this->inventory[pos].getValue();
-    this->hp = (this->hp > this->max_hp ? this->max_hp : this->hp);
-  } else if (dynamic_cast<AttackItem *>(&this->inventory[pos])) {
+  std::cout << "You used " << this->inventory[pos].getName() << " on " << obj->getName() << " ";
+  if ((dynamic_cast<HealingItem *>(&this->inventory[pos])) && (this->inventory[pos].getName() != "Griffin Dawn")) {
+    obj->healEntity(this->inventory[pos].getValue());
+    std::cout << "and healed it of " << this->inventory[pos].getValue() << "\n";
+  } else if ((dynamic_cast<AttackItem *>(&this->inventory[pos])) ||
+             (dynamic_cast<MagicItem *>(&this->inventory[pos]))) {
     obj->getHit(this->inventory[pos].getValue());
-  } else if (dynamic_cast<MagicItem *>(&this->inventory[pos])) {
-    obj->getHit(this->inventory[pos].getValue());
+    std::cout << "and dealt " << this->inventory[pos].getValue() << " damage to it!\n";
   } else if (dynamic_cast<BufferItem *>(&this->inventory[pos])) {
-    if (this->inventory[pos].getName() == "Conqueror's Periapt")
-      this->atk *= this->inventory[pos].getValue();
-    else if (this->inventory[pos].getName() == "Angel's Periapt")
-      this->def *= this->inventory[pos].getValue();
-    else if (this->inventory[pos].getName() == "Demon's Periapt")
-      this->matk *= this->inventory[pos].getValue();
-    else if (this->inventory[pos].getName() == "Mage's Periapt")
-      this->mdef *= this->inventory[pos].getValue();
+    if (this->inventory[pos].getName() == "Conqueror's Periapt") {
+      obj->increase_atk(this->inventory[pos].getValue());
+      std::cout << "and doubled its attack!\n";
+    }
+    else if (this->inventory[pos].getName() == "Angel's Periapt") {
+      obj->increase_def(this->inventory[pos].getValue());
+      std::cout << "and doubled its defense!\n";
+    }
+    else if (this->inventory[pos].getName() == "Demon's Periapt") {
+      obj->increase_matk(this->inventory[pos].getValue());
+      std::cout << "and doubled its magick attack!\n";
+    }
+    else if (this->inventory[pos].getName() == "Mage's Periapt") {
+      obj->increase_mdef(this->inventory[pos].getValue());
+      std::cout << "and doubled its magick defense!\n";
+    }
   }
-
   this->inventory.erase(this->inventory.begin() + pos);
 }
-
-/*void Player::useItem(std::string item_name, Entity *obj) {
-  int pos = get_item_index(item_name, this->getInventory());
-
-  std::cout << "item position in inventory: " << pos << "\n";
-
-  if (dynamic_cast<HealingItem *>(&this->inventory[pos])) {
-    this->hp += this->inventory[pos].getValue();
-    this->hp = (this->hp > this->max_hp ? this->max_hp : this->hp);
-  } else if (dynamic_cast<AttackItem *>(&this->inventory[pos])) {
-    obj->getHit(this->inventory[pos].getValue());
-  } else if (dynamic_cast<MagicItem *>(&this->inventory[pos])) {
-    obj->getHit(this->inventory[pos].getValue());
-  } else if (dynamic_cast<BufferItem *>(&this->inventory[pos])) {
-    if (this->inventory[pos].getName() == "Conqueror's Periapt")
-      this->atk *= this->inventory[pos].getValue();
-    else if (this->inventory[pos].getName() == "Angel's Periapt")
-      this->def *= this->inventory[pos].getValue();
-    else if (this->inventory[pos].getName() == "Demon's Periapt")
-      this->matk *= this->inventory[pos].getValue();
-    else if (this->inventory[pos].getName() == "Mage's Periapt")
-      this->mdef *= this->inventory[pos].getValue();
-  }
-
-  this->inventory.erase(this->inventory.begin() + pos);
-}*/
 
 uint Player::attack(Enemy &obj, Skill *skill) {
   uint dmg = 0, dmg_eff = 0;

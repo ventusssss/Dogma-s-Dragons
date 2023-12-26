@@ -7,7 +7,6 @@
 // #include "ddgm/items.hpp"
 // #include <iostream>
 // #include <random>
-#include <map>
 #include <sys/types.h>
 #include <vector>
 
@@ -85,7 +84,7 @@ normalize_inventory(std::vector<Item> inventory);
 std::vector<std::pair<std::string, uint>>
 normalize_inventory(const std::vector<Item> &player_inventory);
 
-void choose_item(Player &player, std::vector<Enemy> enemies);
+void choose_item(Player &player, Pawn &pawn, std::vector<Enemy> enemies);
 
 bool find_skill(std::vector<Skill> skillsVector, Skill skillToFind);
 
