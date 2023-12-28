@@ -72,14 +72,7 @@ uint totalDmg(uint dmg, float multiplier);
 
 uint check_skill(uint end);
 
-int controllo_int();
-
 bool search_skill(std::vector<Skill::SkillType> vector, Skill::SkillType skill);
-
-/*
-std::vector<std::pair<std::string, uint>>
-normalize_inventory(std::vector<Item> inventory);
-*/
 
 std::vector<std::pair<std::string, uint>>
 normalize_inventory(const std::vector<Item> &player_inventory);

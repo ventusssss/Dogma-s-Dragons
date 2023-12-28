@@ -1,10 +1,10 @@
 // #include "ddgm/enemies.hpp"
 // #include "ddgm/entity.hpp"
-//#include "ddgm/enemies.hpp"
+// #include "ddgm/enemies.hpp"
 #include "ddgm/game.hpp"
 // #include "ddgm/items.hpp"
 // #include "ddgm/items.hpp"
-//#include "ddgm/items.hpp"
+// #include "ddgm/items.hpp"
 #include "ddgm/pawn.hpp"
 #include "ddgm/player.hpp"
 // #include "ddgm/skills.hpp"
@@ -35,14 +35,15 @@ int main() {
   uint choice = 0;
   std::cout << "Welcome to Dogma's Dragons!\nThanks for playing our game,\nwe "
                "really appreciate it!\n";
+  system("clear");
 
-  battle(player, pawn);
+  //battle(player, pawn);
+  //change_abilities(player, pawn);
+
+  game_menu(player, pawn);
 
   player.setHp(player.getMaxHp());
   pawn.setHp(pawn.getMaxHp());
-
-
-  //choose_item(player, pawn, selectable_enemies);
 
   save(player, pawn);
 

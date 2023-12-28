@@ -21,10 +21,12 @@ void new_game(Player *player, Pawn *pawn);
 void load_characterData(Player &player, Pawn &pawn, nlohmann::json data);
 
 // Declaring a function for the menu in-game
-int game_menu();
+void game_menu(Player &player, Pawn &pawn);
 
 // Declaring the in-game functions
 void travel(Player &player, Pawn &pawn);
+
+void describe_surroundings();
 
 std::vector<Enemy> enemies_appearing(uint enemyNumber);
 
@@ -55,12 +57,17 @@ void check_stats(Player &player, Pawn &pawn);
 // Declaring a function for the final credits of the game
 void game_credits();
 
+// Declaring a function for all the possible game sequences
+void game();
+
 // Declaring a function for the game introduction
 void game_introduction();
 
 // declaring a function for narrating what
 // happens after the introduction
 void game_progression(Pawn *pawn);
+
+void game_final_battle();
 
 // functions that take the user input to give
 // a name to their characters

@@ -143,22 +143,42 @@ void load_characterData(Player &player, Pawn &pawn, nlohmann::json data) {
 }
 
 // creating the game menu for the in-game actions
-int game_menu() {
-  uint c;
-  std::cout << "1. Travel\n";
-  std::cout << "2. Change Abilities\n";
-  std::cout << "3. Change Vocation\n";
-  std::cout << "4. Check Stats\n";
-  std::cout << "0. Main Menu\n";
-  std::cout << ">> ";
-  std::cin >> c;
-  while (std::cin.fail() || (c < 0 || c > 4)) {
-    std::cin.clear();
-    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-    std::cout << "Please choose a valid option\n>> ";
+void game_menu(Player &player, Pawn &pawn) {
+  bool exit = false;
+  do {
+    uint c;
+    std::cout << "1. Travel\n";
+    std::cout << "2. Change Abilities\n";
+    std::cout << "3. Change Vocation\n";
+    std::cout << "4. Check Stats\n";
+    std::cout << "0. Main Menu\n";
+    std::cout << ">> ";
     std::cin >> c;
-  }
-  return c;
+    while (std::cin.fail() || (c < 0 || c > 4)) {
+      std::cin.clear();
+      std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+      std::cout << "Please choose a valid option\n>> ";
+      std::cin >> c;
+    }
+
+    switch (c) {
+    case 1:
+      travel(player, pawn);
+      break;
+    case 2:
+      change_abilities(player, pawn);
+      break;
+    case 3:
+      change_vocation(player, pawn);
+      break;
+    case 4:
+      check_stats(player, pawn);
+      break;
+    case 0:
+      exit = true;
+      break;
+    }
+  } while (!exit);
 }
 
 // defining the travel function that has a 60% possibility
@@ -166,6 +186,8 @@ int game_menu() {
 // find an item
 void travel(Player &player, Pawn &pawn) {
   uint travelPossibilities = generateRandom(1, 100);
+  describe_surroundings();
+  std::cin.get();
   if (travelPossibilities <= 60) {
     battle(player, pawn);
   } else {
@@ -181,36 +203,194 @@ void travel(Player &player, Pawn &pawn) {
     case 1: // case Healing
       itemFound = generateRandom(0, availableHealingItems.size() - 1);
       if (generateRandom(0, 1)) {
+        std::cout << "You found " << availableHealingItems[itemFound].getName() << "\n"; 
         player.addItem(availableHealingItems[itemFound]);
       } else {
+        std::cout << "Your pawn found " << availableHealingItems[itemFound].getName() << "\n";
         pawn.addItem(availableHealingItems[itemFound]);
       }
       break;
     case 2: // case Attack
       itemFound = generateRandom(0, availableAttackItems.size() - 1);
       if (generateRandom(0, 1)) {
+        std::cout << "You found " << availableAttackItems[itemFound].getName() << "\n";
         player.addItem(availableAttackItems[itemFound]);
       } else {
+        std::cout << "Your pawn found " << availableAttackItems[itemFound].getName() << "\n";
         pawn.addItem(availableAttackItems[itemFound]);
       }
       break;
     case 3: // case Magick
       itemFound = generateRandom(0, availableMagicItems.size() - 1);
       if (generateRandom(0, 1)) {
+        std::cout << "You found " << availableMagicItems[itemFound].getName() << "\n";
         player.addItem(availableMagicItems[itemFound]);
       } else {
+        std::cout << "Your pawn found " << availableMagicItems[itemFound].getName() << "\n";
         pawn.addItem(availableMagicItems[itemFound]);
       }
       break;
     case 4: // case Buffer
       itemFound = generateRandom(0, availableBufferItems.size() - 1);
       if (generateRandom(0, 1)) {
+        std::cout << "You found " << availableBufferItems[itemFound].getName() << "\n";
         player.addItem(availableBufferItems[itemFound]);
       } else {
+        std::cout << "Your pawn found " << availableBufferItems[itemFound].getName() << "\n";
         pawn.addItem(availableBufferItems[itemFound]);
       }
       break;
     }
+  }
+}
+
+void describe_surroundings() {
+  uint quote = generateRandom(1, 17);
+  switch (quote) {
+  case 1:
+    std::cout
+        << "You now find yourself in the Enchanted Grove, a mystical forest "
+           "sanctuary\nwhere silver-leaved trees and luminescent flowers "
+           "create "
+           "an ethereal landscape.\nListen to the unseen creatures' gentle "
+           "melodies, and bask in the glow of magical orbs.\nTime stands still "
+           "here, blurring the lines between the ordinary and the magical.\n";
+    break;
+  case 2:
+    std::cout
+        << "You're now venturing Aetheria, the Floating City.\nMarvel at elven "
+           "craftsmanship as elegant spires and crystalline structures connect "
+           "floating islands high above the clouds.\nAirships drift between "
+           "them, and grand libraries hold ancient knowledge.\n";
+    break;
+  case 3:
+    std::cout
+        << "You are now stepping the grounds of the Obsidian Citadel—an "
+           "imposing fortress in a desolate wasteland.\nCarved from black "
+           "stone, it stands with foreboding spires and walls adorned "
+           "with fiery red runes.\nWithin, shadowy figures conduct "
+           "forbidden rituals,\nand the very air pulses with dark energy.\n";
+    break;
+  case 4:
+    std::cout << "Mind your steps! It's pointy down here!\nGlowing crystals of "
+                 "every hue illuminate vast caverns,\ncasting mesmerizing "
+                 "reflections.\nThe air is cool and filled with a gentle hum,\n"
+                 "creating an enchanting atmosphere.\nWatch your step as you "
+                 "traverse this underground marvel, because you're crossing "
+                 "the Crystal Caverns.\n";
+    break;
+  case 5:
+    std::cout << "You should've brought a cooler! It's hot here in the Sunlit "
+                 "Oasis!\nA hidden gem in the midst of endless desert dunes.\n"
+                 "Vibrant palm trees provide shade, and a crystal-clear oasis "
+                 "sparkles in the sunlight.\nExotic creatures and colorful "
+                 "birds create a harmonious oasis.\nTake a moment to refresh "
+                 "and marvel at this desert sanctuary.\n";
+    break;
+  case 6:
+    std::cout
+        << "We sure will never lose track of time here, in the Clockwork "
+           "City of Gearford.\nA bustling metropolis where towering gears "
+           "and cogs form the architecture.\nClockwork automatons go "
+           "about their tasks,\nand steam-powered airships fill the "
+           "skies.\nThe rhythmic clanking and hiss of steam create a "
+           "symphony of industry in this mechanical marvel.\n";
+    break;
+  case 7:
+    std::cout
+        << "Enter the Whispering Woods, a mysterious woodland shrouded in "
+           "mist.\nAncient trees with silver bark stand tall,\nand their "
+           "leaves "
+           "seem to whisper secrets carried by the wind.\nThe air is charged "
+           "with magic, and the path ahead is both enchanting and "
+           "unpredictable.\nExplore, but beware the woods' elusive nature.\n";
+    break;
+  case 8:
+    std::cout << "I think this night we should settle here, on the shore of "
+                 "the Luminous Lagoon.\nAs night falls, the water comes alive "
+                 "with bioluminescent creatures,\ncasting an ethereal glow.\n"
+                 "Board a magical boat and navigate the sparkling waters.";
+    break;
+  case 9:
+    std::cout
+        << "Here the stars have never been so beautiful. Welcome to the "
+           "Celestial Observatory.\nPerched atop a mountain peak, this "
+           "observatory offers unparalleled views of the night sky.\nMassive "
+           "telescopes and celestial charts adorn the platform,\nallowing "
+           "astronomers and stargazers to witness the wonders of distant "
+           "galaxies.\nA haven for those who seek the mysteries of the "
+           "cosmos.\n";
+    break;
+  case 10:
+    std::cout
+        << "Step into the Whimsical Mushroom Glen!\nA magical forest "
+           "where colossal mushrooms of every color and size create a "
+           "surreal landscape.\nFairies flit about, and the air is filled "
+           "with the sweet scent of enchanting blooms.\nLose yourself in "
+           "the whimsy of this fairy-tale glade.\n";
+    break;
+  case 11:
+    std::cout << "Behold the Elemental Nexus! A convergence of magical "
+                 "energies where fire, water, earth, and air intertwine.\nThe "
+                 "air crackles with energy, and floating islands represent "
+                 "each elemental force.\nWizards and sorcerers gather here to "
+                 "harness the raw power of the elements.\n";
+    break;
+  case 12:
+    std::cout
+        << "Thing are startin to get a little scary...aren't they?\nWe "
+           "just entered the Ghostly Graveyard—a haunting realm where "
+           "ancient tombstones stand sentinel.\nEerie mist swirls among "
+           "the gravestones, and ghostly apparitions wander silently.\n"
+           "Legends speak of lost souls and forgotten tales,\nmaking this "
+           "graveyard a place both haunting and mysterious.\n";
+    break;
+  case 13:
+    std::cout
+        << "Don't you suffer from vertigo?!\nYou are now crossing the Rainbow "
+           "Bridge of Eldoria!\nA celestial "
+           "bridge that spans across the sky, connecting realms of magic and "
+           "wonder.\nAs you walk, vibrant colors dance beneath your feet,\nand "
+           "the air is filled with the essence of dreams.\nThis bridge is a "
+           "passage to realms beyond the ordinary.\n";
+    break;
+  case 14:
+    std::cout
+        << "You better bring some extra oxygen with you...\nDive into the "
+           "Coral "
+           "Cathedral—an underwater marvel!\nMassive coral formations "
+           "resembling towering spires create an otherworldly city beneath the "
+           "waves.\nBioluminescent fish dart through the coral, and the play "
+           "of "
+           "light creates a mesmerizing spectacle.\nA serene and mystical "
+           "world "
+           "awaits beneath the surface.\n";
+    break;
+  case 15:
+    std::cout
+        << "This place gives an unordinary feeling...as if time stands "
+           "still here.\nExplore the Timeless Library of Arcanum!\nVast "
+           "shelves reach towards the heavens, housing tomes of "
+           "knowledge from every era.\nLibrarians, scholars, and magical "
+           "beings peruse ancient scrolls.\nThe library exists outside of "
+           "time, making it a repository of wisdom and secrets.\n";
+    break;
+  case 16:
+    std::cout
+        << "We should've brought an umbrella...\nWitness the Stormforge "
+           "Citadel—a fortress amidst perpetual thunderstorms.\nTowers made of "
+           "storm-forged steel pierce the sky, and lightning crackles across "
+           "the battlements.\nThis citadel is a hub of elemental power,\nwhere "
+           "storm mages harness the forces of nature.\n";
+    break;
+  case 17:
+    std::cout
+        << "Is that...an illusion or is it real?\nDiscover the Mirage Oasis—an "
+           "illusionary paradise in the heart of the desert.\nThe oasis "
+           "shimmers with deceptive beauty, mirages dancing on the horizon.\n"
+           "Pools of water appear and disappear, creating a mesmerizing oasis "
+           "that challenges the perception of reality.\n";
+    break;
   }
 }
 
@@ -471,7 +651,7 @@ void battle(Player &player, Pawn &pawn) {
       std::cout << "\n";
       if (pawn.getHp()) {
         pawn.battleTalk(casuality(60),
-                      enemies[generateRandom(0, enemies.size() - 1)]);
+                        enemies[generateRandom(0, enemies.size() - 1)]);
       }
       uint enemy_target = enemy_choosing(enemies);
       if (!enemy_target)
@@ -620,40 +800,160 @@ void battle(Player &player, Pawn &pawn) {
             << "Oh no! The enemies blocked your way. Better luck next time.";
       }
       std::cout << "\n";
-      std::cin.get();
-      std::cin.ignore();
       break;
     }
+    std::cin.get();
+    std::cin.ignore();
   } while (enemies.size() && player.getHp() && !is_flee_success);
   system("clear");
   if (!player.getHp())
     std::cout << "The enemies got their best on you...\n";
-  else if (is_flee_success) 
+  else if (is_flee_success)
     std::cout << "";
   else
     std::cout << "You defeated all the enemies!\n";
 }
 
-void change_abilities(Player &player, Pawn &pawn) {}
+void change_abilities(Player &player, Pawn &pawn) {
+  uint choice = 0;
+  bool changed = false;
+  char ans = ' ';
 
-void change_vocation(Player &player, Pawn &pawn) {}
+  do {
+    std::cout << "Select who you would want to change abilities to\n";
+    std::cout << "1. " << player.getName() << " (Player)\n";
+    std::cout << "2. " << pawn.getName() << " (Pawn)\n";
+    std::cout << "0. Choice list\n";
+    std::cout << ">> ";
+    std::cin >> choice;
+    while ((std::cin.fail()) || (choice < 0) || (choice > 2)) {
+      std::cin.clear();
+      std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+      std::cout << "Choose a valid entity: ";
+      std::cin >> choice;
+    }
+    switch (choice) {
+    case 0:
+      changed = true;
+      break;
+    case 1:
+      std::cout << "Would you like to Add or Remove skill? A/R\n";
+      std::cout << ">> ";
+      std::cin >> ans;
+      while ((tolower(ans) != 'a') && (tolower(ans) != 'r')) {
+        std::cout << "Choose a valid answer: ";
+        std::cin >> ans;
+      }
+      if ((tolower(ans) == 'a') && (player.getSkills().size() == 6)) {
+        std::cout << "You reached the maximum amount of skills.\n";
+        std::cout << "You will have to remove some to change them.";
+        std::cout << "Would you like to remove some skills? Y/N\n>> ";
+        std::cin >> ans;
+        while ((tolower(ans) != 'y') && (tolower(ans) != 'n')) {
+          std::cout << "Choose a valid answer: ";
+          std::cin >> ans;
+        }
+        if ((tolower(ans) == 'y')) {
+          skill_removing(&player);
+          changed = true;
+        }
+      } else if ((tolower(ans) == 'a') && (player.getSkills().size() < 6)) {
+        skill_choosing(&player);
+        changed = true;
+      } else if (tolower(ans) == 'r') {
+        skill_removing(&player);
+        changed = true;
+      }
+      break;
+    case 2:
+      std::cout << "Would you like to Add or Remove skill? A/R\n";
+      std::cout << ">> ";
+      std::cin >> ans;
+      while ((tolower(ans) != 'a') && (tolower(ans) != 'r')) {
+        std::cout << "Choose a valid answer: ";
+        std::cin >> ans;
+      }
+      if ((tolower(ans) == 'a') && (pawn.getSkills().size() == 6)) {
+        std::cout << "Your pawn reached the maximum amount of skills.\n";
+        std::cout << "You will have to remove some to change them.";
+        std::cout << "Would you like to remove some skills? Y/N\n>> ";
+        std::cin >> ans;
+        while ((tolower(ans) != 'y') && (tolower(ans) != 'n')) {
+          std::cout << "Choose a valid answer: ";
+          std::cin >> ans;
+        }
+        if ((tolower(ans) == 'y')) {
+          skill_removing(&pawn);
+          changed = true;
+        }
+      } else if ((tolower(ans) == 'a') && (pawn.getSkills().size() < 6)) {
+        skill_choosing(&pawn);
+        changed = true;
+      } else if (tolower(ans) == 'r') {
+        skill_removing(&pawn);
+        changed = true;
+      }
+      break;
+    }
+  } while (!changed);
+}
 
-void check_stats(Player &player, Pawn *pawn) {}
+void change_vocation(Player &player, Pawn &pawn) {
+  uint choice = 0;
+  std::cout << "Select who you would want to change Vocation to\n";
+  std::cout << "1. " << player.getName() << " (Player)\n";
+  std::cout << "2. " << pawn.getName() << " (Pawn)\n";
+  std::cout << "0. Choice list\n";
+  std::cout << ">> ";
+  std::cin >> choice;
+  while ((std::cin.fail()) || (choice < 0) || (choice > 2)) {
+    std::cin.clear();
+    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+    std::cout << "Choose a valid entity: ";
+    std::cin >> choice;
+  }
+
+  switch (choice) {
+  case 1:
+    player.changeVocation();
+    break;
+  case 2:
+    pawn.changeVocation();
+    break;
+  }
+}
+
+void check_stats(Player &player, Pawn &pawn) {
+  std::cout << "PLAYER\n";
+  std::cout << &player;
+  std::cout << "\nPAWN\n";
+  std::cout << &pawn;
+}
+
+void game() {
+  std::cout << "Welcome to Dogma's Dragons!\nThanks for playing our game,\nwe "
+               "really appreciate it!\n";
+}
 
 void game_introduction() {
   system("clear");
   std::cout << "Legends tell that a Dragon has populated these lands since "
                "time immemorial.\nWhether it was the same creature over the "
                "centuries, no one can tell,\nfor no one has ever lived "
-               "enough to witness...or did someone?\n";
+               "enough to witness...or did "
+               "someone?\n-----------------------------------------------------"
+               "-----------------------";
   std::cin.get();
   std::cout << "The people haven't seen the Dragon for over fifty "
                "years now,\nand peace seems to reign sovereign in people's "
-               "hearts once more.\n";
+               "hearts once "
+               "more.\n--------------------------------------------------------"
+               "---------";
 
   std::cin.get();
-  std::cout
-      << "But one day is enough to turn the people's hope into pure fear.\n";
+  std::cout << "But one day is enough to turn the people's hope into pure "
+               "fear.\n--------------------------------------------------------"
+               "--------";
 
   std::cin.get();
   std::cout
@@ -662,7 +962,9 @@ void game_introduction() {
          "terror at its appearance.\nEveryone tried to flee, but many "
          "were struck by The Dragon's infernal flames.\nAmongst all "
          "those terrified people, one person stepped forward,\ndetermined "
-         "to fight The Dragon.\n";
+         "to fight The "
+         "Dragon.\n------------------------------------------------------------"
+         "------------------";
 
   std::cin.get();
   std::cout
@@ -671,26 +973,33 @@ void game_introduction() {
          "sword\nand challenged the Dragon. He stood no choice.\nThe "
          "Dragon struck him with his paw,\nbut in that moment, the "
          "fisherman also managed\nto thrust the weapon into the Dragon's "
-         "hand.\n";
+         "hand.\n--------------------------------------------------------------"
+         "----";
 
   std::cin.get();
   std::cout
       << "Something awakened in the Dragon. Its eyes turned red as fire,\n"
          "and it seemed to realize what was happening.\nThe Beast then "
          "raised his paw, and with a single touch,\nhe ripped the heart "
-         "of the fisherman.\n";
+         "of the "
+         "fisherman.\n---------------------------------------------------------"
+         "------";
 
   std::cin.get();
   std::cout
       << "It then flee away, speaking in an ancient language\nonly the "
          "fisherman could apparently understand.\nIt said \"Come and get me, "
-         "slay me. You'll find me on the tallest peak of the kingdom\"\n";
+         "slay me. You'll find me on the tallest peak of the "
+         "kingdom\"\n----------------------------------------------------------"
+         "----------------------------";
 
   std::cin.get();
   std::cout << "The fisherman woke up in a house, with a scar on his chest,"
                "\nin disbelief that he survived.\nSuddently, the scar "
                "enlightened,\nand the man heard the phrase that the Dragon "
-               "told him before.\n";
+               "told him "
+               "before.\n------------------------------------------------------"
+               "--------";
 
   std::cin.get();
   std::cout
@@ -707,15 +1016,16 @@ void game_progression(Pawn *pawn) {
   std::cout
       << "After packing all your things, and saying goodbye to your "
          "loved ones,\nyou prepare for leaving the Cassardis village,\nin "
-         "order to find the dragon, and get your heart back.\n";
-  std::cin.ignore();
+         "order to find the dragon, and get your heart "
+         "back.\n--------------------------------------------------------------"
+         "--------";
   std::cin.get();
   std::cout
 
       << "But, before leaving, you notice a strange rock,\nwith strange "
          "symbols and patterns hollowed out.\nSuddently, the rock starts "
          "glowing with a bluish color,\nand from inside, you hear a "
-         "voice.\n";
+         "voice.\n--------------------------------------------------------";
   std::cin.get();
   std::cout
       << "\"Arisen, chosen one. Come and touch this Rift "
@@ -737,20 +1047,25 @@ void game_progression(Pawn *pawn) {
          "about.\nYou "
          "aproach the Pawn and, as soon as you do to greet him,\nhe shows "
          "his "
-         "hand, and you notice a strage bright scar on the palm.\n";
+         "hand, and you notice a strage bright scar on the "
+         "palm.\n--------------------------------------------------------------"
+         "----------";
   std::cin.get();
-  std::cout << "You immediately go back to the normal world,\nand even if it "
-               "seems like only a few seconds passed to you,\nit has already "
-               "become night.\nSo, you decide to wait 'till tomorrow morning "
-               "to leave.\nIt's commonly known that the roads aren't safe at "
-               "night.\n";
+  std::cout
+      << "You immediately go back to the normal world,\nand even if it "
+         "seems like only a few seconds passed to you,\nit has already "
+         "become night.\nSo, you decide to wait 'till tomorrow morning "
+         "to leave.\nIt's commonly known that the roads aren't safe at "
+         "night.\n------------------------------------------------------------";
   std::cin.get();
   std::cout
       << "During the night, you notice that your partner doesn't sleep.\n"
          "So, intrigued, you ask him\n\"Hey, wouldn't you mind some rest? "
          "Tomorrow's gonna be a tough day\"\nAfter listening what you "
          "had to say, he replied\n\"Pawns do not need rest, Master\""
-         "\nAtsounded, you go back to sleep.\n";
+         "\nAtsounded, you go back to "
+         "sleep.\n-------------------------------------------------------------"
+         "-------";
   std::cin.get();
   std::cout
       << "You wake up at the crack of dawn.\nStill a bit stunned, you "
@@ -758,7 +1073,9 @@ void game_progression(Pawn *pawn) {
          "you scare a bit, but after setting up all your memories,\nyou "
          "answer \"Oh, well thanks, and yo-\nWait, right, you do not need "
          "rest. And ehm, one more thing.\nDon't call me Master, please. "
-         "You make me unconfortable!\"\n";
+         "You make me "
+         "unconfortable!\"\n---------------------------------------------------"
+         "-----------------------";
   std::cin.get();
   std::cout
 
@@ -766,23 +1083,35 @@ void game_progression(Pawn *pawn) {
          "you ask him \"So...what is YOUR name?\nI mean, you must have "
          "one, everyone does\"\nThe Pawn looks at you with a puzzled "
          "look, and says\n\"Master, you know my name is "
-      << pawn->getName() << ", it was you who gave it to me.\"\n";
+      << pawn->getName()
+      << ", it was you who gave it to "
+         "me.\"\n--------------------------------------------------------------"
+         "----";
   std::cin.get();
   std::cout
 
       << "Upon hearing that name, your face goes pale, and you say\n"
          "\"Wait, wait wait...that is not possible...THAT was...my best "
-         "friend's name...how could this be...\"\n";
+         "friend's name...how could this "
+         "be...\"\n------------------------------------------------------------"
+         "---------------------------------------";
   std::cin.get();
   std::cout << "The Pawn replies saying \"Pawns are made in the image and "
-               "likeness of the Arisen's dearest people\"\n";
+               "likeness of the Arisen's dearest "
+               "people\"\n-----------------------------------------------------"
+               "-------"
+               "--------------------------------------";
   std::cin.get();
   std::cout << "Those words are for you the clear explanation of the "
-               "similarity noticed previously.\n";
+               "similarity noticed "
+               "previously.\n--------------------------------------------------"
+               "----------------------------------";
   std::cin.get();
   std::cout << "After getting your head back on track, you take your things "
                "and finally,\nafter saying goodbye to everyone for the last "
-               "time,\nset off for your adventure.\n";
+               "time,\nset off for your "
+               "adventure.\n---------------------------------------------------"
+               "----------------------";
   std::cin.get();
   std::cout
       << "This, is where your journey begins.\nNow it's your time to make "
@@ -791,6 +1120,113 @@ void game_progression(Pawn *pawn) {
          "only know what your goal is, and that you'll do anything to "
          "acomplish it.\n";
   std::cin.get();
+}
+
+void game_final_battle() {
+  std::cout << "As you and your pawn aproached what would have been your final "
+               "destination,\nyou felt the pain of the scar left in place of "
+               "your heart "
+               "thicken.\n-----------------------------------------------------"
+               "-----------------------";
+  std::cin.get();
+  std::cout
+      << "Finally, you found yourself at the base of the "
+         "Dragon's lair,\nthe mountain that he himself pointed out to you and "
+         "which in the Human World is known as the \"Tainted "
+         "Mountain\".\n--------------------------------------------------------"
+         "---------------------------------------------------------";
+  std::cin.get();
+  std::cout
+      << "The "
+         "Tainted Mountain rose like a dark and menacing obelisk,\ncutting "
+         "through the sky with its imposing height. Its pointed peaks pierced "
+         "the clouds,\ncreating a ghostly silhouette against the horizon. The "
+         "dark rock that made up the mountain\nseemed to absorb sunlight "
+         "rather "
+         "than reflect it,\ncreating an atmosphere of constant twilight around "
+         "it.\nLong, sharp ridges stretched down the mountainside like the "
+         "thorns of a sleeping dragon,\nready to awaken in a moment of "
+         "anger.\n-------------------------------------------------------------"
+         "------------------------------";
+  std::cin.get();
+  std::cout
+      << "In spite of everything, you decided to go on, determined and ready "
+         "to carry out your revenge.\nYou make your way through the narrow "
+         "paths of the mountain,\nbut you hear no sound except the breath of "
+         "the Dragon in the "
+         "distance.\n----------------------------------------------------------"
+         "------------------------------------";
+  std::cin.get();
+  std::cout
+      << "You stop in front of a large door "
+         "decorated with dragon crests\nand carved figures in the shape of "
+         "human hearts.\nAfter one last look, both aware of what awaits you,\n"
+         "you and your pawn decide to open the "
+         "door.\n--------------------------------------------------------------"
+         "-";
+  std::cin.get();
+  std::cout
+      << "You are greeted by a "
+         "large room decorated with columns and ancient architecture,\nat the "
+         "end of which, seated and with open wings,\nthe Dragon resides in all "
+         "majesty.\n-----------------------------------------------------------"
+         "----------------------";
+  std::cin.get();
+  std::cout
+      << "After a few moments of silence, he breaks the stillness in "
+         "the room, asking\n\"What is YOUR purpose here, Arisen? If you sought "
+         "to live\nyou had naught but run and hide yourself "
+         "away.\n--------------------------------------------------------------"
+         "--------------";
+  std::cin.get();
+  std::cout << "But then, "
+               "tell me, child of man...\nwhat does it mean to live in truth?";
+  std::cin.get();
+  std::cout
+      << "To wage "
+         "war against the passing days?\nTo pray to the unseen for a few "
+         "breaths more?\nTo raise grand cities from stone, and spawn new life "
+         "in "
+         "turn?\n-------------------------------------------------------------"
+         "-";
+  std::cin.get();
+  std::cout
+      << "Mankind has done this, yes, and more.\nBut is the tapestry "
+         "you weave truly of your own "
+         "design?\n--------------------------------------------------------";
+  std::cin.get();
+  std::cout
+      << "For the price of a single life, "
+         "I shall leave this land in peace.\nAs my vanquisher, the duchy would "
+         "bow to you. Wealth and power are sweet anodyne for "
+         "heartache.\nYou'll "
+         "not gainsay my terms are more than generous.\nIf it matters aught, "
+         "the man who rules this land now won that honor through just such a "
+         "bargain.\n-----------------------------------------------------------"
+         "--------------------------------------";
+  std::cin.get();
+  std::cout << "\n\nThe decision is yours, Arisen. Now, choose!\"";
+  // if sacrifice
+  std::cout << "Then you will renounce your bond with this human and make an "
+               "offering of their death? I shall not judge you, Arisen, for "
+               "weakness is your nature as a child of man. I  ask this final "
+               "time. Will you turn and leave this place?";
+  // definitive yes or no
+  // if yes
+  std::cout
+      << "Your choice is made, Arisen! As you have willed it, so shall it be!";
+  // end-credits
+
+  // if fight
+  std::cout
+      << "You would face me, then? 'Tis a fool's choice, Arisen. But better "
+         "fool than craven. I knew your mind ere you came... Still, I ask this "
+         "final time. Arisen, will you stand and fight?";
+  // definitive yes or no
+  // if yes
+  std::cout
+      << "Your choice is made, Arisen! As you have willed it, so shall it be!";
+  // fight
 }
 
 std::string playerChooseName() {
@@ -1379,7 +1815,9 @@ void skill_removing(Player *player) {
 
   do {
     system("clear");
-    show_skills(player_abilities);
+    for (uint i = 0; i < player_abilities.size(); i++) {
+      std::cout << i + 1 << ". " << player_abilities[i].getName() << "\n";
+    }
     std::cout << "Choose the skill you want to remove\n";
     std::cout << "Write 0 to get out: ";
     std::cin >> skill;

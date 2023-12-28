@@ -225,10 +225,10 @@ std::string Player::returnVocation() const {
 
 std::ostream &operator<<(std::ostream &os, const Player *player) {
   os << "Name: " << player->getName() << "\n";
-  os << "HP: " << player->getHp() << "\n";
-  os << "ATK: " << player->getAtk() << "\n";
-  os << "DEF: " << player->getDef() << "\n";
-  os << "MATK: " << player->getMatk() << "\n";
+  os << "HP: " << player->getHp() << ", ";
+  os << "ATK: " << player->getAtk() << ", ";
+  os << "DEF: " << player->getDef() << ", ";
+  os << "MATK: " << player->getMatk() << ", ";
   os << "MDEF: " << player->getMdef() << "\n";
   os << "Vocation: " << player->returnVocation() << "\n";
   os << "Level: " << player->getLvl() << "\n";
@@ -237,7 +237,7 @@ std::ostream &operator<<(std::ostream &os, const Player *player) {
   for next level (that's why player.getLvl() +1 ) and player's
   current xp
   */
-  os << "XP required for next level: "
+  os << "Required XP for next level: "
      << (123 * std::pow((player->getLvl() + 1), 2) -
          123 * (player->getLvl() + 1)) -
             player->getXp()
@@ -289,33 +289,131 @@ void Player::changeVocation(Vocations vocation) {
   }
 }
 
+void Player::changeVocation() {
+  uint vocation = 0;
+  bool changed = false;
+  do {
+    std::cout << "1. Fighter\n";
+    std::cout << "2. Strider\n";
+    std::cout << "3. Mage\n";
+    std::cout << "4. Warrior\n";
+    std::cout << "5. Ranger\n";
+    std::cout << "6. Sorcerer\n";
+    std::cout << "7. Assassin\n";
+    std::cout << "8. Paladin\n";
+    std::cout << "9. Magick-Archer\n";
+    std::cout << "0. Entity Choice\n";
+    std::cout << "Choose your new vocation\n>> ";
+    std::cin >> vocation;
+
+    while ((std::cin.fail()) || (vocation < 0) || (vocation > 9)) {
+      std::cin.clear();
+      std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+      std::cout << "Choose a valid vocation: ";
+      std::cin >> vocation;
+    }
+
+    switch (vocation) {
+    case 0:
+      changed = true;
+      break;
+    case 1:
+      this->vocation = Vocations::Fighter;
+      changed = true;
+      break;
+    case 2:
+      this->vocation = Vocations::Strider;
+      changed = true;
+      break;
+    case 3:
+      this->vocation = Vocations::Mage;
+      changed = true;
+      break;
+    case 4:
+      if (this->lvl < 5) {
+        std::cout << "You cannot set this Vocation at your current level.\n";
+        std::cout << "Required level: 5\n";
+      } else {
+        this->vocation = Vocations::Warrior;
+        changed = true;
+      }
+      break;
+    case 5:
+      if (this->lvl < 5) {
+        std::cout << "You cannot set this Vocation at your current level.\n";
+        std::cout << "Required level: 5\n";
+      } else {
+        this->vocation = Vocations::Ranger;
+        changed = true;
+      }
+      break;
+    case 6:
+      if (this->lvl < 5) {
+        std::cout << "You cannot set this Vocation at your current level.\n";
+        std::cout << "Required level: 5\n";
+      } else {
+        this->vocation = Vocations::Sorcerer;
+        changed = true;
+      }
+      break;
+    case 7:
+      if (this->lvl < 10) {
+        std::cout << "You cannot set this Vocation at your current level.\n";
+        std::cout << "Required level: 10\n";
+      } else {
+        this->vocation = Vocations::Assassin;
+        changed = true;
+      }
+      break;
+    case 8:
+      if (this->lvl < 10) {
+        std::cout << "You cannot set this Vocation at your current level.\n";
+        std::cout << "Required level: 10\n";
+      } else {
+        this->vocation = Vocations::Paladin;
+        changed = true;
+      }
+      break;
+    case 9:
+      if (this->lvl < 10) {
+        std::cout << "You cannot set this Vocation at your current level.\n";
+        std::cout << "Required level: 10\n";
+      } else {
+        this->vocation = Vocations::MagickArcher;
+        changed = true;
+      }
+      break;
+    }
+  } while (!changed);
+}
+
 void Player::addItem(Item item) { this->inventory.push_back(item); }
 
 // Defining the method for using the items, that will affect
 // the player, or the object which the item is directed to
 void Player::useItem(uint pos, Entity *obj) {
-  std::cout << "You used " << this->inventory[pos].getName() << " on " << obj->getName() << " ";
-  if ((dynamic_cast<HealingItem *>(&this->inventory[pos])) && (this->inventory[pos].getName() != "Griffin Dawn")) {
+  std::cout << "You used " << this->inventory[pos].getName() << " on "
+            << obj->getName() << " ";
+  if ((dynamic_cast<HealingItem *>(&this->inventory[pos])) &&
+      (this->inventory[pos].getName() != "Griffin Dawn")) {
     obj->healEntity(this->inventory[pos].getValue());
     std::cout << "and healed it of " << this->inventory[pos].getValue() << "\n";
   } else if ((dynamic_cast<AttackItem *>(&this->inventory[pos])) ||
              (dynamic_cast<MagicItem *>(&this->inventory[pos]))) {
     obj->getHit(this->inventory[pos].getValue());
-    std::cout << "and dealt " << this->inventory[pos].getValue() << " damage to it!\n";
+    std::cout << "and dealt " << this->inventory[pos].getValue()
+              << " damage to it!\n";
   } else if (dynamic_cast<BufferItem *>(&this->inventory[pos])) {
     if (this->inventory[pos].getName() == "Conqueror's Periapt") {
       obj->increase_atk(this->inventory[pos].getValue());
       std::cout << "and doubled its attack!\n";
-    }
-    else if (this->inventory[pos].getName() == "Angel's Periapt") {
+    } else if (this->inventory[pos].getName() == "Angel's Periapt") {
       obj->increase_def(this->inventory[pos].getValue());
       std::cout << "and doubled its defense!\n";
-    }
-    else if (this->inventory[pos].getName() == "Demon's Periapt") {
+    } else if (this->inventory[pos].getName() == "Demon's Periapt") {
       obj->increase_matk(this->inventory[pos].getValue());
       std::cout << "and doubled its magick attack!\n";
-    }
-    else if (this->inventory[pos].getName() == "Mage's Periapt") {
+    } else if (this->inventory[pos].getName() == "Mage's Periapt") {
       obj->increase_mdef(this->inventory[pos].getValue());
       std::cout << "and doubled its magick defense!\n";
     }

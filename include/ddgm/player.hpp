@@ -75,6 +75,8 @@ public:
   // under specific criteria
   void changeVocation(Vocations vocation);
 
+  void changeVocation();
+
   // Declaring function that respectively allow
   // the player to add an item to his inventory
   // or to use one
