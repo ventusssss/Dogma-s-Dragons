@@ -42,11 +42,11 @@ int start_menu() {
   return c;
 }
 
-void new_game(Player *player, Pawn *pawn) {
+void new_game(Player &player, Pawn &pawn) {
   game_introduction();
   characterCreation(player);
   game_progression(pawn);
-  save(*player, *pawn);
+  save(player, pawn);
 }
 
 // function to load the stats contained in the "save.json" file
@@ -203,40 +203,48 @@ void travel(Player &player, Pawn &pawn) {
     case 1: // case Healing
       itemFound = generateRandom(0, availableHealingItems.size() - 1);
       if (generateRandom(0, 1)) {
-        std::cout << "You found " << availableHealingItems[itemFound].getName() << "\n"; 
+        std::cout << "You found " << availableHealingItems[itemFound].getName()
+                  << "\n";
         player.addItem(availableHealingItems[itemFound]);
       } else {
-        std::cout << "Your pawn found " << availableHealingItems[itemFound].getName() << "\n";
+        std::cout << "Your pawn found "
+                  << availableHealingItems[itemFound].getName() << "\n";
         pawn.addItem(availableHealingItems[itemFound]);
       }
       break;
     case 2: // case Attack
       itemFound = generateRandom(0, availableAttackItems.size() - 1);
       if (generateRandom(0, 1)) {
-        std::cout << "You found " << availableAttackItems[itemFound].getName() << "\n";
+        std::cout << "You found " << availableAttackItems[itemFound].getName()
+                  << "\n";
         player.addItem(availableAttackItems[itemFound]);
       } else {
-        std::cout << "Your pawn found " << availableAttackItems[itemFound].getName() << "\n";
+        std::cout << "Your pawn found "
+                  << availableAttackItems[itemFound].getName() << "\n";
         pawn.addItem(availableAttackItems[itemFound]);
       }
       break;
     case 3: // case Magick
       itemFound = generateRandom(0, availableMagicItems.size() - 1);
       if (generateRandom(0, 1)) {
-        std::cout << "You found " << availableMagicItems[itemFound].getName() << "\n";
+        std::cout << "You found " << availableMagicItems[itemFound].getName()
+                  << "\n";
         player.addItem(availableMagicItems[itemFound]);
       } else {
-        std::cout << "Your pawn found " << availableMagicItems[itemFound].getName() << "\n";
+        std::cout << "Your pawn found "
+                  << availableMagicItems[itemFound].getName() << "\n";
         pawn.addItem(availableMagicItems[itemFound]);
       }
       break;
     case 4: // case Buffer
       itemFound = generateRandom(0, availableBufferItems.size() - 1);
       if (generateRandom(0, 1)) {
-        std::cout << "You found " << availableBufferItems[itemFound].getName() << "\n";
+        std::cout << "You found " << availableBufferItems[itemFound].getName()
+                  << "\n";
         player.addItem(availableBufferItems[itemFound]);
       } else {
-        std::cout << "Your pawn found " << availableBufferItems[itemFound].getName() << "\n";
+        std::cout << "Your pawn found "
+                  << availableBufferItems[itemFound].getName() << "\n";
         pawn.addItem(availableBufferItems[itemFound]);
       }
       break;
@@ -245,7 +253,7 @@ void travel(Player &player, Pawn &pawn) {
 }
 
 void describe_surroundings() {
-  uint quote = generateRandom(1, 17);
+  uint quote = generateRandom(1, 21);
   switch (quote) {
   case 1:
     std::cout
@@ -309,7 +317,7 @@ void describe_surroundings() {
     std::cout << "I think this night we should settle here, on the shore of "
                  "the Luminous Lagoon.\nAs night falls, the water comes alive "
                  "with bioluminescent creatures,\ncasting an ethereal glow.\n"
-                 "Board a magical boat and navigate the sparkling waters.";
+                 "Board a magical boat and navigate the sparkling waters.\n";
     break;
   case 9:
     std::cout
@@ -390,6 +398,40 @@ void describe_surroundings() {
            "shimmers with deceptive beauty, mirages dancing on the horizon.\n"
            "Pools of water appear and disappear, creating a mesmerizing oasis "
            "that challenges the perception of reality.\n";
+    break;
+  case 18:
+    std::cout
+        << "As you step through the hidden entrance of Eldritch Enclave, a "
+           "sense of ancient magic envelops you.\nGlowing crystals illuminate "
+           "the winding pathways,\nrevealing elven scholars deeply engrossed "
+           "in "
+           "their studies.\nThe air is infused with the scent of "
+           "enchantments,\n"
+           "and the subtle hum of arcane energy accompanies your every step.\n";
+    break;
+  case 19:
+    std::cout
+        << "Venture into the heart of the ancient forest to find the Feywild "
+           "Glade.\nLuminescent mushrooms light your path, and mischievous fey "
+           "creatures play among the enchanted flora.\nThe air is filled with "
+           "the sweet scent of enchanting blooms\nas you witness the whimsical "
+           "dance of time, guided by the capricious spirits of the glade.\n";
+    break;
+  case 20:
+    std::cout
+        << "Enter the desolate realm of the Shadowfell Abyss, where perpetual "
+           "twilight casts long shadows across the landscape.\nEerie specters "
+           "drift through misty paths, and skeletal trees loom overhead.\nThe "
+           "air is heavy with a sense of otherworldly melancholy,\nand ghostly "
+           "echoes accompany your journey through the realm of shadows.\n";
+    break;
+  case 21:
+    std::cout
+        << "Ascend the soaring mountain to reach Phoenix Summit, where the air "
+           "is tinged with the scent of smoldering embers.\nWitness majestic "
+           "phoenixes rise from their own ashes in a fiery display of rebirth.\n"
+           "The landscape is adorned with vibrant flora that blooms in a "
+           "perpetual dance of flame and renewal.\n";
     break;
   }
 }
@@ -930,9 +972,56 @@ void check_stats(Player &player, Pawn &pawn) {
   std::cout << &pawn;
 }
 
-void game() {
+void game(Player &player, Pawn &pawn, nlohmann::json data) {
+  bool exit = false;
   std::cout << "Welcome to Dogma's Dragons!\nThanks for playing our game,\nwe "
                "really appreciate it!\n";
+  std::cin.get();
+  do {
+    system("clear");
+    switch (start_menu()) {
+    // new game
+    case 1:
+      std::cin.ignore();
+      system("clear");
+      new_game(player, pawn);
+      system("clear");
+      game_menu(player, pawn);
+      break;
+    // continue
+    case 2:
+      system("clear");
+      if (data != nlohmann::json::parse("{}")) {
+        std::cout << "Save file found!\n";
+        std::cin.get();
+        system("clear");
+        load_characterData(player, pawn, data);
+        game_menu(player, pawn);
+      } else {
+        std::cout << "Save file empty.\n";
+        std::cout << "Please start a new game and complete character creation "
+                     "to save data.\n";
+        std::cin.ignore();
+        std::cin.get();
+      }
+      break;
+    // credits
+    case 3:
+      system("clear");
+      game_credits();
+      std::cin.ignore();
+      std::cin.get();
+      break;
+    // exit
+    case 0:
+      system("clear");
+      exit = true;
+      break;
+    }
+  } while (!exit);
+  save(player, pawn);
+  std::cout << "Thanks a lot for playing our game!\nYour progresses will be "
+               "automatically saved when exiting!\n";
 }
 
 void game_introduction() {
@@ -1011,7 +1100,8 @@ void game_introduction() {
   std::cin.get();
 }
 
-void game_progression(Pawn *pawn) {
+void game_progression(Pawn &pawn) {
+  std::cin.ignore();
   system("clear");
   std::cout
       << "After packing all your things, and saying goodbye to your "
@@ -1083,7 +1173,7 @@ void game_progression(Pawn *pawn) {
          "you ask him \"So...what is YOUR name?\nI mean, you must have "
          "one, everyone does\"\nThe Pawn looks at you with a puzzled "
          "look, and says\n\"Master, you know my name is "
-      << pawn->getName()
+      << pawn.getName()
       << ", it was you who gave it to "
          "me.\"\n--------------------------------------------------------------"
          "----";
@@ -1297,20 +1387,20 @@ uint chooseStartingVocation() {
   return vocation;
 }
 
-void characterCreation(Player *player) {
+void characterCreation(Player &player) {
   std::string name = "";
   uint vocation = 0;
   system("clear");
-  if (dynamic_cast<Pawn *>(player)) {
+  if (dynamic_cast<Pawn *>(&player)) {
     name = pawnChooseName();
     vocation = chooseStartingVocation();
-    player->setName(name);
-    player->setStartingVocation(vocation);
+    player.setName(name);
+    player.setStartingVocation(vocation);
   } else {
     name = playerChooseName();
     vocation = chooseStartingVocation();
-    player->setName(name);
-    player->setStartingVocation(vocation);
+    player.setName(name);
+    player.setStartingVocation(vocation);
   }
 }
 

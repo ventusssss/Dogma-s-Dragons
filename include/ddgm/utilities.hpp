@@ -19,7 +19,7 @@ struct Item;
 
 // Declaring the functions to load and save the datas
 nlohmann::json load();
-void save(Player player, Pawn pawn);
+void save(Player &player, Pawn &pawn);
 
 // Declaring a function that returns the
 // percentage of a given number

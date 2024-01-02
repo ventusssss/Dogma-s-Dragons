@@ -16,7 +16,7 @@ void itemFind();
 int start_menu();
 
 // declaring a function for the new game start
-void new_game(Player *player, Pawn *pawn);
+void new_game(Player &player, Pawn &pawn);
 
 void load_characterData(Player &player, Pawn &pawn, nlohmann::json data);
 
@@ -58,14 +58,14 @@ void check_stats(Player &player, Pawn &pawn);
 void game_credits();
 
 // Declaring a function for all the possible game sequences
-void game();
+void game(Player &player, Pawn &pawn, nlohmann::json data);
 
 // Declaring a function for the game introduction
 void game_introduction();
 
 // declaring a function for narrating what
 // happens after the introduction
-void game_progression(Pawn *pawn);
+void game_progression(Pawn &pawn);
 
 void game_final_battle();
 
@@ -77,7 +77,7 @@ std::string pawnChooseName();
 // function to choose the player's starting vocation
 uint chooseStartingVocation();
 
-void characterCreation(Player *player);
+void characterCreation(Player &player);
 
 // Defining the function to print all
 // the vocations' skills

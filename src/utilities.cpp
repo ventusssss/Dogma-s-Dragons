@@ -25,7 +25,7 @@ nlohmann::json load() {
   return data;
 }
 
-void save(Player player, Pawn pawn) {
+void save(Player &player, Pawn &pawn) {
   std::ofstream stream("save.json");
   nlohmann::json data = {{"player", player.getJson()},
                          {"pawn", pawn.getJson()}};

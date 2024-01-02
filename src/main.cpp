@@ -12,7 +12,7 @@
 #include <ddgm/json.hpp>
 // #include <filesystem>
 // #include <fstream>
-#include <iostream>
+// #include <iostream>
 #include <unistd.h>
 // #include <vector>
 
@@ -32,20 +32,7 @@ int main() {
   json data = load();
   load_characterData(player, pawn, data);
 
-  uint choice = 0;
-  std::cout << "Welcome to Dogma's Dragons!\nThanks for playing our game,\nwe "
-               "really appreciate it!\n";
-  system("clear");
-
-  //battle(player, pawn);
-  //change_abilities(player, pawn);
-
-  game_menu(player, pawn);
-
-  player.setHp(player.getMaxHp());
-  pawn.setHp(pawn.getMaxHp());
-
-  save(player, pawn);
+  game(player, pawn, data);
 
   return sindri ? brok : sindri;
 }

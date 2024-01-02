@@ -4,14 +4,14 @@
         "atk": 80,
         "def": 80,
         "fighter_levels": 0,
-        "hp": 0,
+        "hp": 430,
         "inventory": null,
         "lvl": 1,
         "mage_levels": 0,
         "magickarcher_levels": 0,
         "matk": 60,
         "mdef": 60,
-        "name": "walt",
+        "name": "o",
         "paladin_levels": 0,
         "ranger_levels": 0,
         "skills": null,
@@ -22,92 +22,24 @@
         "xp": 0
     },
     "player": {
-        "assassin_levels": 10,
-        "atk": 0,
-        "def": 0,
+        "assassin_levels": 0,
+        "atk": 70,
+        "def": 70,
         "fighter_levels": 0,
-        "hp": 1000,
-        "inventory": [
-            {
-                "description": "A common herb used in preparing tisanes.\n- Restores 120 HP.\n",
-                "name": "Greenwarish",
-                "value": 120
-            },
-            {
-                "description": "A herb common across the peninsula.\n- Restores 30 HP.\n",
-                "name": "Gransys Herb",
-                "value": 30
-            },
-            {
-                "description": "A herb that is the subject of many rumors.\nIt is said that it can change the fate of those who take it.\n- Restores 100 HP.\n",
-                "name": "Destiny Grass",
-                "value": 100
-            },
-            {
-                "description": "The milky water that remains from washing a hardy harspud.\n-Restores 150 HP.\n",
-                "name": "Harspud Milk",
-                "value": 150
-            },
-            {
-                "description": "A common herb used in preparing tisanes.\n- Restores 120 HP.\n",
-                "name": "Greenwarish",
-                "value": 120
-            },
-            {
-                "description": "The milky water that remains from washing a hardy harspud.\n-Restores 150 HP.\n",
-                "name": "Harspud Milk",
-                "value": 150
-            }
-        ],
+        "hp": 430,
+        "inventory": null,
         "lvl": 1,
         "mage_levels": 0,
         "magickarcher_levels": 0,
-        "matk": 0,
-        "mdef": 0,
-        "name": "noName",
+        "matk": 70,
+        "mdef": 70,
+        "name": "f",
         "paladin_levels": 0,
         "ranger_levels": 0,
-        "skills": [
-            {
-                "cooldown": 1,
-                "multiplier": 1.2999999523162842,
-                "name": "Blind Strike",
-                "type": 0
-            },
-            {
-                "cooldown": 2,
-                "multiplier": 2.4000000953674316,
-                "name": "Great Windmill",
-                "type": 1
-            },
-            {
-                "cooldown": 2,
-                "multiplier": 1.7999999523162842,
-                "name": "Cutting Wind",
-                "type": 1
-            },
-            {
-                "cooldown": 3,
-                "multiplier": 4.199999809265137,
-                "name": "Masterful Kill",
-                "type": 0
-            },
-            {
-                "cooldown": 1,
-                "multiplier": 1.7999999523162842,
-                "name": "Fivefold Flurry",
-                "type": 1
-            },
-            {
-                "cooldown": 3,
-                "multiplier": 2.700000047683716,
-                "name": "Eagle Sight",
-                "type": 1
-            }
-        ],
+        "skills": null,
         "sorcerer_levels": 0,
         "strider_levels": 0,
-        "vocation": 6,
+        "vocation": 1,
         "warrior_levels": 0,
         "xp": 0
     }
