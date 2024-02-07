@@ -32,6 +32,8 @@ std::vector<Enemy> enemies_appearing(uint enemyNumber);
 
 uint battle_start();
 
+uint final_battle_start();
+
 uint enemy_choosing(std::vector<Enemy> enemiesToFight);
 
 void display_enemies_names(std::vector<Enemy> enemies);
@@ -42,11 +44,15 @@ void display_skills(std::vector<Skill> usable_skills);
 
 std::vector<Entity> display_entities(Player &player, Pawn &pawn, std::vector<Enemy> enemies);
 
+std::vector<Entity> display_entities(Player &player, Pawn &pawn, Enemy &enemy);
+
 uint entity_choice(std::vector<Entity> entities);
 
 uint attack_choice(std::vector<Skill *> usable_skills);
 
 void battle(Player &player, Pawn &pawn);
+
+void final_battle(Player &player, Pawn &pawn);
 
 void change_abilities(Player &player, Pawn &pawn);
 
@@ -67,7 +73,13 @@ void game_introduction();
 // happens after the introduction
 void game_progression(Pawn &pawn);
 
+// Function that manages the whole final battle section
 void game_final_battle();
+
+char check_player_decision();
+
+// Function that manages the player's decision
+bool final_decision();
 
 // functions that take the user input to give
 // a name to their characters

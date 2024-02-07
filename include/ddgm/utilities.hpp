@@ -79,6 +79,8 @@ normalize_inventory(const std::vector<Item> &player_inventory);
 
 void choose_item(Player &player, Pawn &pawn, std::vector<Enemy> enemies);
 
+void choose_item(Player &player, Pawn &pawn, Enemy &enemy);
+
 bool find_skill(std::vector<Skill> skillsVector, Skill skillToFind);
 
 void show_skills(std::vector<Skill> skills);

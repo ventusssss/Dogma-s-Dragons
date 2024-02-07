@@ -3,8 +3,6 @@
 // #include "ddgm/enemies.hpp"
 #include "ddgm/game.hpp"
 // #include "ddgm/items.hpp"
-// #include "ddgm/items.hpp"
-// #include "ddgm/items.hpp"
 #include "ddgm/pawn.hpp"
 #include "ddgm/player.hpp"
 // #include "ddgm/skills.hpp"
@@ -32,7 +30,8 @@ int main() {
   json data = load();
   load_characterData(player, pawn, data);
 
-  game(player, pawn, data);
+  // game(player, pawn, data);
+  final_decision();
 
   return sindri ? brok : sindri;
 }

@@ -429,7 +429,8 @@ void describe_surroundings() {
     std::cout
         << "Ascend the soaring mountain to reach Phoenix Summit, where the air "
            "is tinged with the scent of smoldering embers.\nWitness majestic "
-           "phoenixes rise from their own ashes in a fiery display of rebirth.\n"
+           "phoenixes rise from their own ashes in a fiery display of "
+           "rebirth.\n"
            "The landscape is adorned with vibrant flora that blooms in a "
            "perpetual dance of flame and renewal.\n";
     break;
@@ -534,6 +535,26 @@ uint battle_start() {
   return battleChoice;
 }
 
+uint final_battle_start() {
+  uint battleChoice = 0;
+  std::cout << "\n";
+  std::cout << "1. Attack\n";
+  std::cout << "2. Use Item\n";
+  std::cout << ">> ";
+  std::cin >> battleChoice;
+
+  // controls if number is in range
+  while (std::cin.fail() || (battleChoice != 1 && battleChoice != 2)) {
+    std::cin.clear();
+    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+    std::cout << "Choose a valid option: ";
+    std::cin >> battleChoice;
+  }
+  std::cout << "\n";
+
+  return battleChoice;
+}
+
 /*
   Returns subject index on user input
 */
@@ -607,6 +628,31 @@ std::vector<Entity> display_entities(Player &player, Pawn &pawn,
       entities.push_back(enemy);
     }
   }
+  std::cout << ">> ";
+  return entities;
+}
+
+std::vector<Entity> display_entities(Player &player, Pawn &pawn, Enemy &enemy) {
+  // entity number to take count of all entities
+  uint entity_number = 1;
+
+  // vector to store the entities
+  std::vector<Entity> entities;
+  std::cout << "Select the entity you want to cure\n";
+  std::cout << entity_number++ << ". "
+            << "|Player| " << player.getName() << ": " << player.getHp() << "/"
+            << player.getMaxHp() << "\n";
+  entities.push_back(player);
+  if (pawn.getHp()) {
+    std::cout << entity_number++ << ". "
+              << "|Pawn| " << pawn.getName() << ": " << pawn.getHp() << "/"
+              << pawn.getMaxHp() << "\n";
+    entities.push_back(pawn);
+  }
+  std::cout << entity_number << ". "
+            << "|Enemy| " << enemy.getName() << ": " << enemy.getHp() << "/"
+            << enemy.getMaxHp() << "\n";
+  entities.push_back(enemy);
   std::cout << ">> ";
   return entities;
 }
@@ -854,6 +900,172 @@ void battle(Player &player, Pawn &pawn) {
     std::cout << "";
   else
     std::cout << "You defeated all the enemies!\n";
+}
+
+void final_battle(Player &player, Pawn &pawn) {
+  Enemy *subject = new Grigori();
+
+  std::vector<Skill> player_skills = player.getSkills();
+  std::vector<Skill *> usable_skills;
+  Skill *skill = nullptr;
+  bool is_flee_success = false;
+
+  std::cin.get();
+
+  do {
+    system("clear");
+    uint choice = 0;
+    bool on_turn = true;
+    uint flee_percent = 0;
+
+    std::cout << "- " << subject->getName() << ": " << subject->getHp() << "/"
+              << subject->getMaxHp() << "\n";
+
+    // clears the usable_skills vector
+    usable_skills.clear();
+    usable_skills.shrink_to_fit();
+
+    // select available skills
+    for (Skill &skill : player_skills) {
+      if (!skill.getActualCd())
+        // if the skill is available (actual cd 0)
+        // it gets pushed inside the usable_skills vect
+        usable_skills.push_back(&skill);
+      else
+        // else, it means that has been already used,
+        // so the cd gets decremented
+        skill.decrement_cd();
+    }
+
+    // displays player and pawn names/hps
+    display_character_names(player, pawn);
+
+    // starts the battle
+    std::cout << "\nSelect an action";
+    switch (final_battle_start()) {
+    // attack
+    case 1: {
+      system("clear");
+      std::cout << "- " << subject->getName() << ": " << subject->getHp() << "/"
+                << subject->getMaxHp() << "\n";
+      std::cout << "\n";
+      if (pawn.getHp()) {
+        pawn.battleTalk(casuality(60), *subject);
+      }
+
+      if (usable_skills.size()) {
+        bool is_choice_reset = false;
+        display_skills(usable_skills);
+        choice = attack_choice(usable_skills);
+        std::cout << "\n";
+        while (choice == usable_skills.size() + 1) {
+          system("clear");
+          std::cout << "- " << subject->getName() << ": " << subject->getHp()
+                    << "/" << subject->getMaxHp() << "\n";
+          std::cout << "\n";
+          display_skills(usable_skills);
+          choice = attack_choice(usable_skills);
+        }
+        if (!choice)
+          std::cout << "You dealt " << player.attack(*subject, nullptr)
+                    << " damage to " << subject->getName() << "\n";
+        else {
+          choice--;
+          skill = usable_skills[choice];
+          if (skill->returnSkillType() == Skill::SkillType::cure) {
+            system("clear");
+            std::vector<Entity> entities =
+                display_entities(player, pawn, *subject);
+            // index for the entity to heal
+            uint entity_to_heal = entity_choice(entities);
+            Entity &entity = entities[entity_to_heal];
+            uint previous_entity_hp = entity.getHp();
+            entity.healEntity(percu(entity.getMaxHp(), 40));
+            uint entity_heal_value = entity.getHp() - previous_entity_hp;
+            std::cout << entity.getName() << " was healed of "
+                      << entity_heal_value << "!\n";
+          } else if (isIn(skill->getName(),
+                          {"Fire Pact", "Ice Pact", "Thunder Pact", "Holy Pact",
+                           "Dark Pact"})) {
+            if ((pawn.getVocation() == Vocations::Mage) ||
+                (pawn.getVocation() == Vocations::Sorcerer)) {
+              std::cout
+                  << "This action can't be performed on Mage and Sorcerers\n";
+              std::cin.ignore();
+              std::cin.get();
+              continue;
+            } else {
+              std::vector<Skill> *pawn_skills = pawn.getSkillsAddr();
+              for (Skill &x : *pawn_skills) {
+                x.setSkillType(skill->returnSkillType());
+              }
+              std::cout << "All of " << pawn.getName()
+                        << "'s skill types have turned to "
+                        << skill->getSkillType()
+                        << " for the rest of the battle!\n";
+            }
+          } else {
+            std::cout << "You dealt " << player.attack(*subject, skill)
+                      << " damage to " << subject->getName() << "\n";
+          }
+          skill->use();
+          usable_skills.erase(usable_skills.begin() + choice);
+        }
+      } else {
+        std::cout << "You have no usable skills.\n";
+        std::cout << "You will use a normal attack.\n";
+        std::cout << "You dealt " << player.attack(*subject, nullptr)
+                  << " damage to " << subject->getName() << "\n";
+      }
+      std::cout << "Remaining HP: " << subject->getHp() << "\n";
+
+      // checking if enemy is dead (hp 0)
+      if (!subject->getHp()) {
+        std::cout << subject->getName() << " was defeated!\n";
+        player.addXp(subject->getXp());
+        pawn.addXp(subject->getHp());
+      }
+
+      if (pawn.getHp() && subject->getHp()) {
+        std::cout << "\n";
+        pawn.calculate_dmg(*subject, pawn.pawn_attack(*subject, player));
+        std::cout << "\n";
+      }
+
+      // deciding if to attack pawn or player
+      if (!pawn.getHp()) {
+        std::cout << subject->getName() << " dealt " << subject->attack(player)
+                  << " damage to " << player.getName() << "\n";
+      } else if (generateRandom(0, 1)) {
+        std::cout << subject->getName() << " dealt " << subject->attack(player)
+                  << " damage to " << player.getName() << "\n";
+        std::cout << "Remaining HP: " << player.getHp() << "\n";
+        if (!player.getHp()) {
+          std::cout << "Arisen...You have fought well.\nThis spot marks your "
+                       "grave,\nand the beginning of a new ring of the Eternal "
+                       "Cycle.\n";
+          std::cin.ignore();
+          std::cin.get();
+          break;
+        }
+      } else {
+        std::cout << subject->getName() << " dealt " << subject->attack(pawn)
+                  << " damage to " << pawn.getName() << "\n";
+        std::cout << "Remaining HP: " << pawn.getHp() << "\n";
+      }
+    }
+      std::cin.ignore();
+      std::cin.get();
+      break;
+    // use item
+    case 2:
+      system("clear");
+      choose_item(player, pawn, *subject);
+      break;
+    }
+  } while (subject->getHp() && player.getHp());
+  std::cin.get();
+  std::cin.ignore();
 }
 
 void change_abilities(Player &player, Pawn &pawn) {
@@ -1296,27 +1508,78 @@ void game_final_battle() {
          "--------------------------------------";
   std::cin.get();
   std::cout << "\n\nThe decision is yours, Arisen. Now, choose!\"";
-  // if sacrifice
-  std::cout << "Then you will renounce your bond with this human and make an "
-               "offering of their death? I shall not judge you, Arisen, for "
-               "weakness is your nature as a child of man. I  ask this final "
-               "time. Will you turn and leave this place?";
-  // definitive yes or no
-  // if yes
-  std::cout
-      << "Your choice is made, Arisen! As you have willed it, so shall it be!";
-  // end-credits
+  if (final_decision()) {
+    Grigori greg;
+  }
+  game_credits();
+}
 
-  // if fight
-  std::cout
-      << "You would face me, then? 'Tis a fool's choice, Arisen. But better "
-         "fool than craven. I knew your mind ere you came... Still, I ask this "
-         "final time. Arisen, will you stand and fight?";
-  // definitive yes or no
-  // if yes
-  std::cout
-      << "Your choice is made, Arisen! As you have willed it, so shall it be!";
-  // fight
+char check_player_decision() {
+  char answer = ' ';
+  std::cin >> answer;
+  answer = tolower(answer);
+  while (std::cin.fail() || (answer != 'y' && answer != 'n')) {
+    std::cin.clear();
+    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+    std::cout << "Are you coward, Arisen?\nThis is the time for the final "
+                 "decision.\nNow...Choose.\n";
+    std::cout << ">> ";
+    std::cin >> answer;
+  }
+  return answer;
+}
+
+bool final_decision() {
+  int choice = 0;
+  char answer = ' ';
+
+  do {
+    system("clear");
+    std::cout << "1. Fight\n";
+    std::cout << "2. Go Back.\n";
+    std::cout << ">> ";
+    std::cin >> choice;
+    while (std::cin.fail() || (choice != 1 && choice != 2)) {
+      std::cin.clear();
+      std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+      std::cout << "Are you coward, Arisen?\nThis is the time for the final "
+                   "decision.\nNow...Choose.\n";
+      std::cout << ">> ";
+      std::cin >> choice;
+    }
+    if (choice == 1) {
+      // ask if sure
+      std::cout
+          << "\nYou would face me, then? 'Tis a fool's choice, Arisen.\nBut "
+             "better "
+             "fool than craven. I knew your mind ere you came...\nStill, "
+             "I ask this "
+             "final time.\nArisen, will you stand and fight? (Y/N)\n\n>> ";
+      answer = check_player_decision();
+      if (answer == 'y') {
+        std::cout << "Your choice is made, Arisen! As you have willed it, so "
+                     "shall it be!\n";
+        return true;
+      } else {
+        continue;
+      }
+    } else {
+      // ask if sure
+      std::cout
+          << "\nThen you will renounce your bond with this human and make an "
+             "offering of their death?\nI shall not judge you, Arisen, for "
+             "weakness is your nature as a child of man.\nI  ask this final "
+             "time.\nWill you turn and leave this place? (Y/N)\n\n>> ";
+      answer = check_player_decision();
+      if (answer == 'y') {
+        std::cout << "Your choice is made, Arisen! As you have willed it, so "
+                     "shall it be!\n";
+        return false;
+      } else {
+        continue;
+      }
+    }
+  } while (true);
 }
 
 std::string playerChooseName() {
