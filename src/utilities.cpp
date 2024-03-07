@@ -144,114 +144,134 @@ normalize_inventory(const std::vector<Item> &player_inventory) {
   return inventory;
 }
 
-void choose_item(Player &player, Pawn &pawn, std::vector<Enemy> enemies) {
+int choose_item(Player &player, Pawn &pawn, std::vector<Enemy> enemies) {
   auto inventory = normalize_inventory(player.getInventory());
   int item_to_use = -1;
   bool is_item_valid = true;
 
-  do {
-    for (uint i = 0; i < inventory.size(); i++) {
-      std::cout << i + 1 << ". Name: " << inventory[i].first
-                << ", Quantity: " << inventory[i].second << "\n";
-    }
-    std::cout << "0. Battle Choice\n";
+  if (player.getInventory().size()) {
+    do {
+      for (uint i = 0; i < inventory.size(); i++) {
+        std::cout << i + 1 << ". Name: " << inventory[i].first
+                  << ", Quantity: " << inventory[i].second << "\n";
+      }
+      std::cout << "0. Battle Choice\n";
 
-    std::cout << "Choose the item to use\n>> ";
-    std::cin >> item_to_use;
-
-    while ((std::cin.fail()) ||
-           (item_to_use < 0 || item_to_use > inventory.size())) {
-      std::cin.clear();
-      std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-      std::cout << "Choose a valid item: ";
+      std::cout << "Choose the item to use\n>> ";
       std::cin >> item_to_use;
-    }
 
-    if (!item_to_use)
-      return;
-
-    --item_to_use;
-
-    for (uint index = 0; index < inventory.size(); index++) {
-      if (inventory[item_to_use].first ==
-          player.getInventory()[index].getName()) {
-        item_to_use = index;
-        break;
+      while ((std::cin.fail()) ||
+             (item_to_use < 0 || item_to_use > inventory.size())) {
+        std::cin.clear();
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+        std::cout << "Choose a valid item: ";
+        std::cin >> item_to_use;
       }
-    }
 
-    if (player.getInventory()[item_to_use].getName() == "Griffin Dawn") {
-      if (!pawn.getHp()) {
-        std::cout << "Your pawn was brought back to life by this magic item!\n";
-        pawn.healEntity(percu(pawn.getMaxHp(), 50));
-        player.useItem(item_to_use);
-        return;
-      } else {
-        std::cout << "You can only use this item on a dead pawn.\n";
-        is_item_valid = false;
+      if (!item_to_use)
+        // case no wanted items
+        return -1;
+
+      --item_to_use;
+
+      for (uint index = 0; index < inventory.size(); index++) {
+        if (inventory[item_to_use].first ==
+            player.getInventory()[index].getName()) {
+          item_to_use = index;
+          break;
+        }
       }
-    }
-  } while (!is_item_valid);
 
-  std::vector<Entity> entities = display_entities(player, pawn, enemies);
-  uint entity_target = entity_choice(entities);
-  Entity &entity = entities[entity_target];
-  player.useItem(item_to_use, &entity);
+      if (player.getInventory()[item_to_use].getName() == "Griffin Dawn") {
+        if (!pawn.getHp()) {
+          std::cout
+              << "Your pawn was brought back to life by this magic item!\n";
+          pawn.healEntity(percu(pawn.getMaxHp(), 50));
+          player.useItem(item_to_use);
+          // case pawn back to life
+          return -2;
+        } else {
+          std::cout << "You can only use this item on a dead pawn.\n";
+          is_item_valid = false;
+        }
+      }
+    } while (!is_item_valid);
+
+    std::vector<Entity> entities = display_entities(player, pawn, enemies);
+    uint entity_target = entity_choice(entities);
+    Entity &entity = entities[entity_target];
+    player.useItem(item_to_use, &entity);
+  } else {
+    std::cout << "You have no items avalaible.\n";
+    // case no items
+    return 0;
+  }
+  return 1;
 }
 
-void choose_item(Player &player, Pawn &pawn, Enemy &enemy) {
+int choose_item(Player &player, Pawn &pawn, Enemy &enemy) {
   auto inventory = normalize_inventory(player.getInventory());
   int item_to_use = -1;
   bool is_item_valid = true;
 
-  do {
-    for (uint i = 0; i < inventory.size(); i++) {
-      std::cout << i + 1 << ". Name: " << inventory[i].first
-                << ", Quantity: " << inventory[i].second << "\n";
-    }
-    std::cout << "0. Battle Choice\n";
+  if (player.getInventory().size()) {
+    do {
+      for (uint i = 0; i < inventory.size(); i++) {
+        std::cout << i + 1 << ". Name: " << inventory[i].first
+                  << ", Quantity: " << inventory[i].second << "\n";
+      }
+      std::cout << "0. Battle Choice\n";
 
-    std::cout << "Choose the item to use\n>> ";
-    std::cin >> item_to_use;
-
-    while ((std::cin.fail()) ||
-           (item_to_use < 0 || item_to_use > inventory.size())) {
-      std::cin.clear();
-      std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-      std::cout << "Choose a valid item: ";
+      std::cout << "Choose the item to use\n>> ";
       std::cin >> item_to_use;
-    }
 
-    if (!item_to_use)
-      return;
-
-    --item_to_use;
-
-    for (uint index = 0; index < inventory.size(); index++) {
-      if (inventory[item_to_use].first ==
-          player.getInventory()[index].getName()) {
-        item_to_use = index;
-        break;
+      while ((std::cin.fail()) ||
+             (item_to_use < 0 || item_to_use > inventory.size())) {
+        std::cin.clear();
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+        std::cout << "Choose a valid item: ";
+        std::cin >> item_to_use;
       }
-    }
 
-    if (player.getInventory()[item_to_use].getName() == "Griffin Dawn") {
-      if (!pawn.getHp()) {
-        std::cout << "Your pawn was brought back to life by this magic item!\n";
-        pawn.healEntity(percu(pawn.getMaxHp(), 50));
-        player.useItem(item_to_use);
-        return;
-      } else {
-        std::cout << "You can only use this item on a dead pawn.\n";
-        is_item_valid = false;
+      if (!item_to_use)
+        // case no wanted item
+        return -1;
+
+      --item_to_use;
+
+      for (uint index = 0; index < inventory.size(); index++) {
+        if (inventory[item_to_use].first ==
+            player.getInventory()[index].getName()) {
+          item_to_use = index;
+          break;
+        }
       }
-    }
-  } while (!is_item_valid);
 
-  std::vector<Entity> entities = display_entities(player, pawn, enemy);
-  uint entity_target = entity_choice(entities);
-  Entity &entity = entities[entity_target];
-  player.useItem(item_to_use, &entity);
+      if (player.getInventory()[item_to_use].getName() == "Griffin Dawn") {
+        if (!pawn.getHp()) {
+          std::cout
+              << "Your pawn was brought back to life by this magic item!\n";
+          pawn.healEntity(percu(pawn.getMaxHp(), 50));
+          player.useItem(item_to_use);
+          // case pawn back to life
+          return -2;
+        } else {
+          std::cout << "You can only use this item on a dead pawn.\n";
+          is_item_valid = false;
+        }
+      }
+    } while (!is_item_valid);
+
+    std::vector<Entity> entities = display_entities(player, pawn, enemy);
+    uint entity_target = entity_choice(entities);
+    Entity &entity = entities[entity_target];
+    player.useItem(item_to_use, &entity);
+  } else {
+    std::cout << "You have no items available\n";
+    // case no items available
+    return 0;
+  }
+  return 1;
 }
 
 bool search_enemy(std::vector<Enemy> enemies, Enemy enemy) {

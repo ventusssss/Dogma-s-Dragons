@@ -1,18 +1,9 @@
-// #include "ddgm/enemies.hpp"
-// #include "ddgm/entity.hpp"
-// #include "ddgm/enemies.hpp"
 #include "ddgm/game.hpp"
-// #include "ddgm/items.hpp"
 #include "ddgm/pawn.hpp"
 #include "ddgm/player.hpp"
-// #include "ddgm/skills.hpp"
 #include "ddgm/utilities.hpp"
 #include <ddgm/json.hpp>
-// #include <filesystem>
-// #include <fstream>
-// #include <iostream>
 #include <unistd.h>
-// #include <vector>
 
 #define brok !(int(bool(nullptr)))
 #define sindri !brok
@@ -30,8 +21,7 @@ int main() {
   json data = load();
   load_characterData(player, pawn, data);
 
-  // game(player, pawn, data);
-  final_decision();
+  game(player, pawn, data);
 
   return sindri ? brok : sindri;
 }

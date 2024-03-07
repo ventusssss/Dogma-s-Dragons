@@ -289,7 +289,6 @@ void Pawn::calculate_dmg(Enemy &obj, Skill *skill) {
                  : generateRandom(this->atk - percu(this->atk, 10),
                                   this->atk + percu(this->atk, 10)),
        dmg_eff = 0;
-
   if (skill) {
     if (isIn(skill->getName(), {"Fire Pact", "Ice Pact", "Thunder Pact",
                                 "Holy Pact", "Dark Pact"})) {
@@ -331,12 +330,18 @@ void Pawn::calculate_dmg(Enemy &obj, Skill *skill) {
   } else {
     dmg_eff = dmg;
   }
+
   obj.getHit(dmg_eff);
-  std::cout << this->name << " used " << skill->getName() << " and dealt "
+  if (skill) {
+    std::cout << this->name << " used " << skill->getName() << " and dealt "
             << dmg_eff << " damage to " << obj.getName() << "\n";
+  } else {
+    std::cout << this->name << " used a normal attack and dealt "
+            << dmg_eff << " damage to " << obj.getName() << "\n";
+  }
 }
 
-Skill *Pawn::pawn_attack(Enemy &obj, Player &player) {
+Skill* Pawn::pawn_attack(Enemy &obj, Player &player) {
   // vector to store usable skills
   std::vector<Skill *> usable_skills;
   Skill *skill_to_use = nullptr;

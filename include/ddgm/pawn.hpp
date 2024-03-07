@@ -1,9 +1,9 @@
 #ifndef DDGM_PAWN_HPP
 #define DDGM_PAWN_HPP
 
-#include "ddgm/entity.hpp"
+//#include "ddgm/entity.hpp"
 #include "ddgm/player.hpp"
-#include <random>
+//#include <random>
 
 namespace ddgm {
 class Pawn : public Player {

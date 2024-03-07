@@ -28,12 +28,13 @@ int start_menu() {
   std::cout << "-------------------\n";
   std::cout << "1. New Game\n";
   std::cout << "2. Continue\n";
-  std::cout << "3. Credits\n";
+  std::cout << "3. Guide\n";
+  std::cout << "4. Credits\n";
   std::cout << "0. Exit\n";
   std::cout << "-------------------\n";
   std::cout << ">> ";
   std::cin >> c;
-  while (std::cin.fail() || (c < 0 || c > 3)) {
+  while (std::cin.fail() || (c < 0 || c > 4)) {
     std::cin.clear();
     std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
     std::cout << "Please choose a valid option\n>> ";
@@ -145,7 +146,12 @@ void load_characterData(Player &player, Pawn &pawn, nlohmann::json data) {
 // creating the game menu for the in-game actions
 void game_menu(Player &player, Pawn &pawn) {
   bool exit = false;
+  if (player.getLvl() == 50) {
+    game_final_battle(player, pawn);
+    return;
+  }
   do {
+    system("clear");
     uint c;
     std::cout << "1. Travel\n";
     std::cout << "2. Change Abilities\n";
@@ -162,6 +168,7 @@ void game_menu(Player &player, Pawn &pawn) {
     }
 
     switch (c) {
+    
     case 1:
       travel(player, pawn);
       break;
@@ -520,11 +527,12 @@ uint battle_start() {
   std::cout << "1. Attack\n";
   std::cout << "2. Use Item\n";
   std::cout << "3. Flee\n";
+  std::cout << "4. Guide\n";
   std::cout << ">> ";
   std::cin >> battleChoice;
 
   // controls if number is in range
-  while (std::cin.fail() || (battleChoice < 1 || battleChoice > 3)) {
+  while (std::cin.fail() || (battleChoice < 1 || battleChoice > 4)) {
     std::cin.clear();
     std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
     std::cout << "Choose a valid option: ";
@@ -535,16 +543,40 @@ uint battle_start() {
   return battleChoice;
 }
 
+void battle_guide() {
+  std::cout << "1. Attack\n";
+  std::cout
+      << "By selecting this option, you will choose the enemy to attack\n";
+  std::cout << "and, if present, a skill to use against that enemy.\n";
+  std::cout << "NOTE: Each enemy has vulnerabilities and resistances, and you "
+               "might discover them\n";
+  std::cout << "if your Pawn occasionally tells you them\n\n";
+
+  std::cout << "2. Use Item\n";
+  std::cout << "By selecting this option, if AT LEAST an item is present in "
+               "your inventory\n";
+  std::cout << "you will choose if to use it or not.\n";
+  std::cout << "NOTE: Some items are special and can only be used on special "
+               "circumstances.\n\n";
+
+  std::cout << "3. Flee\n";
+  std::cout
+      << "By selecting this option, you could TRY to escape your enemies.\n";
+  std::cout << "NOTE: Some of them might be too powerful, and escaping "
+               "couldn't be so easy.\n";
+}
+
 uint final_battle_start() {
   uint battleChoice = 0;
   std::cout << "\n";
   std::cout << "1. Attack\n";
   std::cout << "2. Use Item\n";
+  std::cout << "3. Guide\n";
   std::cout << ">> ";
   std::cin >> battleChoice;
 
   // controls if number is in range
-  while (std::cin.fail() || (battleChoice != 1 && battleChoice != 2)) {
+  while (std::cin.fail() || (battleChoice < 1 || battleChoice > 3)) {
     std::cin.clear();
     std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
     std::cout << "Choose a valid option: ";
@@ -682,7 +714,6 @@ uint attack_choice(std::vector<Skill *> usable_skills) {
   return action;
 }
 
-// final battle function
 void battle(Player &player, Pawn &pawn) {
   // creating an enemies vector that contains all the enemies
   // spawned by the enemies_appearing function
@@ -698,6 +729,7 @@ void battle(Player &player, Pawn &pawn) {
   std::vector<Skill *> usable_skills;
   Skill *skill = nullptr;
   bool is_flee_success = false;
+  int is_item_chosen = 0;
 
   std::cin.get();
 
@@ -810,6 +842,7 @@ void battle(Player &player, Pawn &pawn) {
           usable_skills.erase(usable_skills.begin() + choice);
         }
       } else {
+        system("clear");
         std::cout << "You have no usable skills.\n";
         std::cout << "You will use a normal attack.\n";
         std::cout << "You dealt " << player.attack(*subject, nullptr)
@@ -864,12 +897,45 @@ void battle(Player &player, Pawn &pawn) {
         }
       }
       std::cin.ignore();
-      std::cin.get();
     } break;
     // use item
     case 2:
       system("clear");
-      choose_item(player, pawn, enemies);
+      // 0: no items; -1: no wanted item; -2: pawn back to life
+      is_item_chosen = choose_item(player, pawn, enemies);
+      if ((!is_item_chosen) || (is_item_chosen == -1)) {
+        std::cin.ignore();
+        std::cin.get();
+        continue;
+      }
+      std::cout << "\n";
+      if (enemies.size()) {
+        // algorithm to make a random enemy attack the player
+        subject = &enemies[generateRandom(0, enemies.size() - 1)];
+
+        // deciding if to attack pawn or player
+        if (!pawn.getHp()) {
+          std::cout << subject->getName() << " dealt "
+                    << subject->attack(player) << " damage to "
+                    << player.getName() << "\n";
+        } else if (generateRandom(0, 1)) {
+          std::cout << subject->getName() << " dealt "
+                    << subject->attack(player) << " damage to "
+                    << player.getName() << "\n";
+          std::cout << "Remaining HP: " << player.getHp() << "\n";
+          if (!player.getHp()) {
+            std::cout << "And so...the Arisen died...\n";
+            std::cin.ignore();
+            std::cin.get();
+            break;
+          }
+        } else {
+          std::cout << subject->getName() << " dealt " << subject->attack(pawn)
+                    << " damage to " << pawn.getName() << "\n";
+          std::cout << "Remaining HP: " << pawn.getHp() << "\n";
+        }
+      }
+      std::cin.ignore();
       break;
     // flee
     case 3:
@@ -885,13 +951,43 @@ void battle(Player &player, Pawn &pawn) {
         is_flee_success = true;
       } else {
         std::cout
-            << "Oh no! The enemies blocked your way. Better luck next time.";
+            << "Oh no! The enemies blocked your way. Better luck next time.\n";
+        if (enemies.size()) {
+          // algorithm to make a random enemy attack the player
+          subject = &enemies[generateRandom(0, enemies.size() - 1)];
+
+          // deciding if to attack pawn or player
+          if (!pawn.getHp()) {
+            std::cout << subject->getName() << " dealt "
+                      << subject->attack(player) << " damage to "
+                      << player.getName() << "\n";
+          } else if (generateRandom(0, 1)) {
+            std::cout << subject->getName() << " dealt "
+                      << subject->attack(player) << " damage to "
+                      << player.getName() << "\n";
+            std::cout << "Remaining HP: " << player.getHp() << "\n";
+            if (!player.getHp()) {
+              std::cout << "And so...the Arisen died...\n";
+              std::cin.ignore();
+              std::cin.get();
+              break;
+            }
+          } else {
+            std::cout << subject->getName() << " dealt "
+                      << subject->attack(pawn) << " damage to "
+                      << pawn.getName() << "\n";
+            std::cout << "Remaining HP: " << pawn.getHp() << "\n";
+          }
+        }
+        std::cin.ignore();
       }
       std::cout << "\n";
       break;
+    case 4:
+      battle_guide();
+      break;
     }
     std::cin.get();
-    std::cin.ignore();
   } while (enemies.size() && player.getHp() && !is_flee_success);
   system("clear");
   if (!player.getHp())
@@ -902,6 +998,7 @@ void battle(Player &player, Pawn &pawn) {
     std::cout << "You defeated all the enemies!\n";
 }
 
+// final battle function
 void final_battle(Player &player, Pawn &pawn) {
   Enemy *subject = new Grigori();
 
@@ -909,8 +1006,6 @@ void final_battle(Player &player, Pawn &pawn) {
   std::vector<Skill *> usable_skills;
   Skill *skill = nullptr;
   bool is_flee_success = false;
-
-  std::cin.get();
 
   do {
     system("clear");
@@ -1015,9 +1110,9 @@ void final_battle(Player &player, Pawn &pawn) {
         std::cout << "You have no usable skills.\n";
         std::cout << "You will use a normal attack.\n";
         std::cout << "You dealt " << player.attack(*subject, nullptr)
-                  << " damage to " << subject->getName() << "\n";
+                  << " damage to " << subject->getName();
       }
-      std::cout << "Remaining HP: " << subject->getHp() << "\n";
+      std::cout << ", Remaining HP: " << subject->getHp() << "\n";
 
       // checking if enemy is dead (hp 0)
       if (!subject->getHp()) {
@@ -1045,7 +1140,6 @@ void final_battle(Player &player, Pawn &pawn) {
                        "grave,\nand the beginning of a new ring of the Eternal "
                        "Cycle.\n";
           std::cin.ignore();
-          std::cin.get();
           break;
         }
       } else {
@@ -1055,17 +1149,19 @@ void final_battle(Player &player, Pawn &pawn) {
       }
     }
       std::cin.ignore();
-      std::cin.get();
       break;
     // use item
     case 2:
       system("clear");
       choose_item(player, pawn, *subject);
       break;
+    case 3:
+      battle_guide();
+      break;
     }
+    std::cin.get();
   } while (subject->getHp() && player.getHp());
-  std::cin.get();
-  std::cin.ignore();
+  // std::cin.ignore();
 }
 
 void change_abilities(Player &player, Pawn &pawn) {
@@ -1184,6 +1280,37 @@ void check_stats(Player &player, Pawn &pawn) {
   std::cout << &pawn;
 }
 
+void game_guide() {
+  std::cout << "Once you get into your playthrought, you will see 4 choosable "
+               "options\n";
+
+  std::cout << "1. Travel\n";
+  std::cout << "By selecting this option, you will travel alongside your Pawn "
+               "in mysterious and fascinating places\n";
+  std::cout << "You could encounter monsters, and have to fight, or you will "
+               "be so lucky to find good items\n\n";
+
+  std::cout << "2. Change Abilities\n";
+  std::cout << "By selecting this option, you will be able to change your "
+               "characters' abilities.\n";
+  std::cout << "NOTE: Some higher-grade abilities might only be available "
+               "after levelling a few on that vocation\n";
+  std::cout << "In addiction, skills change among almost every vocation\n\n";
+
+  std::cout << "3. Change Vocation\n";
+  std::cout << "By selecting this option, you will be able to change your "
+               "characters' vocation.\n";
+  std::cout
+      << "NOTE: Some vocations are available only after a certain level.\n\n";
+
+  std::cout << "4. Check Stats\n";
+  std::cout << "By selecting this option, you will see all your characters' "
+               "statistics, \n";
+  std::cout << "like HP, ATK, DEF and many others.\n";
+  std::cout << "Make sure to level up well each stat to make the strongest "
+               "Arisen possible!\n";
+}
+
 void game(Player &player, Pawn &pawn, nlohmann::json data) {
   bool exit = false;
   std::cout << "Welcome to Dogma's Dragons!\nThanks for playing our game,\nwe "
@@ -1205,6 +1332,7 @@ void game(Player &player, Pawn &pawn, nlohmann::json data) {
       system("clear");
       if (data != nlohmann::json::parse("{}")) {
         std::cout << "Save file found!\n";
+        std::cin.ignore();
         std::cin.get();
         system("clear");
         load_characterData(player, pawn, data);
@@ -1214,15 +1342,17 @@ void game(Player &player, Pawn &pawn, nlohmann::json data) {
         std::cout << "Please start a new game and complete character creation "
                      "to save data.\n";
         std::cin.ignore();
-        std::cin.get();
       }
       break;
-    // credits
     case 3:
+      game_guide();
+      std::cin.ignore();
+      break;
+    // credits
+    case 4:
       system("clear");
       game_credits();
       std::cin.ignore();
-      std::cin.get();
       break;
     // exit
     case 0:
@@ -1230,6 +1360,7 @@ void game(Player &player, Pawn &pawn, nlohmann::json data) {
       exit = true;
       break;
     }
+    std::cin.get();
   } while (!exit);
   save(player, pawn);
   std::cout << "Thanks a lot for playing our game!\nYour progresses will be "
@@ -1424,7 +1555,7 @@ void game_progression(Pawn &pawn) {
   std::cin.get();
 }
 
-void game_final_battle() {
+void game_final_battle(Player &player, Pawn &pawn) {
   std::cout << "As you and your pawn aproached what would have been your final "
                "destination,\nyou felt the pain of the scar left in place of "
                "your heart "
@@ -1509,7 +1640,7 @@ void game_final_battle() {
   std::cin.get();
   std::cout << "\n\nThe decision is yours, Arisen. Now, choose!\"";
   if (final_decision()) {
-    Grigori greg;
+    final_battle(player, pawn);
   }
   game_credits();
 }
@@ -2168,9 +2299,11 @@ void skill_removing(Player *player) {
 
   do {
     system("clear");
+    std::cout << "[\n";
     for (uint i = 0; i < player_abilities.size(); i++) {
       std::cout << i + 1 << ". " << player_abilities[i].getName() << "\n";
     }
+    std::cout << "]\n";
     std::cout << "Choose the skill you want to remove\n";
     std::cout << "Write 0 to get out: ";
     std::cin >> skill;

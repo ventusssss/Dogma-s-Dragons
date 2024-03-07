@@ -15,6 +15,9 @@ void itemFind();
 // Declaring a function for the main menu of the game;
 int start_menu();
 
+// a guide menu for newcomers ;)
+void game_guide();
+
 // declaring a function for the new game start
 void new_game(Player &player, Pawn &pawn);
 
@@ -31,6 +34,8 @@ void describe_surroundings();
 std::vector<Enemy> enemies_appearing(uint enemyNumber);
 
 uint battle_start();
+
+void battle_guide();
 
 uint final_battle_start();
 
@@ -74,7 +79,7 @@ void game_introduction();
 void game_progression(Pawn &pawn);
 
 // Function that manages the whole final battle section
-void game_final_battle();
+void game_final_battle(Player &player, Pawn &pawn);
 
 char check_player_decision();
 

@@ -36,7 +36,20 @@
         "name": "f",
         "paladin_levels": 0,
         "ranger_levels": 0,
-        "skills": null,
+        "skills": [
+            {
+                "cooldown": 0,
+                "multiplier": 1.100000023841858,
+                "name": "Shearing Wind",
+                "type": 1
+            },
+            {
+                "cooldown": 2,
+                "multiplier": 2.0999999046325684,
+                "name": "Hailstorm Volley",
+                "type": 1
+            }
+        ],
         "sorcerer_levels": 0,
         "strider_levels": 0,
         "vocation": 1,
